@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Machine Learning Performance Improvement</title>
+
+		<meta name="description" content="Machine Learning Performance Improvement">
+		<meta name="author" content="Alessandro Sciarra">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h3>Machine Learning Performance Improvement</h3>
+					<p>
+						<small>Created by <a href="http://sarcdv.github.io">Alessandro Sciarra</a> with <a href="https://github.com/hakimel/reveal.js">reveal.js</a></small>
+            <small>Based on <a href="https://machinelearningmastery.com/machine-learning-performance-improvement-cheat-sheet/">machine-learning-performance-improvement-cheat-sheet</a> </small>
+					</p>
+				</section>
+
+				<section>
+					<h3>Tips, Tricks and Hacks That You Can Use To Make Better Predictions</h3>
+					<p>
+						<ol>
+				            <li>Improve Performance With Data</li>
+				            <li>Improve Performance With Algorithms</li>
+				            <li>Improve Performance With Algorithm Tuning</li>
+				            <li>Improve Performance With Ensembles</li>
+        				</ol>
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h4>Improve Performance With Data</h4>
+						<p><strong>Strategy</strong>: Create new and different perspectives on your data in order to best expose the structure of the underlying problem to the learning algorithms.</p>
+						<br>
+
+					</section>
+					<section>
+						<h4>Get more data</h4>
+						<p><font size="5">
+							<ul>
+								<li>More data can indeed enhance model performance. When a model has access to a larger and more diverse dataset, it can learn better representations and generalize well to unseen examples.</li>
+								<li>However, there’s a point of diminishing returns. Collecting an excessive amount of data might not always lead to significant improvements. It’s essential to strike a balance between data quantity and model complexity.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+					<section>
+						<h4>Generate more data</h4>
+						<p><font size="5">
+							<ul>
+								<li>Data Augmentation: Augmenting existing data is a common approach. By applying various transformations to your original data, you create new examples. </li>
+								<li>Permutation: Permuting existing data involves shuffling the order of features or samples.</li>
+								<li>Generative Models: Probabilistic models can generate new data samples.</li>
+								<li>Synthetic Data: Create synthetic data that resembles your real data. This can be useful for privacy-preserving purposes or when real data is scarce. Be cautious about maintaining statistical properties (e.g., distribution, correlations) when generating synthetic data.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Clean your data</h4>
+						<p><font size="5">
+							<ul>
+								<li>Handling Missing Data: Identify and address missing values (Imputation; Forward/Backward Fill; Remove rows). </li>
+								<li>Outlier Detection and Treatment: Outliers can distort your model (use Z-score; IQR). Decide whether to remove outliers or transform them.</li>
+								<li>Data Validation: Check for data consistency. </li>
+								<li>Handling Duplicates: Remove duplicate records to avoid biasing your analysis.</li>
+								<li>Addressing Corrupt Data: If you suspect corrupt observations, investigate their source. It could be due to measurement errors, sensor malfunctions, or data entry mistakes. Correct or remove such data points.</li>
+								<li>Feature Engineering: Create new features that capture relevant information.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Resample data</h4>
+						<p><font size="5">
+							<ul>
+								<li>Downsampling (Under-sampling): In cases where you have an imbalanced dataset (e.g., rare events), downsampling can help. Randomly remove instances from the majority class until the class distribution is more balanced. Be cautious not to lose critical information by removing too many samples. </li>
+								<li>Upsampling (Over-sampling): When you want to improve representation of a minority class, consider upsampling. Duplicate instances from the minority class or generate synthetic samples (e.g., using SMOTE - Synthetic Minority Over-sampling Technique). Upsampling helps prevent the model from being biased toward the majority class.</li>
+								<li>Stratified Sampling: When splitting your data into training and validation sets, use stratified sampling. This ensures that the class distribution in both sets remains similar to the original dataset.</li>
+								<li>Bootstrapping: Bootstrapping involves randomly sampling with replacement from your dataset. It’s useful for estimating confidence intervals or creating new datasets for model training.</li>
+								<li>Subsampling for Speed: If your dataset is large and training is time-consuming, consider using a smaller random sample for initial experiments. Once you’re satisfied with your approach, scale up to the full dataset.</li>
+								<li>Temporal Resampling: For time-series data, you can resample by time intervals (e.g., daily, weekly, monthly). Aggregating data over intervals can reveal trends and patterns.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Reframe Your Problem</h4>
+						<p><font size="5">
+							<ul>
+								<li>Regression: If your original problem was a classification task, consider reframing it as a regression task.</li>
+								<li>Binary Classification to Multiclass: If you’re solving a binary classification problem (e.g., spam detection), consider expanding it to a multiclass problem.</li>
+								<li>Multiclass to Binary Classification: Sometimes simplifying a multiclass problem to binary can be beneficial.</li>
+								<li>Anomaly Detection: If you suspect that your data contains anomalies (outliers), consider reframing your problem as an anomaly detection task. Detect unusual patterns, fraud, or errors.</li>
+								<li>Time Series Forecasting: If your data has a temporal component (e.g., stock prices, weather), reframe it as a time series forecasting problem. Predict future values based on historical data.</li>
+								<li>Rating and Recommender Systems: If you have user-item interactions (e.g., movie ratings, product reviews), consider building a rating or recommender system. Predict user preferences or recommend items based on past behavior.</li>
+								<li>Sequence-to-Sequence Problems: If your data involves sequences (e.g., natural language, DNA sequences), reframe it as a sequence-to-sequence problem.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Rescale Your Data</h4>
+						<p><font size="5">
+							<ul>
+								<li>Normalization (Min-Max Scaling): In normalization, we transform the data to a fixed range, typically [0, 1]. The formula for normalization is:  \[\begin{aligned}
+								   X_{\text{normalized}} = \frac{{X - X_{\text{min}}}}{{X_{\text{max}} - X_{\text{min}}}}
+  								\end{aligned} \] where $X$ is the original value, $X_{\text{min}}$ is the minimum value in the dataset and $X_{\text{max}}$ is the maximum value in the dataset.
+  								Normalization is useful when features have different scales and you want them to be on a similar scale.</li>
+								<li>Standardization (Z-Score Scaling): Standardization transforms the data to have a mean of 0 and standard deviation of 1.The formula for standardization is:
+								\[\begin{aligned} 
+								 X_{\text{standardized}} = \frac{{X - \mu}}{{\sigma}} 
+								 \end{aligned} \]  where:
+								$X$ is the original value,
+								$\mu$ is the mean of the dataset and
+								$\sigma$ is the standard deviation of the dataset. 
+								Standardization is useful when features have different units or distributions.</li>
+								<li>When to Use Which: Use normalization when you want to preserve the original data range and ensure values are within [0, 1]. Use standardization when you want to center the data around 0 and handle outliers effectively.</li>
+								
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Transform Your Data</h4>
+						<p><font size="5">
+							<ul>
+								<li>Box-Cox Transformation: The Box-Cox transformation is useful when dealing with non-Gaussian data. It aims to make the data more Gaussian-like. The formula for the Box-Cox transformation is: 
+								\[\begin{aligned}
+								X_{\text{transformed}} = \frac{{X^\lambda - 1}}{{\lambda}}
+								\end{aligned} \]
+								 where: $X$ is the original value, $\lambda$ is a parameter that determines the type of transformation (e.g., (\lambda = 0) corresponds to the natural logarithm).</li>
+								<li>Exponential Transformation: Applying an exponential function to your data can help expose certain features. For example, if you have data with exponential growth (e.g., population growth, viral spread), taking the logarithm can linearize the relationship.</li>
+								<li>Square Root Transformation: Taking the square root of data can mitigate the impact of extreme values and make the distribution more symmetric.</li>
+								<li>Rank Transformation: If your data doesn’t follow a specific distribution, consider ranking the values. This assigns ranks based on their order. Rank-based features can be useful for non-parametric models.</li>
+								<li>Quantile Transformation: The quantile transformation maps data to a uniform distribution. It’s particularly useful when you want to ensure that your data has a consistent distribution across percentiles.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Project Your Data</h4>
+						<p><font size="5">
+							<ul>
+								<li>Principal Component Analysis (PCA): PCA is a widely used technique for dimensionality reduction. It identifies the principal components (linear combinations of original features) that explain the most variance in the data. By selecting a subset of these components, you can reduce the dimensionality while retaining as much information as possible. PCA is particularly useful when dealing with correlated features.</li>
+								<li>t-SNE (t-Distributed Stochastic Neighbor Embedding): t-SNE is an unsupervised technique that focuses on preserving pairwise similarities between data points. It maps high-dimensional data to a lower-dimensional space (usually 2D or 3D) while emphasizing the separation between dissimilar points. t-SNE is commonly used for visualization and clustering tasks.</li>
+								<li>UMAP (Uniform Manifold Approximation and Projection): UMAP is another dimensionality reduction method that preserves both local and global structure. It’s particularly effective for nonlinear data. UMAP can be used for visualization, clustering, and manifold learning.</li>
+								<li>Autoencoders: Autoencoders are neural network architectures used for unsupervised representation learning. They consist of an encoder (maps input data to a lower-dimensional representation) and a decoder (reconstructs the original data from the representation).By training an autoencoder, you can learn a compressed representation of your data.</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Feature Selection</h4>
+						<p><font size="4">
+							<ul>
+								<li>Why Feature Selection? 
+									<ul>
+										<li>Simplification: By selecting only relevant features, models become easier to interpret for researchers and users.</li>
+										<li>Efficiency: Reducing the number of features leads to shorter training times.</li>
+										<li>Curse of Dimensionality: When dealing with high-dimensional data, feature selection helps avoid the curse of dimensionality. </li>
+										<li>Model Compatibility: Selecting relevant features improves compatibility with specific learning model classes. </li>
+										<li>Symmetry Encoding: Feature selection can encode inherent symmetries present in the input space. </li>
+									</ul>
+								</li>
+								<li>Redundant vs. Irrelevant Features:
+									<ul>
+										<li>Redundant: Features that convey similar information and can be removed without significant loss of information.</li>
+										<li> Irrelevant: Features that do not contribute meaningfully to the model’s performance.</li>
+									</ul>
+								</li>
+								<li>Techniques for Feature Selection:
+									<ul>
+										<li> Filter Methods: These evaluate features independently of the learning algorithm. Common filter methods include: 
+											<ul>
+												<li>Variance Threshold: Removes low-variance features. </li>
+												<li>Univariate Tests: Selects features based on statistical tests (e.g., chi-squared, ANOVA).</li> 
+											</ul>
+										<li>Wrapper Methods: Use a predictive model to score feature subsets. Examples include recursive feature elimination (RFE) and forward/backward selection.</li> 
+										<li>Embedded Methods: Incorporate feature selection within the learning algorithm itself. For instance:</li>
+										<ul>
+											<li> Lasso Regression: Penalizes 	coefficients, leading to automatic feature selection.</li>
+											<li> Regularized Trees: Decision trees with built-in feature selection.</li>
+										</ul>
+
+									</ul>
+								</li>
+								<li>Checklist for Feature Selection: When selecting features for your machine learning models, consider the following: 
+									<ul>
+										<li>Domain Knowledge: Understand the problem and the relevance of each feature.</li>
+										<li>Correlation: Remove highly correlated features.</li>
+										<li>Feature Importance: Use models like random forests or gradient boosting to assess feature importance.</li>
+									</ul>
+								</li>
+							</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Feature engineering</h4>
+						<p><font size="4">
+							<ul>
+								<li>Feature Creation:</li>
+									<ul>
+										<li>Binning: Convert continuous variables (e.g., age) into categorical bins (e.g., age groups: young, middle-aged, senior).</li>
+										<li>One-Hot Encoding: Convert categorical variables (e.g., country names) into 	binary columns (0 or 1) for each category.</li>
+										<li>Date Decomposition: Extract year, month, day, day of the week, etc., from date features.</li>
+										<li>Text Features:</li>
+										<ul>
+											<li>Bag of Words: Create a vector representation of text data by counting word occurrences.</li>
+											<li>TF-IDF: Weigh words based on their importance in a document.</li>
+										</ul>
+										<li>Interaction Terms: Multiply or combine existing features to capture interactions (e.g., age * income).</li>
+									</ul>
+								<li>Aggregation:</li>
+									<ul>
+										<li>Group Statistics: Calculate summary statistics (mean, median, max, etc.) for groups within a dataset.</li>
+										<li>Time-Based Aggregation: Aggregate data over time intervals (e.g., daily, weekly) to create new features.</li>
+										<li>Rolling Windows: Compute moving averages, cumulative sums, or other rolling statistics.</li>
+									</ul>
+								<li>Domain-Specific Features:</li>
+									<ul>
+										<li>Business Metrics: Create features relevant to your domain (e.g., customer churn rate, conversion rate).</li>
+										<li>Geospatial Features: Use latitude, longitude, and distance calculations.</li>
+										<li>Seasonal Trends: Capture seasonal patterns (e.g., holiday season, summer).</li>
+									</ul>
+								<li>Feature Scaling and Normalization:</li>
+									<ul>
+										<li>Standardize features to have zero mean and unit variance (e.g., using Z-score normalization).</li>
+										<li>Min-max scaling: Scale features to a specific range (e.g., [0, 1]).</li>
+									</ul>
+
+								<li>Feature Importance:</li>
+									<ul>
+										<li>Random Forest Feature Importance: Measures how much each feature contributes to model performance.</li>
+										<li>Permutation Importance: Shuffles feature values and observes the impact on model accuracy.</li>
+									</ul>
+
+							</ul>
+						</font>
+						</p>
+					</section>
+				</section>
+				<!-- #################################################### -->
+				<section>
+					<section>
+						<h4>Improve Performance With Algorithms</h4>
+						<p><strong>Strategy</strong>: Identify the algorithms and data representations that perform above a baseline of performance and better than average. Remain skeptical of results and design experiments that make it hard to fool yourself.</p>
+						<br>
+
+					</section>
+
+					<section>
+						<h4>Resampling Method</h4>
+						<p><font size="3">
+							<ul>
+								<li>Train and Test Split:</li>
+								<ul>
+									<li>Description: The train and test split is the simplest resampling method and widely used.</li>
+									<li>Process, separate your dataset into two parts (Rows are randomly assigned to each dataset to ensure objectivity):</li>
+									<ul>
+										<li>Training Dataset: Used to train the machine learning model.</li>
+										<li>Test Dataset: Held back to evaluate the model’s performance.</li>
+									</ul>
+									<li>Purpose:</li>
+									<ul>
+										<li>Estimate how well the model will perform on unseen data.</li>
+										<li>Helps choose model parameters or select the best model.</li>
+									</ul>
+									<li>Consistency:</li>
+									<ul>
+										<li>When comparing multiple algorithms or configurations, use the same train and test split for fair comparison.</li>
+										<li>You can achieve this by seeding the random number generator consistently or holding the same split for multiple algorithms.</li>
+									</ul>
+								</ul>
+								<li>k-fold Cross Validation:</li>
+								<ul>
+									<li>Description: k-fold cross validation divides the dataset into k subsets (folds) and iteratively trains and evaluates the model.</li>
+									<li>Process:</li>
+									<ul>
+										<li>Split the data into k equally sized folds.</li>
+										<li>Train the model on k-1 folds and evaluate it on the remaining fold.</li>
+										<li>Repeat this process k times, using a different fold as the test set each time.</li>
+										<li>Compute the average performance across all k iterations.</li>
+									</ul>
+									<li>Benefits:</li>
+									<ul>
+										<li>Reduces bias by using different subsets for training and testing.</li>
+										<li>Provides a more robust estimate of model performance.</li>
+									</ul>
+									<li>Holdout Validation Dataset:</li>
+									<ul>
+										<li>Sometimes, a separate holdout validation dataset is used in addition to k-fold cross-validation.</li>
+										<li>The holdout dataset is not part of the k-fold process but serves as an additional validation set.</li>
+									</ul>
+									<li>Choosing k:</li>
+									<ul>
+										<li>Common choices for k are 5 or 10, but it depends on the dataset size and computational resources.</li>
+									</ul>
+
+
+								</ul>
+								<li>How to Choose:</li>
+								<ul>
+									<li>Use train-test split for quick initial assessment.</li>
+									<li>Use k-fold cross-validation for more robust evaluation.</li>
+									<li>Consider a holdout validation dataset if needed.</li>
+								</ul>
+
+							</ul>
+							</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Evaluation Metric</h4>
+						<p><font size="4">
+						<ul>
+							<li>Area Under the Receiver Operating Characteristic Curve (AUC-ROC): This metric is widely used for binary classification. It assesses the model’s ability to distinguish between positive and negative instances. A higher AUC-ROC indicates better performance.</li>
+							<li>Precision, Recall:These metrics are useful when dealing with imbalanced datasets. Precision measures the proportion of true positive predictions among all positive predictions, while recall (also known as sensitivity) quantifies the proportion of true positives correctly identified by the model.</li>
+							<li>F1-Score: The F1-score balances precision and recall. It’s particularly valuable when both false positives and false negatives need to be minimized.</li>
+							<li>Mean Squared Error (MSE) and R-squared (R2) for Regression:</li>
+							<ul>
+								<li>MSE measures the average squared difference between the predicted values and the actual (observed) values in a regression model. $\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$ where: $n$ is the number of data points, $y_i$ represents the actual value for the (i)-th data point and $\hat{y}_i$ represents the predicted value for the (i)-th data point. A lower MSE indicates better model performance. It penalizes larger errors more heavily due to the squaring operation.</li>
+								<li>R2 (also known as the coefficient of determination) quantifies the proportion of variance in the dependent variable (target) that is explained by the independent variables (features) in the regression model. $R^2 = 1 - \frac{\text{SSR}}{\text{SST}}$ where: $\text{SSR}$ is the sum of squared residuals (sum of squared differences between predicted and actual values), $\text{SST}$ is the total sum of squares (sum of squared differences between actual values and the mean of the dependent variable). An R2 value close to 1 indicates that a large proportion of the variance in the target variable is explained by the model. An R2 value close to 0 suggests that the model does not explain much of the variance. Negative R2 values can occur if the model performs worse than a simple mean-based model.</li>
+							</ul>
+							<li>Log Loss (Logarithmic Loss):</li>
+							<ul>
+								<li>Log Loss measures the discrepancy between predicted probabilities and actual class labels. It quantifies how well a model’s predicted probabilities align with the true labels. <br> $\text{Log Loss} = -\frac{1}{n} \sum_{i=1}^{n} \left( y_i \cdot \log(\hat{y}_i) + (1 - y_i) \cdot \log(1 - \hat{y}_i) \right)$, where: $n$ is the number of data points, $y_i$ represents the actual binary class label (0 or 1) for the (i)-th data point and $\hat{y}_i$ represents the predicted probability of the positive class (class 1) for the (i)-th data point. Lower log loss values indicate better model performance. Log loss penalizes incorrect predictions based on their confidence scores (predicted probabilities). It encourages the model to produce well-calibrated probabilities.</li>
+							</ul>
+							
+						</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Evaluation Metric</h4>
+						<p><font size="4">
+						<ul>
+							<li>Matthews Correlation Coefficient (MCC):</li>
+							<ul>
+								<li>The MCC, invented by Brian Matthews in 1975, measures the differences between actual values and predicted values in a binary classification problem.</li>
+								<li>$\text{MCC} = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP)(TP + FN)(TN + FP)(TN + FN)}}$, where:<br>
+									$TP$ is the count of true positives.<br>
+									$TN$ is the count of true negatives.<br>
+									$FP$ is the count of false positives.<br>
+									$FN$ is the count of false negatives.
+								</li>
+								<li>MCC ranges from -1 to 1 (similar to a correlation coefficient). A value close to 1 indicates strong agreement between predicted and actual labels. A value close to -1 suggests strong disagreement. A value close to 0 means the classifier performs no better than random guessing.</li>
+								<li>Advantages of MCC: Unlike the F1 score, which focuses on positive class performance, MCC considers all four entries in the confusion matrix (TP, TN, FP, FN). It helps identify the effectiveness of the classifier for both positive and negative class samples. MCC is particularly useful for imbalanced classification problems.</li>
+								<li>Example: <br>Consider a confusion matrix with the following entries: <br>
+								(TP = 90), (FP = 4) <br>
+								(TN = 1), (FN = 5) <br>
+								Calculating MCC: $\text{MCC} = \frac{90 \cdot 1 - 4 \cdot 5}{\sqrt{(90 + 4)(90 + 5)(1 + 4)(1 + 5)}}$<br>
+								The resulting MCC is approximately 0.14, indicating poor performance. In contrast, the F1 score for the same example is misleadingly high (0.9524).</li>
+								<li>Conclusion:
+								While MCC provides a comprehensive view of classification performance, the choice between MCC and other metrics (such as F1-score) depends on the problem context and class labeling conventions.</li>
+							</ul>
+						
+						</ul>
+						</font>
+						</p>
+					</section>
+
+					<section>
+						<h4>Evaluation Metric</h4>
+						<p><font size="4">
+						<ul>
+							<li>Custom Metrics:</li>
+							<ul>
+								<li>Problem Context:</li>
+								<ul><li>Understand the unique aspects of your problem. Consider factors like class imbalance, business requirements, and domain-specific constraints.</li></ul>
+								<li>Define Your Metric, identify what you want to measure. For example:</li>
+								<ul>
+									<li>If you’re working on a recommendation system, you might create a custom metric that combines relevance, diversity, and novelty.</li>
+									<li>If you’re dealing with time-series data, you could design a metric that accounts for temporal patterns or lagged effects.</li>
+									<li>If fairness is crucial, create a custom fairness metric that assesses disparities across different demographic groups.</li>
+								</ul>
+								<li>Mathematical Formulation:</li>
+								<ul>
+									<li>Express your custom metric mathematically. It could involve combining existing metrics, introducing weights, or incorporating domain-specific knowledge.</li>
+									<li>For instance, if you’re building a fraud detection model, you might create a custom metric that balances precision, recall, and the cost of false positives.</li>
+								</ul>
+								<li>Implementation:</li>
+								<ul>
+									<li>Implement your custom metric in your evaluation pipeline.</li>
+									<li>Ensure that it aligns with your problem’s objectives and provides meaningful insights.</li>
+								</ul>
+								<li>Example Custom Metrics:</li>
+								<ul>
+									<li>Normalized Discounted Cumulative Gain (NDCG): Used in information retrieval and recommendation systems to measure the quality of ranked lists.</li>
+									<li>Coverage: Measures the proportion of items covered by recommendations.</li>
+									<li>Gini Index: Evaluates income inequality and can be adapted for other contexts.</li>
+									<li>Custom Loss Functions: If standard loss functions don’t fit your problem, design your own (e.g., Huber loss, quantile loss).</li>
+								</ul>
+							</ul>
+
+						</ul>
+						</font>
+						</p>
+					</section>
+
+
+					<section>
+						<h4>Baseline Performance</h4>
+						<p><font size="4">
+						<ul>
+							<li>Random Algorithm (Random Guessing):</li>
+							<ul>
+								<li>A random algorithm predicts outcomes randomly, without any knowledge of the data. For binary classification, it might predict class labels with a 50% chance for each class.</li>
+								<li>Example: If you’re predicting whether an email is spam or not, a random algorithm would randomly assign “spam” or “not spam” labels.</li>
+								<li>Baseline performance: The accuracy achieved by the random algorithm.</li>
+							</ul>
+							<li>Zero Rule Algorithm (Predict Mean or Mode):</li>
+							<ul>
+								<li>The zero rule algorithm makes predictions based on the most frequent class (mode) or the average value (mean) of the target variable.</li>
+								<li>For classification:</li>
+								<ul>
+									<li>Predict the majority class for all instances.</li>
+									<li>Baseline performance: Accuracy based on the majority class.</li>
+								</ul>
+								<li>For regression:</li>
+								<ul>
+									<li>Predict the mean (or median) of the target variable for all instances.</li>
+									<li>Baseline performance: Mean squared error (MSE) or other regression metrics based on the mean prediction.</li>
+								</ul>
+							</ul>
+							<li>Why Establish a Baseline?</li>
+							<ul>
+								<li>Baselines help us understand whether our model provides meaningful improvements over simple methods.</li>
+								<li>If our advanced model performs only slightly better than the baseline, it may not be worth the added complexity.</li>
+							</ul>
+							<li>Statistical Significance Tests:</li>
+							<ul>
+								<li>Use statistical tests (such as t-tests or permutation tests) to determine if the difference between the advanced model and the baseline is statistically significant.</li>
+								<li>If the improvement is significant, it justifies using the more complex model.</li>
+							</ul>
+						</ul>
+						</font>
+						</p>
+					</section>
+<!-- Certainly! Let's explore some well-known **linear algorithms** that work well in machine learning. Linear methods are indeed straightforward, interpretable, and efficient. Here are several linear algorithms you can consider:
+
+1. **Linear Regression**:
+   - **Description**: Linear regression is a fundamental algorithm for modeling the relationship between input features (independent variables) and a continuous target variable (output).
+   - **How It Works**: It assumes a linear relationship between the features and the target. The goal is to find the best-fitting line (or hyperplane in higher dimensions) that minimizes the sum of squared errors.
+   - **Use Cases**: Linear regression is commonly used for predicting numerical values (e.g., house prices, stock prices, temperature).
+   - **Advantages**: Simple, interpretable, and fast to train.
+   - **Learn More**: ¹
+
+2. **Ridge Regression (L2 Regularization)**:
+   - **Description**: Ridge regression extends linear regression by adding an L2 regularization term to the loss function. It helps prevent overfitting.
+   - **How It Works**: The regularization term penalizes large coefficients, encouraging simpler models.
+   - **Use Cases**: When dealing with multicollinearity (highly correlated features) or when you want to avoid overfitting.
+   - **Advantages**: Handles multicollinearity, robust to outliers.
+   - **Learn More**: ¹
+
+3. **Lasso Regression (L1 Regularization)**:
+   - **Description**: Similar to ridge regression, lasso regression adds an L1 regularization term. It encourages sparsity by driving some coefficients to exactly zero.
+   - **How It Works**: Lasso performs feature selection by shrinking less important features to zero.
+   - **Use Cases**: Feature selection, when you want a sparse model.
+   - **Advantages**: Automatic feature selection, interpretable.
+   - **Learn More**: ¹
+
+4. **Elastic Net Regression**:
+   - **Description**: Elastic Net combines L1 (lasso) and L2 (ridge) regularization.
+   - **How It Works**: It balances the benefits of both regularization techniques.
+   - **Use Cases**: When you need both feature selection and robustness against multicollinearity.
+   - **Advantages**: Flexible, handles correlated features.
+   - **Learn More**: ¹
+
+5. **Logistic Regression**:
+   - **Description**: Despite the name, logistic regression is a linear model for binary classification (predicting probabilities of class membership).
+   - **How It Works**: It models the log-odds of the probability of the positive class.
+   - **Use Cases**: Spam detection, medical diagnosis, churn prediction.
+   - **Advantages**: Interpretable, widely used.
+   - **Learn More**: ²
+
+6. **Support Vector Machines (SVM)**:
+   - **Description**: SVMs can be linear or nonlinear, but the linear variant is powerful for binary classification.
+   - **How It Works**: SVM finds the hyperplane that best separates the classes while maximizing the margin.
+   - **Use Cases**: Image classification, text categorization, anomaly detection.
+   - **Advantages**: Effective in high-dimensional spaces, robust to outliers.
+   - **Learn More**: ²
+
+7. **Perceptron**:
+   - **Description**: The perceptron is a simple linear classifier.
+   - **How It Works**: It updates weights based on misclassified instances.
+   - **Use Cases**: Basic binary classification tasks.
+   - **Advantages**: Lightweight, easy to understand.
+   - **Learn More**: ²
+
+Remember that the choice of algorithm depends on your specific problem, data, and goals. Evaluating a diverse suite of linear methods will help you find the most suitable one for your task. 🚀🔍
+[1]: https://machinelearningmastery.com/linear-regression-for-machine-learning/
+[2]: https://www.geeksforgeeks.org/ml-linear-regression/
+
+Source: Conversation with Bing, 22/04/2024
+(1) Linear Regression for Machine Learning. https://machinelearningmastery.com/linear-regression-for-machine-learning/.
+(2) Linear Regression in Machine learning - GeeksforGeeks. https://www.geeksforgeeks.org/ml-linear-regression/.
+(3) Introduction to Linear Algebra for Data Science - Machine Learning Plus. https://www.machinelearningplus.com/linear-algebra/introduction-to-linear-algebra/. -->
+					<section>
+						
+					</section>
+				</section>
+
+				
+
+			</div>
+
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/search/search.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+
+			// Also available as an ES module, see:
+			// https://revealjs.com/initialization/
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+			});
+
+		</script>
+		<script src="plugin/math/math.js"></script>
+		<script>
+		  Reveal.initialize({ plugins: [ RevealMath.KaTeX ] });
+		</script>
+
+	</body>
+</html>
