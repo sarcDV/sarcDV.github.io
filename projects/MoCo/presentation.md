@@ -263,7 +263,8 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
     font-size: 13px
   }
 </style>
-## Sequence parameters
+
+### Sequence parameters
 
 | **Sequence**        | MPRAGE         | TSE            | TSE            | GRE            | GRE            | GRE            |
 |---------------------|----------------|----------------|----------------|----------------|----------------|----------------|
@@ -272,7 +273,7 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
 | **PMC**             | On/Off         | On/Off         | On/Off         | On/Off         | On/Off         | On/Off         |
 | **In-plane res. (mm)** | 0.45 iso | 0.28 iso | 0.28 iso | 0.5 iso | 0.35 iso | 0.25 iso |
 | **Slice thick. (mm)** | 0.45          | 1.0            | 1.0            | 1.5            | 1.5            | 1.5            |
-| **Matrix size (voxel)** | 496 x 496    | 690 x 704      | 690 x 704      | 336 x 448      | 480 x 640      | 672 x 896      |
+| **Matrix size (voxel)** | 496 x 496    | 690 x 704      | 690 x 704      | 336 x 448      | 480 x 640      | 672 x 896      |       
 | **Voxel vol. (mm$^3$)** | 0.091        | 0.078          | 0.078          | 0.375          | 0.184          | 0.094          |
 | **Slices**          | 416            | 15             | 15             | 30             | 30             | 30             |
 | **TR (ms)**         | 2820           | 6000           | 6000           | 680            | 680            | 680            |
@@ -284,88 +285,14 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
 | **TA (min:sec)**    | 12:12          | 5:12           | 5:12           | 8:21           | 11:37          | 15:58          |
 | **Parallel imaging** | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       |
 
+
 ---
 
 ![bg height:650px](images/slice_3-crop.png)
 
 ---
 ![bg left:60% height:650px](images/Figure_1_SIQA.png)
-<!-- Motion artifacts in MRI are distortions or errors in the images caused by patient movement during the scanning process. These artifacts can significantly affect the quality of the images and may lead to misinterpretation of the results. Here are some key points regarding motion artifacts in MRI:
 
-Causes of Motion Artifacts
-Patient Movement: Any voluntary or involuntary movement by the patient, such as breathing, swallowing, or muscle contractions, can lead to motion artifacts.
-Physiological Motion: Natural body processes, such as heartbeat and respiration, can cause shifts in the position of structures being imaged.
-Long Scan Times: Longer MRI sequences increase the likelihood of patient movement, making it essential to minimize scan duration when possible.
-Types of Motion Artifacts
-Ghosting Artifacts:
-
-Description: These appear as repetitive, faint copies of the main image, often aligned with the direction of movement.
-Cause: Typically caused by periodic motion, such as breathing or pulsatile blood flow.
-Blurring:
-
-Description: This results in a loss of sharpness in the images, making structures appear smeared or fuzzy.
-Cause: Can occur due to any movement during the acquisition of the image data.
-Phase Encoding Artifacts:
-
-Description: These artifacts occur when motion happens during the phase encoding step of the MRI sequence, leading to distortions in the final image.
-Cause: Often linked to respiratory motion, resulting in spatial misregistration of tissue.
-Chemical Shift Artifacts:
-
-Description: While not purely motion-related, these artifacts can be exacerbated by patient movement and can manifest as misalignment between fat and water signals.
-Cause: Differences in resonance frequencies between fat and water protons can cause misregistration, particularly at fat-water interfaces.
-Mitigation Strategies
-Patient Preparation:
-
-Educate patients about the importance of remaining still during the scan.
-Use comfort measures, such as pillows or straps, to help minimize movement.
-Breath-Holding Techniques:
-
-Instruct patients to hold their breath during specific sequences, especially for abdominal imaging, to reduce motion from respiration.
-Shorter Scan Times:
-
-Utilize faster imaging techniques, such as parallel imaging or compressed sensing, to reduce the time needed for acquisition.
-Motion Correction Algorithms:
-
-Implement advanced post-processing techniques that can help correct for motion artifacts in the acquired images.
-Use of Sedation:
-
-In cases of extreme anxiety or inability to remain still, sedation may be considered, especially in pediatric or claustrophobic patients.
-Conclusion
-Motion artifacts in MRI can significantly impact image quality and diagnostic accuracy. Understanding the causes and types of motion artifacts, as well as employing strategies to mitigate them, is essential for obtaining high-quality MRI images and ensuring accurate clinical interpretations. -->
-
-
-<!-- 1. Magnetic Field
-- **Alignment of Protons**:
-  - The human body is primarily composed of water, which contains hydrogen atoms.
-  - When placed in a strong magnetic field (typically 1.5T to 7T), the hydrogen protons align with the direction of the magnetic field.
-
-2. Radiofrequency Pulses
-- **Excitation**:
-  - A radiofrequency (RF) pulse is applied, which temporarily disrupts the alignment of the protons.
-  - The frequency of the RF pulse is tuned to the Larmor frequency, which is specific to the strength of the magnetic field and the type of nucleus being imaged.
-
-3. Relaxation and Signal Detection
-- **Relaxation**:
-  - After the RF pulse is turned off, the protons begin to return to their original alignment (equilibrium state).
-  - This process occurs in two phases:
-    - **T1 Relaxation (Spin-Lattice Relaxation)**: Protons release energy to their surroundings, returning to alignment with the magnetic field.
-    - **T2 Relaxation (Spin-Spin Relaxation)**: Protons lose coherence among their spins, leading to a decay of the signal.
-  
-- **Signal Emission**:
-  - As protons relax, they emit radiofrequency signals, which are detected by the MRI scanner.
-
-4. Image Reconstruction
-- **Data Acquisition**:
-  - The emitted signals are collected and digitized.
-  
-- **Fourier Transform**:
-  - The raw data is processed using mathematical algorithms (Fourier Transform) to convert the signals into images.
-  
-- **Image Formation**:
-  - The resulting images represent different tissue types based on their relaxation properties (T1 and T2 times), allowing for detailed visualization of anatomical structures.
---- 
-
--->
 ---
 
 # A big thank you to:
@@ -390,9 +317,23 @@ Special thanks to **Soumick Chatterjee** and **Max Dünnwald**
 
 ---
 # Some important Equation ...
+---
+
+## Schrödinger Equation
+
+$
+i\hbar \frac{\partial}{\partial t} \Psi(\mathbf{r}, t) = \hat{H} \Psi(\mathbf{r}, t)
+$
+
+- **Explanation**: 
+  - The Schrödinger equation describes how the quantum state of a physical system changes over time.
+  - $\Psi$ is the wave function, $\hat{H}$ is the Hamiltonian operator, and $\hbar$ is the reduced Planck's constant.
+
+- **Importance in MRI**: 
+  - It provides the foundation for understanding the quantum behavior of nuclear spins in a magnetic field, which is essential for MRI signal generation.
 
 ---
-## 1. Larmor Frequency
+##  Larmor Frequency
 
 $
 f = \frac{\gamma B_0}{2\pi}
@@ -402,9 +343,35 @@ $
   - The Larmor frequency $f$ is the frequency at which the magnetic moments of nuclei precess in a magnetic field $B_0$.
   - $\gamma$ is the gyromagnetic ratio, which is specific to each type of nucleus (e.g., hydrogen).
   - This frequency is crucial for determining the resonance condition in MRI.
+--- 
+
+## Bloch Equations
+
+$\frac{dM_x}{dt} = \gamma M_y B_0 - \frac{M_x}{T_2}$
+$\frac{dM_y}{dt} = -\gamma M_x B_0 - \frac{M_y}{T_2}$
+$\frac{dM_z}{dt} = -\frac{M_z - M_0}{T_1}$
+
+- **Explanation**: 
+  - The Bloch equations describe the dynamics of magnetization $ \mathbf{M} $ in a magnetic field, accounting for relaxation processes ($T_1$ and $T_2$).
+  
+- **Importance in MRI**: 
+  - They are crucial for understanding how spins return to equilibrium after excitation, which directly affects image contrast and quality.
 
 ---
-## 2. Relaxation Times
+
+## 4. Signal Equation
+
+$
+S(t) = \int M(t) e^{-i \omega t} dt$
+
+- **Explanation**: 
+  - This equation represents the signal $ S(t) $ detected in MRI as a function of time, where $ M(t) $ is the magnetization vector and $ \omega $ is the angular frequency.
+
+- **Importance in MRI**: 
+  - It illustrates how the time-varying magnetization generates the MRI signal, which is essential for image reconstruction.
+
+---
+## Relaxation Times
 
 ### $T_1$ Relaxation
 
@@ -428,7 +395,7 @@ $
 
 ---
 
-## 3. Signal Equation
+## Signal Equation
 
 $
 S = \frac{M_0 \cdot \gamma^2 \cdot B_0^2 \cdot T_1}{T_2}
@@ -440,19 +407,26 @@ $
 
 ---
 
-## 4. Fourier Transform
+## Fourier Transform
 
-$
-f(t) = \int_{-\infty}^{\infty} S(\omega) e^{i \omega t} d\omega
-$
+$f(t) = \int_{-\infty}^{\infty} S(\omega) e^{i \omega t} d\omega$
 
 - **Explanation**: 
   - The Fourier Transform is used to convert the time-domain signal $S(t)$ into the frequency domain.
   - This transformation is essential for image reconstruction in MRI, allowing the spatial information to be extracted from the frequency data.
 
+
+$f(x, y) = \int_{-\infty}^{\infty} S(k_x, k_y) e^{i(k_x x + k_y y)} dk_x dk_y$
+
+- **Explanation**: 
+  - The Fourier Transform converts the k-space data $S(k_x, k_y)$ into the spatial domain $f(x, y)$.
+
+- **Importance in MRI**: 
+  - This transformation is fundamental for reconstructing images from the acquired k-space data, allowing clinicians to visualize the anatomy.
+
 ---
 
-## 5. Image Reconstruction
+## Image Reconstruction
 
 $
 I(x, y) = \sum_{k=1}^{N} S_k \cdot e^{-i \phi_k}
@@ -595,9 +569,7 @@ $
 
 ## 3. Faraday's Law of Induction
 
-$
-\oint \mathbf{E} \cdot d\mathbf{l} = -\frac{d\Phi_B}{dt}
-$
+$\oint \mathbf{E} \cdot d\mathbf{l} = -\frac{d\Phi_B}{dt}$
 
 - **Explanation**: 
   - A changing magnetic field induces an electromotive force (EMF) in a closed loop.
@@ -630,3 +602,81 @@ $
 # Summary
 
 Maxwell's equations provide the theoretical foundation for understanding the electromagnetic principles underlying MRI technology. Each equation plays a critical role in MRI operation, from generating magnetic fields to detecting emitted signals.
+
+
+<!-- Motion artifacts in MRI are distortions or errors in the images caused by patient movement during the scanning process. These artifacts can significantly affect the quality of the images and may lead to misinterpretation of the results. Here are some key points regarding motion artifacts in MRI:
+
+Causes of Motion Artifacts
+Patient Movement: Any voluntary or involuntary movement by the patient, such as breathing, swallowing, or muscle contractions, can lead to motion artifacts.
+Physiological Motion: Natural body processes, such as heartbeat and respiration, can cause shifts in the position of structures being imaged.
+Long Scan Times: Longer MRI sequences increase the likelihood of patient movement, making it essential to minimize scan duration when possible.
+Types of Motion Artifacts
+Ghosting Artifacts:
+
+Description: These appear as repetitive, faint copies of the main image, often aligned with the direction of movement.
+Cause: Typically caused by periodic motion, such as breathing or pulsatile blood flow.
+Blurring:
+
+Description: This results in a loss of sharpness in the images, making structures appear smeared or fuzzy.
+Cause: Can occur due to any movement during the acquisition of the image data.
+Phase Encoding Artifacts:
+
+Description: These artifacts occur when motion happens during the phase encoding step of the MRI sequence, leading to distortions in the final image.
+Cause: Often linked to respiratory motion, resulting in spatial misregistration of tissue.
+Chemical Shift Artifacts:
+
+Description: While not purely motion-related, these artifacts can be exacerbated by patient movement and can manifest as misalignment between fat and water signals.
+Cause: Differences in resonance frequencies between fat and water protons can cause misregistration, particularly at fat-water interfaces.
+Mitigation Strategies
+Patient Preparation:
+
+Educate patients about the importance of remaining still during the scan.
+Use comfort measures, such as pillows or straps, to help minimize movement.
+Breath-Holding Techniques:
+
+Instruct patients to hold their breath during specific sequences, especially for abdominal imaging, to reduce motion from respiration.
+Shorter Scan Times:
+
+Utilize faster imaging techniques, such as parallel imaging or compressed sensing, to reduce the time needed for acquisition.
+Motion Correction Algorithms:
+
+Implement advanced post-processing techniques that can help correct for motion artifacts in the acquired images.
+Use of Sedation:
+
+In cases of extreme anxiety or inability to remain still, sedation may be considered, especially in pediatric or claustrophobic patients.
+Conclusion
+Motion artifacts in MRI can significantly impact image quality and diagnostic accuracy. Understanding the causes and types of motion artifacts, as well as employing strategies to mitigate them, is essential for obtaining high-quality MRI images and ensuring accurate clinical interpretations. -->
+
+
+<!-- 1. Magnetic Field
+- **Alignment of Protons**:
+  - The human body is primarily composed of water, which contains hydrogen atoms.
+  - When placed in a strong magnetic field (typically 1.5T to 7T), the hydrogen protons align with the direction of the magnetic field.
+
+2. Radiofrequency Pulses
+- **Excitation**:
+  - A radiofrequency (RF) pulse is applied, which temporarily disrupts the alignment of the protons.
+  - The frequency of the RF pulse is tuned to the Larmor frequency, which is specific to the strength of the magnetic field and the type of nucleus being imaged.
+
+3. Relaxation and Signal Detection
+- **Relaxation**:
+  - After the RF pulse is turned off, the protons begin to return to their original alignment (equilibrium state).
+  - This process occurs in two phases:
+    - **T1 Relaxation (Spin-Lattice Relaxation)**: Protons release energy to their surroundings, returning to alignment with the magnetic field.
+    - **T2 Relaxation (Spin-Spin Relaxation)**: Protons lose coherence among their spins, leading to a decay of the signal.
+  
+- **Signal Emission**:
+  - As protons relax, they emit radiofrequency signals, which are detected by the MRI scanner.
+
+4. Image Reconstruction
+- **Data Acquisition**:
+  - The emitted signals are collected and digitized.
+  
+- **Fourier Transform**:
+  - The raw data is processed using mathematical algorithms (Fourier Transform) to convert the signals into images.
+  
+- **Image Formation**:
+  - The resulting images represent different tissue types based on their relaxation properties (T1 and T2 times), allowing for detailed visualization of anatomical structures.
+--- 
+
+-->
