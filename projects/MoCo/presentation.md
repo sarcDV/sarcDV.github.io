@@ -116,7 +116,25 @@ style: |
 
 # Sessione di domande e risposte (5 minuti)
 # ● Dedicare del tempo a rispondere alle domande del pubblico e a impegnarsi in ulteriori discussioni sull'argomento.
+#       intro
+#     how MRI works
+#     Motion artefacts
+#     State-of-the-art
+#     Goal: Tackle motion correction problem with pmc and dl-rmc (pmc quasi-no.motion-regime)
+#     pmc intro
+#     how pmc works
+#     experiments, image quality assessment
+#     results
+#     discussion and conclusion
+#     intro to dl approach
+#     motion detection SSIM work
+#     results/discussion/conclusion
+#     motion correction ResNet
+#     results_/discussion/conclusion
+#     Future perspective
+#     Acknowledgements
 
+# Extra slides in case....  
 ---
 ![bg left:17% height:750px](images/3DMPRAGE-sag-ax-corv.png)
 ## Prospective and Deep Learning Based Retrospective Motion Correction for Magnetic Resonance Imaging
@@ -159,7 +177,7 @@ style: |
 Marie Curie Initial Training Network -->
 <!-- https://www.nottingham.ac.uk/himr/students/alessandro-sciarra.aspx -->
 
----
+<!-- ---
 
 #### Outline
 
@@ -167,13 +185,13 @@ Marie Curie Initial Training Network -->
   <!-- + Magnetic Resonance Imaging and MRI@Ultra High Field: a short intro
   + Problem: Motion Artefacts in MRI
   + Solution: Motion Correction in MRI -->
-- Prospective Motion Correction (PMC) 
+<!-- - Prospective Motion Correction (PMC)  -->
   <!-- + What is PMC and how it works (pros & cons) -->
   <!-- + Goal: Qualitatively And Quantitatively Evaluation of PMC -->
-- Deep Learning Based Retrospective Motion Correction (RMC)
+<!-- - Deep Learning Based Retrospective Motion Correction (RMC)
 - Structural Imaging with PMC
 - Retrospective Motion Artefacts Detection and Correction using Deep Learning 
-- Conclusion and Open Questions
+- Conclusion and Open Questions  -->
 <!-- - Goal: why this work?
 - Prospective Motion Correction (PMC): State of the art and our setup
 - Image Quality Assessment for PMC: Results
@@ -193,8 +211,18 @@ Marie Curie Initial Training Network -->
 
 ---
 
-### Magnetic Resonance Imaging: How does it work?
+## Magnetic Resonance Imaging: 
+### How does it work?
 
+1. **Proton spins** initially exhibit random orientations in space. 
+2. A **strong magnetic field** induces **alignment** of the proton spins.
+3. **Radiofrequency pulses** induce **precession** in a subset of proton spins.
+4. Following the pulse, these spins undergo **relaxation** back to their equilibrium orientations, resulting in the **emission** of detectable **signals**.
+5. The emitted signals are **acquired** and **processed** to generate a diagnostic image.
+
+![bg right height:650px](images/howMRIworks.gif)
+
+<!-- 
 ```
    +---------------------+    1. Magnetic Fields
    |                     |    MRI Machine: Represents the MRI scanner. 
@@ -234,7 +262,7 @@ Marie Curie Initial Training Network -->
                                primarily the Fourier Transform, to convert them into images. T
                                This process reconstructs the spatial information to create detailed cross-sectional images of the body.
 
-```
+``` -->
 
 ---
 
@@ -257,6 +285,34 @@ Marie Curie Initial Training Network -->
   + Chemical Shift Artifacts:  While not purely motion-related, these artefacts can be exacerbated by patient movement and can manifest as misalignment between fat and water signals.
 
 ![bg right](images/example-motion-artifacts.png)
+
+---
+### Motion Correction in MRI: State-of-the-Art and AI Advances
+
+#### State-of-the-Art in Motion Correction
+
+| Technique                         | Description                                                                               |
+|-----------------------------------|-------------------------------------------------------------------------------------------|
+| **Prospective Motion Correction (PMC)** | Real-time adjustments during MRI acquisition.                                            |
+| **Retrospective Motion Correction (RMC)** | Post-processing techniques to correct motion artefacts.                                |
+| **Data Acquisition Strategies**       | Techniques like PROPELLER, radial/spiral sampling, and fast-imaging methods.              |
+
+#### Recent AI Advances
+
+| AI Technique                      | Description                                                                               |
+|-----------------------------------|-------------------------------------------------------------------------------------------|
+| **Deep Learning Approaches**          | Neural networks for motion artefact reduction and motion estimation.                      |
+| **Self-Supervised Learning**          | Uses motion-guided implicit neural representations for correction.                        |
+| **Physics-Informed Models**           | Combines deep learning with physics-based modeling for improved accuracy.                 |
+<!-- | **MIT Research**                      | Combines deep learning and physics to correct motion artifacts in MRI scans.              | -->
+
+<!-- ## Future Directions
+
+- Enhancing generalization across different datasets.
+- Reducing the need for extensive training data.
+- Integrating AI with real-time MRI systems for better patient outcomes. -->
+
+
 
 ---
 ## Goal of this thesis work (PMC section):
