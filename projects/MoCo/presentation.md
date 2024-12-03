@@ -52,89 +52,7 @@ style: |
     padding: 10px;
   }
 
-# Ecco un possibile schema per una presentazione di 35 minuti sulle tecniche di correzione del movimento per la risonanza magnetica, basato sul documento fornito:
-# Presentazione di 35 minuti sulla correzione del movimento per la risonanza magnetica
-# Introduzione (5 minuti)
-# ● Iniziare con una breve introduzione alla risonanza magnetica (MRI).
-# ● La risonanza magnetica è una tecnica di imaging medico ampiamente utilizzata per scopi clinici e di ricerca.
-# ● Si tratta di un metodo non invasivo che utilizza radiazioni non ionizzanti.
-# ● Rispetto ad altre tecniche di imaging, la risonanza magnetica richiede un tempo di acquisizione più lungo.
-# ● Spiegare il problema degli artefatti da movimento nella risonanza magnetica.
-# ● I lunghi tempi di acquisizione possono portare a immagini degradate in termini di qualità perché i soggetti tendono a muoversi.
-# ● Il movimento durante la scansione è la causa di sfocatura e ghosting nelle immagini RM.
-# ● Presentare le diverse strategie disponibili per evitare o limitare gli artefatti da movimento nella risonanza magnetica.
-# ● Sono disponibili diversi approcci per evitare o limitare la presenza di artefatti da movimento (sfocatura o ghosting), come la correzione prospettica del movimento (PMC), la correzione retrospettiva del movimento (RMC) ecc.
-# ● Introdurre l'obiettivo della tesi di ricerca: analizzare qualitativamente e quantitativamente due strategie di correzione del movimento: PMC con un sistema di tracciamento ottico in-bore (OMTS) per l'imaging cerebrale ad altissima risoluzione a 7T e correzione del movimento retrospettiva basata sul deep learning (DL-RMC), utilizzata per il rilevamento, la quantificazione e la correzione degli artefatti da movimento nel caso di imaging cerebrale ad alto campo MRI (1.5 e 3.0 T).
-
-# Correzione prospettica del movimento (PMC) (10 minuti)
-# ● Definizione e principio di funzionamento del PMC.
-# ● Il termine correzione prospettica del movimento (PMC) si riferisce alla tecnica di correzione mediante l'aggiornamento in tempo reale della sequenza di imaging. È stata proposta per la prima volta da Haacke e Patrick nel 1986.
-# ● Il PMC consiste nell'aggiornamento in tempo reale della sequenza di impulsi utilizzando i dati di tracciamento che possono essere acquisiti con diverse modalità.
-# ● Il principio alla base del PMC è concettualmente semplice. Le difficoltà di questa tecnica risiedono solitamente nell'implementazione pratica.
-# ● Con il PMC è possibile mantenere la coerenza dei dati durante la scansione.
-# ● In pratica, un sistema di tracciamento tiene continuamente traccia del posizionamento e dell'orientamento della testa del soggetto, considerata un corpo rigido; queste informazioni vengono poi trasferite al controllo dello scanner; in questo modo le sequenze vengono aggiornate in tempo reale e le immagini ottenute non sono corrotte da artefatti da movimento.
-# ● Tipi di sistemi di tracciamento del movimento.
-# ● I dati di tracciamento possono essere ottenuti in diversi modi: navigatori di k-spazio o di spazio immagine, tracciamento ottico senza marker della testa e sistemi di telecamere, ecc.
-# ● Tutte queste modalità di tracciamento differiscono in termini di accuratezza e precisione.
-# ● Vantaggi e svantaggi del PMC.
-  # ● Vantaggi: Il PMC può correggere efficacemente gli artefatti da movimento, soprattutto per i movimenti rigidi della testa. Può essere utilizzato con diverse sequenze di risonanza magnetica e può migliorare la qualità dell'immagine e l'affidabilità dei dati.
-  # ● Svantaggi: Il PMC richiede sistemi di tracciamento specializzati che possono essere costosi e complessi da impostare e utilizzare. Può aumentare il tempo di scansione e può non essere adatto a tutti i tipi di movimento o a tutti i pazienti.
-# ● PMC utilizzando un sistema di tracciamento ottico del movimento (OMTS).
-# ● L'OMTS utilizzato nella tesi si basa sul rilevamento della posizione 3D (X, Y, Z) e dell'orientamento (Pitch, Yaw, Roll) di un marker Moiré Phase Tracking (MPT).
-# ● L'utilizzo di boccagli personalizzati consente un accoppiamento rigido e impedisce lo pseudo-movimento.
-
-# Correzione retrospettiva del movimento (RMC) basata sul deep learning (10 minuti)
-# ● Introduzione al deep learning e alle reti neurali.
-# ● Il deep learning è un tipo di apprendimento automatico che utilizza reti neurali artificiali per apprendere dai dati e fare previsioni o decisioni.
-# ● Le reti neurali sono ispirate alla struttura e alla funzione del cervello umano e sono costituite da strati di nodi interconnessi che elaborano le informazioni.
-# ● Deep learning per la correzione del movimento nella risonanza magnetica.
-# ● Negli ultimi anni, il deep learning ha mostrato risultati promettenti nella correzione degli artefatti da movimento nella risonanza magnetica.
-# ● I modelli di deep learning possono essere addestrati su grandi set di dati di immagini RM con e senza artefatti da movimento per apprendere le relazioni tra di essi.
-# ● Tipi di architetture di reti neurali per l'RMC.
-# ● Diverse architetture di reti neurali, come le reti neurali convoluzionali (CNN), le reti neurali ricorrenti (RNN) e le reti generative avversarie (GAN), sono state utilizzate per l'RMC.
-
-# ● Vantaggi e svantaggi dell'RMC basata sul deep learning.
-  # ● Vantaggi: L'RMC basata sul deep learning può potenzialmente correggere sia i movimenti rigidi che quelli non rigidi. Può essere utilizzata con diverse sequenze di risonanza magnetica e può ottenere risultati accurati senza la necessità di dati o hardware di tracciamento aggiuntivi.
-  # ● Svantaggi: L'RMC basata sul deep learning richiede grandi set di dati di addestramento e può essere computazionalmente costosa. Potrebbe esserci il rischio di overfitting o di generare artefatti non realistici.
-
-# ● Metodi DL-RMC specifici utilizzati nella tesi.
-# ● La tesi ha testato diversi approcci DL-RMC preliminari per l'imaging cerebrale strutturale.
-# ● Questi includono un metodo basato sulla previsione dell'indice di similarità strutturale (SSIM) tramite una rete neurale e l'applicazione di diverse reti neurali (ad esempio, rete residua (ResNet) e rete U (U-Net)) per la correzione retrospettiva degli artefatti da movimento.
-# ● L'obiettivo è fornire uno strumento automatico di valutazione della qualità dell'immagine (IQA) in grado di rilevare la presenza di artefatti da movimento e quantificare il livello di corruzione o distorsione rispetto all'immagine di verità di base, basato sulla regressione dello SSIM.
-
-# Conclusione (5 minuti)
-# ● Riassumere i principali risultati e conclusioni della tesi.
-# ● Il PMC che utilizza un OMTS può migliorare la qualità dell'immagine di scansioni già eccellenti di soggetti sani e conformi in assenza di movimento intenzionale.
-# ● Il PMC può migliorare la qualità dell'immagine anche in presenza di movimenti molto forti.
-# ● I modelli ResNet sono in grado di stimare con precisione i valori dello SSIM da immagini corrotte artificialmente dal movimento.
-# ● Le classi di movimento derivate dagli SSIM previsti hanno mostrato un'elevata accuratezza nella classificazione degli artefatti da movimento.
-# ● L'RMC basata sul deep learning mostra potenzialità nella correzione degli artefatti da movimento in una varietà di contrasti e risoluzioni di risonanza magnetica.
-# ● Discutere le implicazioni e i futuri indirizzi di ricerca.
-# ● Evidenziare la necessità di ulteriori ricerche per migliorare l'accuratezza, l'efficienza e la generalizzabilità delle tecniche di correzione del movimento basate sul deep learning.
-# ● Esplorare il potenziale di combinare il PMC e l'RMC basata sul deep learning per ottenere risultati di correzione ottimali.
-# ● Indagare l'uso del deep learning per altri aspetti della correzione del movimento nella risonanza magnetica, come il rilevamento del movimento, la segmentazione e l'analisi quantitativa.
-
-# Sessione di domande e risposte (5 minuti)
-# ● Dedicare del tempo a rispondere alle domande del pubblico e a impegnarsi in ulteriori discussioni sull'argomento.
-#       intro
-#     how MRI works
-#     Motion artefacts
-#     State-of-the-art
-#     Goal: Tackle motion correction problem with pmc and dl-rmc (pmc quasi-no.motion-regime)
-#     pmc intro
-#     how pmc works
-#     experiments, image quality assessment
-#     results
-#     discussion and conclusion
-#     intro to dl approach
-#     motion detection SSIM work
-#     results/discussion/conclusion
-#     motion correction ResNet
-#     results_/discussion/conclusion
-#     Future perspective
-#     Acknowledgements
-
-# Extra slides in case....  
+ 
 ---
 ![bg left:17% height:750px](images/3DMPRAGE-sag-ax-corv.png)
 ## Prospective and Deep Learning Based Retrospective Motion Correction for Magnetic Resonance Imaging
@@ -315,12 +233,33 @@ Marie Curie Initial Training Network -->
 
 
 ---
-## Goal of this thesis work (PMC section):
 
-### Assessing the impact of the prospective motion correction using 
+## Goal of this thesis: Advanced Motion Correction in MRI
+
+### Overall Objective
+- Investigate and address the challenge of motion correction in MRI through the application of Prospective Motion Correction (PMC) and Deep Learning-based Retrospective Motion Correction (RMC) methodologies.
+
+
+##### Prospective Motion Correction (PMC)
+- Develop techniques for motion correction at ultra-high field strength (7 Tesla) MRI.
+- Focus on achieving accurate motion correction in a regime of minimal motion.
+- Apply methods exclusively to high-resolution structural brain imaging.
+
+##### Deep Learning-Based Retrospective Motion Correction (RMC)
+- Evaluate the efficacy of deep learning models in predicting and correcting motion artifacts.
+- Use Structural Similarity Index (SSIM) to quantitatively assess image quality improvements.
+- Develop and test various custom models designed to address specific types of motion artifacts in brain MRI.
+
+<!-- ### Assessing the impact of the prospective motion correction using 
 ### an in-bore optical tracking system, in case of high-resolution 
-### structural imaging in regime of quasi-no motion.
+### structural imaging in regime of quasi-no motion. -->
+<!-- - Prospective Motion Correction (PMC):
+  + Tackle the problem of motion correction at 7T MRI in a regime of quasi-no-motion, 
+  focusing solely on high resolution brain imaging.
 
+- Deep Learning Based Retrospective Motion Correction (RMC):
+  + Assess image quality through Structural Similarity Index (SSIM) predictions.
+  + Implement motion correction using various ad-hoc models tailored to specific motion artifacts. -->
 ---
 ### Prospective Motion Correction
 
@@ -328,12 +267,28 @@ Marie Curie Initial Training Network -->
 ![](images/MRHardPMC.png)
 
 ---
-### Prospective Motion Correction: How Does It Work?
+#### Prospective Motion Correction: How Does It Work? [1]
 
-- **Real-Time Monitoring**: 
+- **Real-Time Monitoring**:
+  + Uses motion tracking to detect head movements during scans.
+
+- **Dynamic Adjustments**:
+  + Adjusts imaging parameters in real-time to correct detected motion.
+
+- **Affine Transformations**:
+  + Aligns images with real-time adjustments for consistency.
+
+- **Integration with Sequences**:
+  + Can be used with various imaging sequences; effectiveness varies by sequence and motion type.
+ 
+ 
+**[1]** Maclaren et al. Magn Reson Med. 2013 Mar 1;69(3):621-36. doi: 10.1002/mrm.24314. Epub 2012 May 8. PMID: 22570274.
+
+![bg right:40% height:700px](images/howPMCworks.png)
+
+<!-- - **Real-Time Monitoring**: 
   + PMC systems utilize motion tracking devices to monitor head movements during the scan.
   + This allows for immediate detection of any changes in position and orientation.
-
 - **Dynamic Adjustments**:
   + Once motion is detected, the imaging system adjusts the acquisition parameters in real-time.
   + This may involve altering the gradient fields or the timing of radio-frequency pulses to compensate for the detected motion.
@@ -344,7 +299,7 @@ Marie Curie Initial Training Network -->
 
 - **Integration with Imaging Sequences**:
   + PMC can be integrated with various imaging sequences.
-  + The effectiveness of PMC can vary depending on the specific sequence used and the nature of the motion.
+  + The effectiveness of PMC can vary depending on the specific sequence used and the nature of the motion. -->
 
 <!-- Prospective motion correction (PMC) is a technique used in functional MRI (fMRI) to minimize motion artifacts during imaging. It involves real-time adjustments to the imaging pulse sequence based on detected head movements. By continuously updating the gradients and radio-frequency pulses in response to motion, PMC helps maintain the anatomical integrity of the images being captured. Here’s a breakdown of how it works:
 
@@ -396,12 +351,15 @@ There is a need for rigorous testing of PMC methods across various fMRI applicat
 Researchers should demand a higher burden of proof before adopting new PMC techniques in clinical and research settings.
 Prospective motion correction represents a significant advancement in fMRI technology, aiming to enhance the quality of brain imaging by addressing the challenges posed by patient movement -->
 
+
+
 --- 
 # Experimental Setup:
-- 7T Scanner (Siemens)
-- 32-channel head coil
-- Optical Motion Tracking System (OMTS)
-- 21 healthy subjects scanned with PMC On/Off
+- a 7T whole-body MRI scanner (Siemens Healthineers, Erlangen, Germany)
+- a 32-channel head coil (Nova Medical, Wilmington, MA, USA) 
+- Optical Motion Tracking System (OMTS), Metria Innovation Inc., Milwaukee, WI, USA
+- 21 healthy volunteers were scanned over the course of two independent 75-minute long sessions 
+(14 males, 31.5±6.1 years old, and 7 females, 27.3±3.4 years old).
 
 <!-- ## 21 Subjects, 
 ### Sequence parameters
@@ -432,23 +390,84 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 ---
 ![bg right:60% height:675px](images/Figure_1_SIQA.png)
-## Subjective Image Quality Assessment
+### Subjective Image Quality Assessment
+
+- **Expert Reviewers**:
+  + Four experts with over five years of MR image-quality assessment expertise.
+  
+- **Blinded Comparison**:
+  + Raters performed side-by-side comparisons of images with and without PMC.
+  + Image presentations were randomized to avoid bias.
+
+- **Scoring System**:
+  + Image quality rated from 1 (worst) to 10 (best) based on motion artefacts.
+  <!-- + Scores reflect the degree of corruption due to motion. -->
+
+<!-- ### Statistical Analysis
+- **Intraclass Correlation Coefficient (ICC)**:
+  + Calculated using Pingouin to assess agreement among raters. -->
 
 ---
 ![bg right:60% height:650px](images/OIQA-crop.png)
 ## Objective Image Quality Assessment
-### 
+
+### Evaluation Metrics
+- **Average Edge Strength (AES)**: Measures the average strength of edges in an image, indicating the clarity and sharpness of structural details.
+- **Gradient Entropy (GE)**: Evaluates the randomness and complexity of the gradient distribution, reflecting the overall texture and contrast of the image.
+
 ---
 
-![bg height:650px](images/pmc_paper.png)
+
+## Key Findings
+
+- **High-Resolution MRI**:
+  + PMC significantly improves image quality in high-resolution scans.
+  + Majority of images with PMC ON showed high or very high quality.
+  + Only three scenarios showed statistically significant improvement, but overall subjective and objective measures indicate better quality with PMC.
+
+- **Evaluation Metrics**:
+  + Five out of six groups showed higher image quality with PMC.
+  + One group showed inconsistent results between subjective and objective metrics.
+
+- **Applicability of PMC**:
+  + PMC is beneficial for high-resolution scans even in the absence of deliberate motion.
+  + Effective for healthy, compliant participants.
+
+<!-- ### Extra:
+
+- **Intentional Motion**:
+  + PMC improves image quality even with high levels of motion.
+  + Indicates potential use for non-compliant patients (e.g., Parkinson's disease) when combined with additional motion prevention or RMC techniques. -->
+---
+
+## Limitations
+- **Statistical Significance**:
+  + Limited scenarios showed statistically significant improvement.
+  + Some cases exhibited inconsistencies between subjective and objective measures.
+
+- **Motion Pattern Variability**:
+  + Comparability of motion patterns for PMC ON and OFF not always consistent.
+  + Some groups did not show clear superiority in image quality metrics.
+
+- **Extremes of Motion**:
+  + PMC's effectiveness decreases with very high levels of motion.
+  + Requires further techniques or integration with RMC for extreme cases or non-compliant patients.
+
+- **Patient Compliance**:
+  + Effectiveness is more pronounced in compliant subjects.
+  + Additional challenges in applying PMC to non-compliant patients without supplementary measures.
 
 ---
 
-# A big thank you to:
+![bg height:450px](images/pmc_paper.png)
+
+---
+
+<!-- # A big thank you to:
 
 ![height=80px](images/bmmr_logo_RGB_125.png)![height=80px](images/himr-logo.png) 
 <!-- ![height=80px](images/Medigit.png) -->
-**Prof. Oliver Speck**,                               
+<!-- **Prof. Oliver Speck**,                               
 Kathrin Schulze,  Frank Godenschweger,                
 Daniel Stucht, Hendrik Mattern, Astrid Wollrab,
 Yi-Hang Tung, Mahsa Fatahi, Peter Schulze, 
@@ -462,41 +481,47 @@ Tino-Johannes Lüttge, Falk Lüsebrink-Rindsland
 **Prof. Steffen Oeltze-Jafra**, Yannic Waerzeggers,
 Max Dünnwald, Juliane Müller
 
-Special thanks to **Soumick Chatterjee** and **Max Dünnwald**
+Special thanks to **Soumick Chatterjee** and **Max Dünnwald** -->
 
 
----
+
 
 # A big thank you to:
 
 <div class="two-columns">
   <div class="column">
-  **Prof. Oliver Speck** ,                               
-Kathrin Schulze,  Frank Godenschweger,                
-Daniel Stucht, Hendrik Mattern, Astrid Wollrab,
-Yi-Hang Tung, Mahsa Fatahi, Peter Schulze, 
-Sebastian Hupfeld, Renat Yakupov, Oleg Posnansky,
-Urte Kägebein, Yan Arnold, Nicolas Huch, Michel Pohl,
-Uten Yarach, Weiqiang Dou, Shan Yang, Myung-Ho In,
-Dominik Kolmann, Tobias Leutritz, Denis Kokorin,
-Tino-Johannes Lüttge, Falk Lüsebrink-Rindsland
-
-
-**Prof. Steffen Oeltze-Jafra**, Yannic Waerzeggers,
-Max Dünnwald, Juliane Müller
-
-Special thanks to **Soumick Chatterjee** and **Max Dünnwald**
+  <strong>Prof. Oliver Speck</strong>,                               
+    Kathrin Schulze,  Frank Godenschweger,                
+    Daniel Stucht, Hendrik Mattern, Astrid Wollrab,
+    Yi-Hang Tung, Mahsa Fatahi, Peter Schulze, 
+    Sebastian Hupfeld, Renat Yakupov, Oleg Posnansky,
+    Urte Kägebein, Yan Arnold, Nicolas Huch, Michel Pohl,
+    Uten Yarach, Weiqiang Dou, Shan Yang, Myung-Ho In,
+    Dominik Kolmann, Tobias Leutritz, Denis Kokorin,
+    Tino-Johannes Lüttge, Falk Lüsebrink-Rindsland
+    <br>
+    <strong>Prof. Steffen Oeltze-Jafra</strong>, Yannic Waerzeggers,
+    Max Dünnwald, Juliane Müller
+    <br>
+    Special thanks to <strong>Soumick Chatterjee</strong> and <strong>Max Dünnwald</strong>
   </div>
   <div class="column">
-  **Funding information**
-  Initial Training Network, funded by the
-  FP7 Marie Curie Actions of the European
-  Commission (FP7- PEOPLE- 2012-
-  ITN- 316716) and the National Institutes
-  of Health (1R01-DA021146), the DFG
-  (DFG- MA 9235/1-1), and the federal state
-  of Saxony-Anhalt (“I 88”)
-    
+    <strong>Funding information</strong><br>
+    <img src="images/logo_verde.png" alt="Image 1"  height=70px/>
+    <img src="images/bmmr_logo_RGB_125.png" alt="Image 2"  height=80px/>
+    <img src="images/himr-logo.png" alt="Image 2"  height=80px/>
+    <img src="images/eu-flag.png" alt="Image 2"  height=80px/>
+    <img src="images/MedDigit.png" alt="Image 2"  height=80px/><br>
+    Initial Training Network, funded by the
+    FP7 Marie Curie Actions of the European
+    Commission (FP7- PEOPLE- 2012-
+    ITN- 316716) and the National Institutes
+    of Health (1R01-DA021146), the DFG
+    (DFG- MA 9235/1-1), and the federal state
+    of Saxony-Anhalt (“I 88”)<br>
+    <br>
+    <strong></strong>
+
   </div>
 </div>
 
@@ -873,4 +898,88 @@ Motion artifacts in MRI can significantly impact image quality and diagnostic ac
   - The resulting images represent different tissue types based on their relaxation properties (T1 and T2 times), allowing for detailed visualization of anatomical structures.
 --- 
 
--->
+
+
+# Ecco un possibile schema per una presentazione di 35 minuti sulle tecniche di correzione del movimento per la risonanza magnetica, basato sul documento fornito:
+# Presentazione di 35 minuti sulla correzione del movimento per la risonanza magnetica
+# Introduzione (5 minuti)
+# ● Iniziare con una breve introduzione alla risonanza magnetica (MRI).
+# ● La risonanza magnetica è una tecnica di imaging medico ampiamente utilizzata per scopi clinici e di ricerca.
+# ● Si tratta di un metodo non invasivo che utilizza radiazioni non ionizzanti.
+# ● Rispetto ad altre tecniche di imaging, la risonanza magnetica richiede un tempo di acquisizione più lungo.
+# ● Spiegare il problema degli artefatti da movimento nella risonanza magnetica.
+# ● I lunghi tempi di acquisizione possono portare a immagini degradate in termini di qualità perché i soggetti tendono a muoversi.
+# ● Il movimento durante la scansione è la causa di sfocatura e ghosting nelle immagini RM.
+# ● Presentare le diverse strategie disponibili per evitare o limitare gli artefatti da movimento nella risonanza magnetica.
+# ● Sono disponibili diversi approcci per evitare o limitare la presenza di artefatti da movimento (sfocatura o ghosting), come la correzione prospettica del movimento (PMC), la correzione retrospettiva del movimento (RMC) ecc.
+# ● Introdurre l'obiettivo della tesi di ricerca: analizzare qualitativamente e quantitativamente due strategie di correzione del movimento: PMC con un sistema di tracciamento ottico in-bore (OMTS) per l'imaging cerebrale ad altissima risoluzione a 7T e correzione del movimento retrospettiva basata sul deep learning (DL-RMC), utilizzata per il rilevamento, la quantificazione e la correzione degli artefatti da movimento nel caso di imaging cerebrale ad alto campo MRI (1.5 e 3.0 T).
+
+# Correzione prospettica del movimento (PMC) (10 minuti)
+# ● Definizione e principio di funzionamento del PMC.
+# ● Il termine correzione prospettica del movimento (PMC) si riferisce alla tecnica di correzione mediante l'aggiornamento in tempo reale della sequenza di imaging. È stata proposta per la prima volta da Haacke e Patrick nel 1986.
+# ● Il PMC consiste nell'aggiornamento in tempo reale della sequenza di impulsi utilizzando i dati di tracciamento che possono essere acquisiti con diverse modalità.
+# ● Il principio alla base del PMC è concettualmente semplice. Le difficoltà di questa tecnica risiedono solitamente nell'implementazione pratica.
+# ● Con il PMC è possibile mantenere la coerenza dei dati durante la scansione.
+# ● In pratica, un sistema di tracciamento tiene continuamente traccia del posizionamento e dell'orientamento della testa del soggetto, considerata un corpo rigido; queste informazioni vengono poi trasferite al controllo dello scanner; in questo modo le sequenze vengono aggiornate in tempo reale e le immagini ottenute non sono corrotte da artefatti da movimento.
+# ● Tipi di sistemi di tracciamento del movimento.
+# ● I dati di tracciamento possono essere ottenuti in diversi modi: navigatori di k-spazio o di spazio immagine, tracciamento ottico senza marker della testa e sistemi di telecamere, ecc.
+# ● Tutte queste modalità di tracciamento differiscono in termini di accuratezza e precisione.
+# ● Vantaggi e svantaggi del PMC.
+  # ● Vantaggi: Il PMC può correggere efficacemente gli artefatti da movimento, soprattutto per i movimenti rigidi della testa. Può essere utilizzato con diverse sequenze di risonanza magnetica e può migliorare la qualità dell'immagine e l'affidabilità dei dati.
+  # ● Svantaggi: Il PMC richiede sistemi di tracciamento specializzati che possono essere costosi e complessi da impostare e utilizzare. Può aumentare il tempo di scansione e può non essere adatto a tutti i tipi di movimento o a tutti i pazienti.
+# ● PMC utilizzando un sistema di tracciamento ottico del movimento (OMTS).
+# ● L'OMTS utilizzato nella tesi si basa sul rilevamento della posizione 3D (X, Y, Z) e dell'orientamento (Pitch, Yaw, Roll) di un marker Moiré Phase Tracking (MPT).
+# ● L'utilizzo di boccagli personalizzati consente un accoppiamento rigido e impedisce lo pseudo-movimento.
+
+# Correzione retrospettiva del movimento (RMC) basata sul deep learning (10 minuti)
+# ● Introduzione al deep learning e alle reti neurali.
+# ● Il deep learning è un tipo di apprendimento automatico che utilizza reti neurali artificiali per apprendere dai dati e fare previsioni o decisioni.
+# ● Le reti neurali sono ispirate alla struttura e alla funzione del cervello umano e sono costituite da strati di nodi interconnessi che elaborano le informazioni.
+# ● Deep learning per la correzione del movimento nella risonanza magnetica.
+# ● Negli ultimi anni, il deep learning ha mostrato risultati promettenti nella correzione degli artefatti da movimento nella risonanza magnetica.
+# ● I modelli di deep learning possono essere addestrati su grandi set di dati di immagini RM con e senza artefatti da movimento per apprendere le relazioni tra di essi.
+# ● Tipi di architetture di reti neurali per l'RMC.
+# ● Diverse architetture di reti neurali, come le reti neurali convoluzionali (CNN), le reti neurali ricorrenti (RNN) e le reti generative avversarie (GAN), sono state utilizzate per l'RMC.
+
+# ● Vantaggi e svantaggi dell'RMC basata sul deep learning.
+  # ● Vantaggi: L'RMC basata sul deep learning può potenzialmente correggere sia i movimenti rigidi che quelli non rigidi. Può essere utilizzata con diverse sequenze di risonanza magnetica e può ottenere risultati accurati senza la necessità di dati o hardware di tracciamento aggiuntivi.
+  # ● Svantaggi: L'RMC basata sul deep learning richiede grandi set di dati di addestramento e può essere computazionalmente costosa. Potrebbe esserci il rischio di overfitting o di generare artefatti non realistici.
+
+# ● Metodi DL-RMC specifici utilizzati nella tesi.
+# ● La tesi ha testato diversi approcci DL-RMC preliminari per l'imaging cerebrale strutturale.
+# ● Questi includono un metodo basato sulla previsione dell'indice di similarità strutturale (SSIM) tramite una rete neurale e l'applicazione di diverse reti neurali (ad esempio, rete residua (ResNet) e rete U (U-Net)) per la correzione retrospettiva degli artefatti da movimento.
+# ● L'obiettivo è fornire uno strumento automatico di valutazione della qualità dell'immagine (IQA) in grado di rilevare la presenza di artefatti da movimento e quantificare il livello di corruzione o distorsione rispetto all'immagine di verità di base, basato sulla regressione dello SSIM.
+
+# Conclusione (5 minuti)
+# ● Riassumere i principali risultati e conclusioni della tesi.
+# ● Il PMC che utilizza un OMTS può migliorare la qualità dell'immagine di scansioni già eccellenti di soggetti sani e conformi in assenza di movimento intenzionale.
+# ● Il PMC può migliorare la qualità dell'immagine anche in presenza di movimenti molto forti.
+# ● I modelli ResNet sono in grado di stimare con precisione i valori dello SSIM da immagini corrotte artificialmente dal movimento.
+# ● Le classi di movimento derivate dagli SSIM previsti hanno mostrato un'elevata accuratezza nella classificazione degli artefatti da movimento.
+# ● L'RMC basata sul deep learning mostra potenzialità nella correzione degli artefatti da movimento in una varietà di contrasti e risoluzioni di risonanza magnetica.
+# ● Discutere le implicazioni e i futuri indirizzi di ricerca.
+# ● Evidenziare la necessità di ulteriori ricerche per migliorare l'accuratezza, l'efficienza e la generalizzabilità delle tecniche di correzione del movimento basate sul deep learning.
+# ● Esplorare il potenziale di combinare il PMC e l'RMC basata sul deep learning per ottenere risultati di correzione ottimali.
+# ● Indagare l'uso del deep learning per altri aspetti della correzione del movimento nella risonanza magnetica, come il rilevamento del movimento, la segmentazione e l'analisi quantitativa.
+
+# Sessione di domande e risposte (5 minuti)
+# ● Dedicare del tempo a rispondere alle domande del pubblico e a impegnarsi in ulteriori discussioni sull'argomento.
+#       intro
+#     how MRI works
+#     Motion artefacts
+#     State-of-the-art
+#     Goal: Tackle motion correction problem with pmc and dl-rmc (pmc quasi-no.motion-regime)
+#     pmc intro
+#     how pmc works
+#     experiments, image quality assessment
+#     results
+#     discussion and conclusion
+#     intro to dl approach
+#     motion detection SSIM work
+#     results/discussion/conclusion
+#     motion correction ResNet
+#     results_/discussion/conclusion
+#     Future perspective
+#     Acknowledgements
+
+# Extra slides in case.... -->
