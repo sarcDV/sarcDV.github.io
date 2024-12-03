@@ -43,6 +43,14 @@ style: |
   section::after {
   content: attr(data-marpit-pagination) '/' attr(data-marpit-pagination-total);
   }
+  .two-columns {
+    display: flex;
+    justify-content: space-between;
+  }
+  .column {
+    width: 48%; /* Adjust width as needed */
+    padding: 10px;
+  }
 
 # Ecco un possibile schema per una presentazione di 35 minuti sulle tecniche di correzione del movimento per la risonanza magnetica, basato sul documento fornito:
 # Presentazione di 35 minuti sulla correzione del movimento per la risonanza magnetica
@@ -230,7 +238,7 @@ Marie Curie Initial Training Network -->
 
 ---
 
-Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence diagram; (b) k-space 2D-image and (c) reconstructed 2D-image.
+## Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence diagram; (b) k-space 2D-image and (c) reconstructed 2D-image.
 ![height=16cm](images/FigureImaging2d.png)
 
 --- 
@@ -251,19 +259,95 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
 ![bg right](images/example-motion-artifacts.png)
 
 ---
+## Goal of this thesis work (PMC section):
+
+### Assessing the impact of the prospective motion correction using 
+### an in-bore optical tracking system, in case of high-resolution 
+### structural imaging in regime of quasi-no motion.
+
+---
 ### Prospective Motion Correction
 
 <!-- ![](images/camera-system.png) -->
 ![](images/MRHardPMC.png)
 
 ---
+### Prospective Motion Correction: How Does It Work?
 
-<style scoped>
-  {
-    font-size: 13px
-  }
-</style>
+- **Real-Time Monitoring**: 
+  + PMC systems utilize motion tracking devices to monitor head movements during the scan.
+  + This allows for immediate detection of any changes in position and orientation.
 
+- **Dynamic Adjustments**:
+  + Once motion is detected, the imaging system adjusts the acquisition parameters in real-time.
+  + This may involve altering the gradient fields or the timing of radio-frequency pulses to compensate for the detected motion.
+
+- **Affine Transformations**:
+  + The adjustments made are often based on affine transformations, which help align the images as they are being acquired.
+  + This ensures that the images remain consistent and aligned with the intended anatomical structures.
+
+- **Integration with Imaging Sequences**:
+  + PMC can be integrated with various imaging sequences.
+  + The effectiveness of PMC can vary depending on the specific sequence used and the nature of the motion.
+
+<!-- Prospective motion correction (PMC) is a technique used in functional MRI (fMRI) to minimize motion artifacts during imaging. It involves real-time adjustments to the imaging pulse sequence based on detected head movements. By continuously updating the gradients and radio-frequency pulses in response to motion, PMC helps maintain the anatomical integrity of the images being captured. Here’s a breakdown of how it works:
+
+Key Components of Prospective Motion Correction
+
+Real-Time Monitoring:
+
+PMC systems utilize motion tracking devices (like optical or electromagnetic sensors) to monitor head movements during the scan.
+This allows for immediate detection of any shifts in position.
+Dynamic Adjustments:
+
+Once motion is detected, the imaging system adjusts the acquisition parameters in real-time.
+This may involve altering the gradient fields or the timing of radio-frequency pulses to compensate for the detected motion.
+Affine Transformations:
+
+The adjustments made are often based on affine transformations, which help align the images as they are being acquired.
+This ensures that the images remain consistent and aligned with the intended anatomical structures.
+Integration with Imaging Sequences:
+
+PMC can be integrated with various imaging sequences, including echo-planar imaging (EPI) and multiband EPI.
+
+The effectiveness of PMC can vary depending on the specific sequence used and the nature of the motion.
+
+Challenges and Considerations
+
+Precision and Accuracy:
+
+The success of PMC relies heavily on the precision of motion measurement. If the motion is not accurately detected, the corrections may be inadequate.
+Continuous validation of PMC methods is essential to ensure they are effective across different imaging scenarios.
+Impact of New Imaging Techniques:
+
+As imaging technology evolves, such as with the introduction of multiplexed EPI, existing PMC techniques may need reevaluation.
+New sequences may introduce different motion sensitivities that could affect the performance of PMC.
+Holistic Approach:
+
+A comprehensive understanding of the entire fMRI process, from acquisition to analysis, is crucial for optimizing PMC.
+
+Collaboration between pulse sequence developers and image processing algorithm designers can lead to better outcomes.
+
+Future Directions
+
+Improved Algorithms:
+
+Ongoing research is focused on developing more sophisticated algorithms that can better handle motion correction in real-time.
+This includes exploring machine learning techniques to enhance motion detection and correction capabilities.
+Validation and Testing:
+
+There is a need for rigorous testing of PMC methods across various fMRI applications to establish their reliability and effectiveness.
+Researchers should demand a higher burden of proof before adopting new PMC techniques in clinical and research settings.
+Prospective motion correction represents a significant advancement in fMRI technology, aiming to enhance the quality of brain imaging by addressing the challenges posed by patient movement -->
+
+--- 
+# Experimental Setup:
+- 7T Scanner (Siemens)
+- 32-channel head coil
+- Optical Motion Tracking System (OMTS)
+- 21 healthy subjects scanned with PMC On/Off
+
+<!-- ## 21 Subjects, 
 ### Sequence parameters
 
 | **Sequence**        | MPRAGE         | TSE            | TSE            | GRE            | GRE            | GRE            |
@@ -283,7 +367,7 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
 | **Bandwidth (Hz/px)** | 170          | 473            | 473            | 60             | 60             | 60             |
 | **Total ADC (ms)**  | 5.88           | 2.11           | 2.11           | 16.67          | 16.67          | 16.67          |
 | **TA (min:sec)**    | 12:12          | 5:12           | 5:12           | 8:21           | 11:37          | 15:58          |
-| **Parallel imaging** | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       |
+| **Parallel imaging** | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | -->
 
 
 ---
@@ -291,7 +375,16 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
 ![bg height:650px](images/slice_3-crop.png)
 
 ---
-![bg left:60% height:650px](images/Figure_1_SIQA.png)
+![bg right:60% height:675px](images/Figure_1_SIQA.png)
+## Subjective Image Quality Assessment
+
+---
+![bg right:60% height:650px](images/OIQA-crop.png)
+## Objective Image Quality Assessment
+### 
+---
+
+![bg height:650px](images/pmc_paper.png)
 
 ---
 
@@ -299,8 +392,8 @@ Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence di
 
 ![height=80px](images/bmmr_logo_RGB_125.png)![height=80px](images/himr-logo.png) 
 <!-- ![height=80px](images/Medigit.png) -->
-**Prof. Oliver Speck**,                         
-Kathrin Schulze,  Frank Godenschweger,
+**Prof. Oliver Speck**,                               
+Kathrin Schulze,  Frank Godenschweger,                
 Daniel Stucht, Hendrik Mattern, Astrid Wollrab,
 Yi-Hang Tung, Mahsa Fatahi, Peter Schulze, 
 Sebastian Hupfeld, Renat Yakupov, Oleg Posnansky,
@@ -314,6 +407,51 @@ Tino-Johannes Lüttge, Falk Lüsebrink-Rindsland
 Max Dünnwald, Juliane Müller
 
 Special thanks to **Soumick Chatterjee** and **Max Dünnwald**
+
+
+---
+
+# A big thank you to:
+
+<div class="two-columns">
+  <div class="column">
+  **Prof. Oliver Speck** ,                               
+Kathrin Schulze,  Frank Godenschweger,                
+Daniel Stucht, Hendrik Mattern, Astrid Wollrab,
+Yi-Hang Tung, Mahsa Fatahi, Peter Schulze, 
+Sebastian Hupfeld, Renat Yakupov, Oleg Posnansky,
+Urte Kägebein, Yan Arnold, Nicolas Huch, Michel Pohl,
+Uten Yarach, Weiqiang Dou, Shan Yang, Myung-Ho In,
+Dominik Kolmann, Tobias Leutritz, Denis Kokorin,
+Tino-Johannes Lüttge, Falk Lüsebrink-Rindsland
+
+
+**Prof. Steffen Oeltze-Jafra**, Yannic Waerzeggers,
+Max Dünnwald, Juliane Müller
+
+Special thanks to **Soumick Chatterjee** and **Max Dünnwald**
+  </div>
+  <div class="column">
+  **Funding information**
+  Initial Training Network, funded by the
+  FP7 Marie Curie Actions of the European
+  Commission (FP7- PEOPLE- 2012-
+  ITN- 316716) and the National Institutes
+  of Health (1R01-DA021146), the DFG
+  (DFG- MA 9235/1-1), and the federal state
+  of Saxony-Anhalt (“I 88”)
+    
+  </div>
+</div>
+
+<!-- Funding information
+Initial Training Network, funded by the
+FP7 Marie Curie Actions of the European
+Commission (FP7- PEOPLE- 2012-
+ITN- 316716) and the National Institutes
+of Health (1R01-DA021146), the DFG
+(DFG- MA 9235/1-1), and the federal state
+of Saxony-Anhalt (“I 88”) -->
 
 ---
 # Some important Equation ...
@@ -365,7 +503,7 @@ $
 S(t) = \int M(t) e^{-i \omega t} dt$
 
 - **Explanation**: 
-  - This equation represents the signal $ S(t) $ detected in MRI as a function of time, where $ M(t) $ is the magnetization vector and $ \omega $ is the angular frequency.
+  - This equation represents the signal $S(t)$ detected in MRI as a function of time, where $M(t)$ is the magnetization vector and $\omega$ is the angular frequency.
 
 - **Importance in MRI**: 
   - It illustrates how the time-varying magnetization generates the MRI signal, which is essential for image reconstruction.
@@ -381,7 +519,7 @@ $
 
 - **Explanation**: 
   - T1 is the longitudinal relaxation time, representing the time it takes for the magnetization to recover to its equilibrium state.
-  - $M_0$ is the equilibrium magnetization, and $ M(t) $ is the magnetization at time $ t $.
+  - $M_0$ is the equilibrium magnetization, and $M(t)$ is the magnetization at time $t$.
 
 ### $T_2$ Relaxation
 
