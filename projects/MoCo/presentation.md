@@ -389,6 +389,10 @@ Prospective motion correction represents a significant advancement in fMRI techn
 ![bg height:650px](images/slice_3-crop.png)
 
 ---
+
+![bg height:650px](images/sample_comparison_1.png)
+
+---
 ![bg right:60% height:675px](images/Figure_1_SIQA.png)
 ### Subjective Image Quality Assessment
 
@@ -463,6 +467,186 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 ---
 # Retrospective Motion Artefacts Detection and Correction Using Deep Learning
+
+---
+
+## Introduction to AI in Medical Imaging
+
+- **Artificial Intelligence (AI)**: The simulation of human intelligence processes by machines, especially computer systems.
+- **Deep Learning**: A subset of AI that uses neural networks with many layers to analyze various factors of data.
+
+### Role of AI in MRI
+
+- **Data Analysis**: AI algorithms can process and analyze large volumes of MRI data quickly and accurately.
+- **Pattern Recognition**: Deep learning models excel at identifying complex patterns in imaging data, including motion artefacts.
+
+---
+
+### Deep Learning Approaches
+
+- **Convolutional Neural Networks (CNNs)**: Commonly used for image processing tasks, including artifact detection.
+- **Generative Adversarial Networks (GANs)**: Can be employed to generate high-quality images from corrupted data.
+- **Reinforcement Learning**: Potential for optimizing motion correction strategies in real-time.
+
+
+### Benefits of Using AI and Deep Learning
+
+- **Improved Accuracy**: Enhanced detection and correction of motion artefacts lead to better image quality.
+- **Efficiency**: Reduces the need for repeat scans, saving time and resources.
+- **Automation**: Streamlines the workflow in clinical settings, allowing radiologists to focus on diagnosis.
+
+---
+
+## Image Quality Assessment Through SSIM Prediction
+### Importance of Image Quality
+- Motion artefacts can lower diagnostic accuracy.
+- May require repeat scans to avoid misdiagnosis.
+
+### Image Quality Assessment (IQA)
+- **IQA**: Quick, automated process to evaluate MR images.
+- Goal: Determine if images are diagnostically reliable and free of artefacts.
+- Challenges:
+  - Time-consuming and subjective evaluation.
+  - Varying expertise among readers leads to inconsistent outcomes.
+  - Lack of reference images complicates assessment.
+
+---
+###  Advances in IQA
+- Reference-free IQA methods emerging, including machine learning approaches.
+- No gold standard IQA for MR images yet.
+
+### Proposed Solution
+- Development of an automated IQA tool based on SSIM (Structural Similarity Index).
+- Tool identifies motion artefacts and measures distortion.
+- Applicable to various MR image contrasts (T1, T2, PD, FLAIR).
+- Incorporates contrast augmentation for broader weighting range.
+
+---
+![bg right:60% height:710px](images/corruption.png)
+### Methodology
+- Two methods to artificially produce corrupted images:
+  1. In-house developed method.
+  2. Implementation by Shaw et al. using TorchIO library.
+
+### ResNets Models:
+- Two depths used: ResNet-18 and ResNet-101.
+
+
+---
+
+![bg right:50% height:650px](images/Pipeline001test.png)
+
+
+### Training Process
+1. **Slice Selection**: Random 2D slice()axial, sagittal, or coronal orientation).
+2. **Contrast Augmentation**: Randomly apply one of four algorithms:
+   - Gamma adjustment, Logarithmic adjustment, Sigmoid adjustment, Adaptive histogram adjustment
+3. **Motion Corruption**: Apply motion corruption using:
+   - TorchIO or In-house algorithm
+4. **SSIM Calculation**: Determine SSIM between input and corrupted images.
+5. **Model Training**: Use corrupted image and SSIM for training.
+
+---
+## Datasets Used
+- **Training**: 200 volumes
+- **Validation**: 50 volumes
+- **Testing**: 50 volumes
+- Sources: IXI dataset, Site-A (3T), Site-B (7T), various scanners.
+- Resampling for isotropic resolution of 1.00 mm³.
+
+## Training Parameters
+- Training conducted with and without contrast enhancement.
+- Learning rate: 1e−3
+- Batch size: 100
+- Loss function: Mean Squared Error (MSE)
+- Optimizer: Adam
+- Epochs: 2000
+- Image size: 256x256
+---
+## Performance Assessment
+- Predicted SSIM vs. ground truth SSIM.
+- Residuals calculated for model performance.
+- Regression task converted to classification with 3, 5, and 10 classes.
+
+## Clinical Dataset Testing
+- Included images from five subjects with varying scans.
+- Subjective quality assessment by an expert using a classification scheme:
+  - Class 1: Good quality (SSIM 0.85-1.00)
+  - Class 2: Sufficient quality (SSIM 0.60-0.85)
+  - Class 3: Insufficient quality (SSIM 0.00-0.60)
+
+## Comparison with MRIQC
+- MRIQC used as a baseline for comparison.
+- Limitations: Only works on properly transformed BIDS format images.
+- Metrics used: CNR, CJV, EFC, QI for structural images.
+- SIQA scores averaged and normalized for agreement analysis.
+
+---
+
+
+### Testing
+- 10,000 images randomly selected
+- SSIM values compared to ground truth
+- Classification based on SSIM ranges
+
+---
+
+## Clinical Dataset Evaluation
+- Subjective quality assessment by an expert
+- Comparison with MRIQC toolbox
+- Quality metrics: CNR, CJV, EFC, QI
+
+---
+
+# SSIM Prediction and Model Evaluation
+
+<!-- ## Figures Overview
+- **Figure 39**: Example outputs of SSIM predictions.
+- **Figure 40**: SSIM vs. ground truth with linear fitting.
+- **Figure 41**: Residual distribution analysis.
+- **Figure 42**: Confusion matrices for classification tasks.
+- **Table 10**: Precision, recall, F1-score, and accuracy. -->
+
+---
+
+## Model Performance
+- **Best Performance**: ResNet-18 with contrast augmentation
+  - Accuracy: 
+    - 97% (3 classes)
+    - 95% (5 classes)
+    - 89% (10 classes)
+- **Impact of Contrast Augmentation**:
+  - Reduced standard deviation
+  - Improved mean SSIM predictions
+
+---
+
+## Clinical Data Evaluation
+- **SSIM Predictions**: Compared with subjective ratings
+- **Agreement**: 76.6 ± 0.8%
+  - ResNet-101: 
+    - 75.5% (without contrast)
+    - 77.7% (with contrast)
+
+---
+
+## MRIQC Comparison
+- **Processed Scans**: 12 of 36 due to non-compliance
+- **Agreement Rates**:
+  - CNR: 17%
+  - CJV: 17%
+  - EFC: 33%
+  - QI: 75%
+
+---
+
+## Discussion
+- Contrast augmentation improved performance.
+- Accuracy decreased with more classes.
+- Confusion matrices showed higher misclassification rates with more classes.
+
+---
+
 
 ---
 
