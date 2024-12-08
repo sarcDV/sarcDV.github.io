@@ -538,7 +538,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 
 ### Training Process
-1. **Slice Selection**: Random 2D slice()axial, sagittal, or coronal orientation).
+1. **Slice Selection**: Random 2D slice (axial, sagittal, or coronal orientation).
 2. **Contrast Augmentation**: Randomly apply one of four algorithms:
    - Gamma adjustment, Logarithmic adjustment, Sigmoid adjustment, Adaptive histogram adjustment
 3. **Motion Corruption**: Apply motion corruption using:
@@ -563,10 +563,11 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - Epochs: 2000
 - Image size: 256x256
 ---
+
 ## Performance Assessment
-- Predicted SSIM vs. ground truth SSIM.
+- Predicted SSIM vs. ground truth SSIM (10,000 images randomly selected).
 - Residuals calculated for model performance.
-- Regression task converted to classification with 3, 5, and 10 classes.
+- Prediction task converted to classification with 3, 5, and 10 classes.
 
 ## Clinical Dataset Testing
 - Included images from five subjects with varying scans.
@@ -583,34 +584,37 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 ---
 
+- **CNR**: Contrast-to-noise Ratio, $\text{CNR} = \frac{C}{N}$, where:
+  + $C$ = Contrast between the object and background.
+  + $N$ = Noise level in the image or signal.
 
-### Testing
-- 10,000 images randomly selected
-- SSIM values compared to ground truth
-- Classification based on SSIM ranges
+- **CJV**: Coefficient of Joint Variation, $\text{CJV}=\frac{\sigma(WM)+\sigma(GM)}{\mu(WM)-\mu(GM)}$, where $\sigma$ and $\mu$ indicate the standard deviation and the mean intensity of a given tissue.
 
----
+- **EFC**: Entropy Focus Criterion, $E =-\sum_{j=1}^{S}\frac{B_j}{B_{max}}ln\Big[\frac{B_j}{B_{max}}\Big]$, where $S$ is the number of image pixels and $B_j$ is the modulus of the complex value of the th image pixel, referred to here as the pixel “brightness”. If all the image energy were in one pixel, we would have the largest possible pixel brightness, $B_{max}$ , given by $B_{max}=\sqrt{\sum_{j=1}^{S}B_{j}^2}$
 
-## Clinical Dataset Evaluation
-- Subjective quality assessment by an expert
-- Comparison with MRIQC toolbox
-- Quality metrics: CNR, CJV, EFC, QI
+- **QI**: Quality Index, Mortamet B, Bernstein MA, Jack CR Jr, et al. Automatic quality assessment in structural brain magnetic resonance imaging. Magn Reson Med. 2009;62(2):365-372. doi:10.1002/mrm.21992
 
 ---
 
+![bg right:50% height:710px](images/SSIM_predicted_examples.png)
 # SSIM Prediction and Model Evaluation
 
+---
+![bg height:690px](images/regression-residuals.png)
 <!-- ## Figures Overview
 - **Figure 39**: Example outputs of SSIM predictions.
 - **Figure 40**: SSIM vs. ground truth with linear fitting.
 - **Figure 41**: Residual distribution analysis.
 - **Figure 42**: Confusion matrices for classification tasks.
 - **Table 10**: Precision, recall, F1-score, and accuracy. -->
-
 ---
 
+![bg right:67% height:690px](images/classification-all.png)
+
+
 ## Model Performance
-- **Best Performance**: ResNet-18 with contrast augmentation
+- **Best Performance**: 
+ResNet-18 with contrast augmentation
   - Accuracy: 
     - 97% (3 classes)
     - 95% (5 classes)
@@ -621,14 +625,12 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 ---
 
-## Clinical Data Evaluation
+# Clinical Data Evaluation
 - **SSIM Predictions**: Compared with subjective ratings
 - **Agreement**: 76.6 ± 0.8%
   - ResNet-101: 
     - 75.5% (without contrast)
     - 77.7% (with contrast)
-
----
 
 ## MRIQC Comparison
 - **Processed Scans**: 12 of 36 due to non-compliance
