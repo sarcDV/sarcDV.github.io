@@ -466,9 +466,10 @@ Prospective motion correction represents a significant advancement in fMRI techn
 ![bg height:450px](images/pmc_paper.png)
 
 ---
-# Retrospective Motion Artefacts Detection and Correction Using Deep Learning
+<!-- # Retrospective Motion Artefacts Detection 
+# and Correction Using Deep Learning
 
----
+--- -->
 
 ## Introduction to AI in Medical Imaging
 
@@ -600,7 +601,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 # SSIM Prediction and Model Evaluation
 
 ---
-![bg height:690px](images/regression-residuals.png)
+![bg height:650px](images/regression-residuals.png)
 <!-- ## Figures Overview
 - **Figure 39**: Example outputs of SSIM predictions.
 - **Figure 40**: SSIM vs. ground truth with linear fitting.
@@ -609,10 +610,9 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - **Table 10**: Precision, recall, F1-score, and accuracy. -->
 ---
 
-![bg right:67% height:690px](images/classification-all.png)
+![bg right:70% height:650px](images/classification-all.png)
 
-
-## Model Performance
+### Model Performance
 - **Best Performance**: 
 ResNet-18 with contrast augmentation
   - Accuracy: 
@@ -624,15 +624,18 @@ ResNet-18 with contrast augmentation
   - Improved mean SSIM predictions
 
 ---
+![bg height:600px](images/FigureSSIM-SIQA.png)
 
-# Clinical Data Evaluation
-- **SSIM Predictions**: Compared with subjective ratings
+---
+![bg right:70% height:690px](images/MRIQC_results.png)
+
+<!-- ### Clinical Data Evaluation
 - **Agreement**: 76.6 ± 0.8%
   - ResNet-101: 
     - 75.5% (without contrast)
-    - 77.7% (with contrast)
+    - 77.7% (with contrast) -->
 
-## MRIQC Comparison
+### MRIQC Comparison
 - **Processed Scans**: 12 of 36 due to non-compliance
 - **Agreement Rates**:
   - CNR: 17%
@@ -647,8 +650,116 @@ ResNet-18 with contrast augmentation
 - Accuracy decreased with more classes.
 - Confusion matrices showed higher misclassification rates with more classes.
 
+## This work is under review:
+IEEE Access, "Automated SSIM Regression for Detection and Quantification of Motion Artefacts in Brain MR Images"
+
 ---
 
+
+
+# Retrospective Motion Correction of MR Images using Prior-Assisted Deep Learning
+
+## Data Preparation
+- **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
+- **Motion Corruption**: 
+  - Modified TorchIO’s RandomMotion transformation.
+  - Simulated movements: rotation from -1.75 to +1.75 degrees (no translation).
+
+## Image Priors
+- **Similar Slices**: 
+  - 10 similar slices (same position, same contrast) from different subjects.
+  - Used for motion correction of T2-weighted images.
+  
+- **Different Contrasts**: 
+  - Utilized T1 and PD images from the same subject as priors for motion-corrupted T2 images.
+---
+![bg right:50% vertical width:600px](images/mocoprior_U.PNG)
+![bg right:50% width:600px](images/mocoprior_res.PNG)
+## Network Architectures
+- **Baselines**: Modified ReconResNet and U-Net.
+- **Prior Supply Techniques**:
+  - **Multi-Channel Network**: Concatenated motion-corrupted image with priors.
+  - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors.
+
+---
+![bg right:50% height:690px](images/mocoprior_combine.png)
+## Results and Discussions
+- **Effectiveness**: 
+  - Similar slices did not improve motion correction.
+  - Different contrasts significantly enhanced motion correction.
+  
+- **Performance**: 
+  - Multi-channel and dual-branch approaches outperformed ReconResNet.
+  - Only multi-channel strategy significantly improved U-Net.
+
+
+---
+## Conclusion
+- **Key Findings**: 
+  - Additional contrast images from the same subject are more beneficial than similar slices from different subjects.
+  - Multi-channel and dual-branch approaches showed improvements, especially for ReconResNet.
+
+
+- **Future Work**: 
+  - Explore dual-branch approach and impact of skip connections.
+  - Expand dataset and introduce different motion corruption types for robustness.
+
+### 34th Conference on Neural Information Processing Systems (NeurIPS 2020), Vancouver, Canada
+
+![bg right:50% height:720px](images/RetroMoCoDL.png)
+
+---
+
+
+# Generalised Retrospective Motion Correction (RMC) using Deep Learning and Contrast Augmentation
+
+## Introduction
+- Previous methods required image priors, limiting generalisability.
+- This research introduces a deep learning method for RMC in MRI using:
+  - ReconResNet model.
+  - Novel contrast augmentation and artificial motion corruption techniques.
+
+---
+## Methods
+
+### Data
+- Collected from 3T and 7T MRI Siemens scanners.
+- **Dataset**: 600 training, 160 validation, and 158 testing image volumes.
+- Only slices containing brain tissues were considered.
+
+### Data Processing
+- Random slice selection from 3D volumes.
+- Noise removal and Min-Max normalization.
+- Padding and resizing to 256x256.
+- Contrast augmentation (as for the SSIM prediction).
+
+---
+
+### Motion Corruption (as for the SSIM prediction)
+- Two artificial motion corruption techniques:
+  1. **TorchIO Functions**: Random ghosting and motion.
+  2. **In-House Method**: Simulates real-world motion corruption using random parameters.
+
+### Model and Training
+- Deeper version of ReconResNet with:
+  - 64 feature maps, 56 residual blocks, and PReLU activation.
+  - Perceptual loss function using a pretrained ResNeXt 101 model.
+- Optimized using Adam with a learning rate of 3x10⁻⁴ for 2000 epochs.
+
+---
+![bg fit](images/testMC_v01-2.png)
+
+---
+![bg right:50% height:650px](images/resnet56_vol110_146_34_6.png)
+## Results and Discussion
+- Average SSIM improvement from 0.688 to 0.886.
+- Consistent performance across different experimental runs.
+- Qualitative results show significant enhancement in image quality.
+
+## Conclusion
+- Proposed method demonstrates broad generalisation across various MRI contrasts and artefacts.
+- Notable improvements in image quality and robustness.
+- Future work may explore combining prospective and retrospective motion correction techniques.
 
 ---
 
