@@ -77,3 +77,27 @@ concept and mechanisms of Prospective Motion Correction (PMC) in MRI:
 - Dynamic Adjustments: It adjusts imaging parameters in real-time to correct for detected motion, maintaining image quality.
 - Affine Transformations: These transformations align the images with real-time adjustments, ensuring consistency and accuracy in the captured images.
 - Integration with Sequences: PMC can be integrated with various imaging sequences, though its effectiveness can vary depending on the type of sequence and the nature of the motion.
+
+# slide 10
+The experimental setup has been:
+- a 7T Whole-Body MRI Scanner from Siemens Healthineers, offering exceptional image resolution and quality.
+- a 32-Channel Head Coil from Nova Medical was employed to capture detailed brain images, ensuring high sensitivity and signal clarity.
+- the Optical Motion Tracking System (OMTS): An OMTS from Metria Innovation Inc. was used to monitor and track head movements during scans, crucial for implementing motion correction techniques.
+- Participant Details: The study involved 21 healthy volunteers (14 males, average age 31.5±6.1 years; 7 females, average age 27.3±3.4 years) who underwent two independent 75-minute scanning sessions. This diverse group helped in assessing the efficacy of the motion correction methods across different individuals and sessions.
+
+# slide 11
+The tracking data was averaged to determine the global mean and standard deviation (SD) for each degree of freedom, separately for when Prospective Motion Correction (PMC) was off and on. Specific equations were used to analyze rotations and displacements. Histograms were generated for each of these parameters, and the Mann-Whitney U test was applied for statistical analysis. Scans showing significantly different motion patterns within the same subject were excluded to avoid bias. The outlined procedure involves recording motion patterns, calculating distributions and SD values, averaging SDs, and selecting subjects with similar motion patterns for a fair comparison between PMC off and on. This ensures accurate evaluation of the motion correction effectiveness.
+
+# slide 12
+This image compares MRI scans of a brain under two different conditions, labeled "a" and "b," representing "PMC OFF" and "PMC ON." Each scan features a yellow box highlighting a specific region, with an enlarged view of that region shown in an inset.
+The text below the images provides average values for three parameters under these conditions:
+For "OFF":
+Ravg(OFF)=7.2±0.8R_{\text{avg}}(\text{OFF}) = 7.2 \pm 0.8
+AESavg(OFF)=2.5±0.1\text{AES}_{\text{avg}}(\text{OFF}) = 2.5 \pm 0.1
+GEavg(OFF)=2.0±0.1\text{GE}_{\text{avg}}(\text{OFF}) = 2.0 \pm 0.1
+For "ON":
+Ravg(ON)=7.7±0.8R_{\text{avg}}(\text{ON}) = 7.7 \pm 0.8
+AESavg(ON)=2.6±0.1\text{AES}_{\text{avg}}(\text{ON}) = 2.6 \pm 0.1
+GEavg(ON)=2.0±0.1\text{GE}_{\text{avg}}(\text{ON}) = 2.0 \pm 0.1
+
+These metrics suggest that the brain images are being quantitatively analyzed to assess the effects of motion correction, providing insights into the effectiveness of the intervention.
