@@ -101,3 +101,51 @@ AESavg(ON)=2.6±0.1\text{AES}_{\text{avg}}(\text{ON}) = 2.6 \pm 0.1
 GEavg(ON)=2.0±0.1\text{GE}_{\text{avg}}(\text{ON}) = 2.0 \pm 0.1
 
 These metrics suggest that the brain images are being quantitatively analyzed to assess the effects of motion correction, providing insights into the effectiveness of the intervention.
+
+# slide 13
+here the methodology used for the subjective assessment of MRI image quality in the study.
+- Expert Reviewers: The assessment was conducted by four experts, each with over five years of experience in MR image-quality evaluation.
+- Blinded Comparison: The raters performed side-by-side comparisons of images taken with and without Prospective Motion Correction (PMC). To ensure unbiased results, the images were presented in a randomized order.
+- Scoring System: Image quality was rated on a scale from 1 (worst) to 10 (best), with a focus on the presence and severity of motion artefacts.
+
+This structured approach helps to objectively evaluate the effectiveness of motion correction techniques in improving MRI image quality.
+
+# slide 14
+instead here the metrics used for the objective assessment of MRI image quality:
+- Average Edge Strength (AES): This metric measures the average strength of edges in an image, providing an indication of the clarity and sharpness of structural details. Higher AES values typically denote better-defined edges, reflecting enhanced image quality.
+and
+- Gradient Entropy (GE): GE evaluates the randomness and complexity of the gradient distribution within the image. It serves as a measure of the overall texture and contrast, with higher GE values suggesting a more detailed and varied image structure.
+
+Together, these metrics help quantify the improvements in image quality achieved through motion correction techniques, offering a clear and objective means of assessment.
+
+# slide 15
+In summary these are the key findings of the study on Prospective Motion Correction (PMC) in MRI:
+- High-Resolution MRI: The application of PMC notably enhances image quality in high-resolution scans. Most images with PMC activated demonstrated high or very high quality, with only three scenarios showing statistically significant improvements. Overall, both subjective and objective measures indicate superior image quality with PMC.
+- Evaluation Metrics: Among six evaluated groups, five showed improved image quality with PMC. However, one group displayed inconsistent results between subjective and objective assessments, highlighting the need for further investigation.
+- Applicability of PMC: PMC proves beneficial for high-resolution scans, even without deliberate motion, making it effective for healthy, compliant participants. This suggests PMC's broad applicability in routine clinical MRI practices.
+
+# slide 16
+the limitations encountered in the study on Prospective Motion Correction (PMC) in MRI are
+- Statistical Significance: While some scenarios showed statistically significant improvements with PMC, there were cases with inconsistencies between subjective and objective measures, indicating mixed results.
+- Motion Pattern Variability: The motion patterns for PMC ON and OFF were not always comparable. In some groups, the image quality metrics did not consistently show clear superiority for PMC.
+- Extremes of Motion: PMC's effectiveness decreases with very high levels of motion. For extreme cases or non-compliant patients, additional techniques or integration with Retrospective Motion Correction (RMC) are required.
+- Patient Compliance: PMC is more effective in compliant subjects. Applying PMC to non-compliant patients poses additional challenges, necessitating supplementary measures to achieve optimal results.
+
+These limitations highlight areas for further research and development to enhance the robustness and applicability of PMC in clinical practice.
+
+# slide 17
+this work have been on published on magnetice resonance in medicine with the title:
+"Quantitative evaluation of prospective motion correction in healthy subjects at 7T MRI"
+
+# slide 18
+following the recent development of Artificial Intelligence (AI) and Deep Learning in medical imaging, specifically in MRI:
+- Artificial Intelligence (AI): AI involves the simulation of human intelligence processes by machines, primarily computer systems, to perform tasks that typically require human cognition.
+- Deep Learning: A specialized subset of AI, deep learning uses multi-layered neural networks to analyze complex data, enabling the extraction of intricate patterns and insights.
+
+Role of AI in MRI
+
+    Data Analysis: AI algorithms are capable of processing and analyzing large volumes of MRI data swiftly and accurately, improving efficiency and diagnostic capabilities.
+
+    Pattern Recognition: Deep learning models are particularly adept at identifying complex patterns within imaging data, such as motion artefacts, enhancing the quality and reliability of MRI scans.
+
+These advancements highlight the significant impact of AI and deep learning on improving the accuracy and efficiency of medical imaging.
