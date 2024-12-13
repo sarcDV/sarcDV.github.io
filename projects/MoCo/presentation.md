@@ -191,12 +191,11 @@ Marie Curie Initial Training Network -->
 ![bg right fit](images/motion-foto.jpg)
 # What's the problem?
 ##  Motion! 
-### The enemy of photographers and people using MRI!
-- Please ignore the ugly guy in the photos!!! :smile:
-- It doesn't matter if you are taking a selfie with your new recent smartphone (top row) or an old Nokia 3310
-- Despite the level of resolution you can achieve taking a picture, motion of the subject can always degrade the image quality
+### The Enemy of Photographers and MRI Users!
 
+- Please ignore the unfortunate subject in the photos! 😄
 
+- Whether you're taking a selfie with your latest top smartphone (top row) or an old Nokia 3310, motion can always degrade image quality, regardless of the resolution you can achieve.
 ---
 ![bg left](images/au70_T1_OFFv.png)
 ## Magnetic Resonance Imaging 
