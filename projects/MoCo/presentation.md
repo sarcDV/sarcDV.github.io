@@ -52,7 +52,75 @@ style: |
     padding: 10px;
   }
 
- 
+# # Convert slide deck into HTML
+# npx @marp-team/marp-cli@latest slide-deck.md
+# npx @marp-team/marp-cli@latest slide-deck.md -o output.html
+
+# # Convert slide deck into PDF
+# npx @marp-team/marp-cli@latest slide-deck.md --pdf
+# npx @marp-team/marp-cli@latest slide-deck.md -o output.pdf
+
+# # Convert slide deck into PowerPoint document (PPTX)
+# npx @marp-team/marp-cli@latest slide-deck.md --pptx
+# npx @marp-team/marp-cli@latest slide-deck.md -o output.pptx
+
+# # Watch mode
+# npx @marp-team/marp-cli@latest -w slide-deck.md
+
+# # Server mode (Pass directory to serve)
+# npx @marp-team/marp-cli@latest -s ./slides 
+
+# - These seem to be too many slides (and also way too much content). You certainly have to reduce the amount and also the complexity.
+# - Consider your audience (commission). There are persons with little to no knowledge on MRI, motion correction or AI.
+# - You should introduce your topic and goals before you introduce the methods (or MRI - why do you need spins? The more important point may be the acquisition in k-space and consequences). Perhaps motivate with nice and corrupted images.
+# - many slides contain too much text ...
+# - Leave out details that are not needed to follow and understand the big picture. 
+# - Your result slides (many from the papers) are too busy. You will not be able to present all the details. Better pick out example results. You don't need to show all your experiments and results. Simplify your slides.
+# - You present the three parts as if they have no connection and are independent. It would be much better to connect them and build a story to include all three aspects (which seems obvious to me).
+# ------
+# Nice slides but I fully agree with Oliver's comments. 
+# It would be good to have a story to tell and don't be shy 
+# to present/highlight your impact/novelty. 
+# I would condense it to two part and sell the story as working 
+# on both ends of the motion correction spectrum, i.e. small 
+# involuntary in ultra-high resolution imaging, 
+# and gross motion in "clinical/conventional" imaging.
+# Maybe start the topic with "motion as the arch enemy of MRI". 
+# Then you can say motion comes in "many forms" ... 
+# and equally many possibilities to address this challenge. 
+# Then I would introduce the vision/mission of your PhD. 
+# It should be on motion correction, but given you used 
+# something which was available i.e. MPT system and ResNets/known 
+# network architectures, you aim was to really test them 
+# with an agnostic mindset as well as thoroughly perform 
+# quantitative metrics instead of the typical boutique style 
+# MoCo studies.
+# You could sell the at first seemingly disconnected PMC 7T 
+# and RMC clinical projects by saying, as mentioned again, 
+# trying to work on the ends of the MoCo MRI spectrum with 
+# acquiring (and correcting) motion prospectively as well as 
+# using available data. and retrospective correction. 
+# # Per project part (if possible combined both RMC projects or 
+# point at the last one only shortly) a short set-up, motivation, 
+# cohort, voxel-size vs motion amplitude should be given. 
+# Then maybe 1 or 2 result images, i.e. MoCo working/failing, 
+# and then approx. 2 slides on quantitative assessment/results. 
+# For the quantitative stuff, use only one objective per slide, 
+# e.g. only AES <OR> gradient entropy for PMC, and take your 
+# time walking the audience through the results 
+# (i.e. starting by the x/y labels, general trends, 
+# interpretation, ...). Again, don't be shy to highlight 
+# your contribution to the field. Further, 
+# results which are challenging to explain can be left out 
+# for the PhD presentation. 
+# If referees have question about challenges they will let you know. 
+# BTW: I remember you gave a great talk on your PMC @  7T 
+# during the final ITN meeting in Magdburg (2016?). 
+# The story was with the Ferrari and a race track or so. 
+# You have to decide if it is fitting for your defense, 
+# but I stuck with me and, as Oliver said, the commission 
+# are not experts on the topics.
+
 ---
 ![bg left:17% height:750px](images/3DMPRAGE-sag-ax-corv.png)
 ## Prospective and Deep Learning Based Retrospective Motion Correction for Magnetic Resonance Imaging
@@ -118,6 +186,16 @@ Marie Curie Initial Training Network -->
 - Evaluation
 - conclusion
 - Future Work -->
+---
+
+![bg right fit](images/motion-foto.jpg)
+# What's the problem?
+##  Motion! 
+### The enemy of photographers and people using MRI!
+- Please ignore the ugly guy in the photos!!! :smile:
+- It doesn't matter if you are taking a selfie with your new recent smartphone (top row) or an old Nokia 3310
+- Despite the level of resolution you can achieve taking a picture, motion of the subject can always degrade the image quality
+
 
 ---
 ![bg left](images/au70_T1_OFFv.png)
@@ -129,6 +207,90 @@ Marie Curie Initial Training Network -->
 
 ---
 
+###  Motion comes in "many forms" ...
+- Motion artefacts in MRI are distortions or errors in the images caused by patient movement during the scanning process.
+- These artefacts can be caused by:
+  + Patient Movement
+  + Physiological Motion
+  + Long Scan Times
+
+- Types of Motion Artefacts:
+  + Ghosting Artefacts
+  + Blurring Artefacts
+  + Phase Encoding Artefacts
+  <!-- + Chemical Shift Artifacts:  While not purely motion-related, these artefacts can be exacerbated by patient movement and can manifest as misalignment between fat and water signals. -->
+
+![bg right](images/example-motion-artifacts.png)
+ 
+---
+![bg left fit](images/tio-motion.png)
+# K-Space and Motion Artefacts
+
+- MRI data is acquired in a domain known as k-space, which is a matrix that represents the spatial frequency information of the image. 
+- Each point in k-space corresponds to a specific frequency and phase of the MRI signal. 
+- The process of filling k-space is crucial for reconstructing the final image.
+
+---
+# How Motion Corrupts K-Space
+
+1. Incomplete Data Acquisition
+        <!-- If a patient moves during the acquisition of k-space data, the signals collected may not correspond to the same anatomical location. This misalignment leads to inconsistencies in the data, resulting in artifacts in the final image. -->
+
+2. Phase Errors
+        <!-- Motion can introduce phase shifts in the acquired signals. Since k-space is sensitive to the phase of the signals, any discrepancies caused by motion can lead to blurring or ghosting effects in the reconstructed image. -->
+
+3. Aliasing
+        <!-- If motion occurs while acquiring data from different parts of k-space, it can cause aliasing artifacts. This happens when the data from one part of the image is incorrectly mapped to another part due to the motion, leading to overlapping or repeating structures in the final image. -->
+
+4. Signal Loss
+        <!-- Motion can also lead to signal loss in certain areas of the brain, particularly if the motion occurs during the acquisition of specific k-space lines. This can result in areas of the image appearing darker or missing entirely. -->
+
+
+---
+# ... despite this annoying problem there are many possibilities to address this challenge
+
+- Prospective & Retrospective Motion Correction
+- Data Acquisition Strategies 
+- Deep Learning and/or the combination of deep learning with the previous ones
+
+<!-- #### State-of-the-Art in Motion Correction -->
+
+<!-- | Technique                         | Description                                                                               |
+|-----------------------------------|-------------------------------------------------------------------------------------------|
+| **Prospective Motion Correction (PMC)** | Real-time adjustments during MRI acquisition.                                            |
+| **Retrospective Motion Correction (RMC)** | Post-processing techniques to correct motion artefacts.                                |
+| **Data Acquisition Strategies**       | Techniques like PROPELLER, radial/spiral sampling, and fast-imaging methods.              | -->
+
+<!-- #### Recent AI Advances -->
+
+<!-- | AI Technique                      | Description                                                                               |
+|-----------------------------------|-------------------------------------------------------------------------------------------|
+| **Deep Learning Approaches**          | Neural networks for motion artefact reduction and motion estimation.                      |
+| **Self-Supervised Learning**          | Uses motion-guided implicit neural representations for correction.                        |
+| **Physics-Informed Models**           | Combines deep learning with physics-based modeling for improved accuracy.                 | -->
+
+---
+
+## Goal of this thesis
+<!-- ### Investigate and address the challenge of motion correction in MRI through the application of Prospective Motion Correction (PMC) and Deep Learning-based Retrospective Motion Correction (RMC) methodologies. -->
+### Investigate and address the challenge of motion correction in MRI on both ends of the motion correction spectrum:
+<!-- - small involuntary in ultra-high resolution imaging, 
+- and gross motion in "clinical/conventional" imaging. -->
+
+
+- **Prospective Motion Correction (PMC)** for  small involuntary motion in ultra-high resolution imaging:
+  <!-- + Develop techniques for motion correction at ultra-high field strength (7 Tesla) MRI.
+  + Focus on achieving accurate motion correction in a regime of minimal motion.
+  + Apply methods exclusively to high-resolution structural brain imaging. -->
+
+- **Deep Learning-Based Retrospective Motion Correction (RMC)** for gross motion in clinical (1.5-3.0 Tesla) imaging:
+  <!-- + Evaluate the efficacy of deep learning models in predicting and correcting motion artefacts.
+  + Use Structural Similarity Index (SSIM) to quantitatively assess image quality improvements.
+  + Develop and test various custom models designed to address specific types of motion artifacts in brain MRI. -->
+![bg left fit](images/from_clinical_to_research.jpg)
+
+<!-- ---
+
 ## Magnetic Resonance Imaging: 
 ### How does it work?
 
@@ -138,7 +300,7 @@ Marie Curie Initial Training Network -->
 4. Following the pulse, these spins undergo **relaxation** back to their equilibrium orientations, resulting in the **emission** of detectable **signals**.
 5. The emitted signals are **acquired** and **processed** to generate a diagnostic image.
 
-![bg right height:650px](images/howMRIworks.gif)
+![bg right height:650px](images/howMRIworks.gif) -->
 
 <!-- 
 ```
@@ -182,46 +344,13 @@ Marie Curie Initial Training Network -->
 
 ``` -->
 
----
+<!-- ---
 
 ## Image acquisition of a $T_2^*$-weighted 2D gradient image. (a) Pulse sequence diagram; (b) k-space 2D-image and (c) reconstructed 2D-image.
-![height=16cm](images/FigureImaging2d.png)
+![height=16cm](images/FigureImaging2d.png) -->
 
---- 
 
-###  Motion Artefacts in MRI:
-- Motion artefacts in MRI are distortions or errors in the images caused by patient movement during the scanning process.
-- These artefacts can be caused by:
-  + Patient Movement
-  + Physiological Motion
-  + Long Scan Times
 
-- Types of Motion Artefacts:
-  + Ghosting Artefacts
-  + Blurring Artefacts
-  + Phase Encoding Artefacts
-  + Chemical Shift Artifacts:  While not purely motion-related, these artefacts can be exacerbated by patient movement and can manifest as misalignment between fat and water signals.
-
-![bg right](images/example-motion-artifacts.png)
-
----
-### Motion Correction in MRI: State-of-the-Art and AI Advances
-
-#### State-of-the-Art in Motion Correction
-
-| Technique                         | Description                                                                               |
-|-----------------------------------|-------------------------------------------------------------------------------------------|
-| **Prospective Motion Correction (PMC)** | Real-time adjustments during MRI acquisition.                                            |
-| **Retrospective Motion Correction (RMC)** | Post-processing techniques to correct motion artefacts.                                |
-| **Data Acquisition Strategies**       | Techniques like PROPELLER, radial/spiral sampling, and fast-imaging methods.              |
-
-#### Recent AI Advances
-
-| AI Technique                      | Description                                                                               |
-|-----------------------------------|-------------------------------------------------------------------------------------------|
-| **Deep Learning Approaches**          | Neural networks for motion artefact reduction and motion estimation.                      |
-| **Self-Supervised Learning**          | Uses motion-guided implicit neural representations for correction.                        |
-| **Physics-Informed Models**           | Combines deep learning with physics-based modeling for improved accuracy.                 |
 <!-- | **MIT Research**                      | Combines deep learning and physics to correct motion artifacts in MRI scans.              | -->
 
 <!-- ## Future Directions
@@ -232,23 +361,6 @@ Marie Curie Initial Training Network -->
 
 
 
----
-
-## Goal of this thesis: Advanced Motion Correction in MRI
-
-### Overall Objective
-- Investigate and address the challenge of motion correction in MRI through the application of Prospective Motion Correction (PMC) and Deep Learning-based Retrospective Motion Correction (RMC) methodologies.
-
-
-##### Prospective Motion Correction (PMC)
-- Develop techniques for motion correction at ultra-high field strength (7 Tesla) MRI.
-- Focus on achieving accurate motion correction in a regime of minimal motion.
-- Apply methods exclusively to high-resolution structural brain imaging.
-
-##### Deep Learning-Based Retrospective Motion Correction (RMC)
-- Evaluate the efficacy of deep learning models in predicting and correcting motion artifacts.
-- Use Structural Similarity Index (SSIM) to quantitatively assess image quality improvements.
-- Develop and test various custom models designed to address specific types of motion artifacts in brain MRI.
 
 <!-- ### Assessing the impact of the prospective motion correction using 
 ### an in-bore optical tracking system, in case of high-resolution 
@@ -360,7 +472,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - Optical Motion Tracking System (OMTS), Metria Innovation Inc., Milwaukee, WI, USA
 - 21 healthy volunteers were scanned over the course of two independent 75-minute long sessions 
 (14 males, 31.5±6.1 years old, and 7 females, 27.3±3.4 years old).
-
+- $T_1$, $T_2$, $PD$ and $T_2^*$-weighted images for each subject were acquired 
 <!-- ## 21 Subjects, 
 ### Sequence parameters
 
@@ -384,16 +496,16 @@ Prospective motion correction represents a significant advancement in fMRI techn
 | **Parallel imaging** | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | GRAPPA 2       | -->
 
 
----
+<!-- ---
 
-![bg height:650px](images/slice_3-crop.png)
+![bg height:650px](images/slice_3-crop.png) -->
 
 ---
 
 ![bg height:650px](images/sample_comparison_1.png)
 
 ---
-![bg right:60% height:675px](images/Figure_1_SIQA.png)
+![bg right fit](images/Figure_1_SIQA_simplified.jpg)
 ### Subjective Image Quality Assessment
 
 - **Expert Reviewers**:
@@ -421,17 +533,16 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 ---
 
-
-## Key Findings
+![bg right fit](images/pmc_paper.png)
 
 - **High-Resolution MRI**:
   + PMC significantly improves image quality in high-resolution scans.
-  + Majority of images with PMC ON showed high or very high quality.
+  <!-- + Majority of images with PMC ON showed high or very high quality. -->
   + Only three scenarios showed statistically significant improvement, but overall subjective and objective measures indicate better quality with PMC.
 
-- **Evaluation Metrics**:
+<!-- - **Evaluation Metrics**:
   + Five out of six groups showed higher image quality with PMC.
-  + One group showed inconsistent results between subjective and objective metrics.
+  + One group showed inconsistent results between subjective and objective metrics. -->
 
 - **Applicability of PMC**:
   + PMC is beneficial for high-resolution scans even in the absence of deliberate motion.
@@ -461,17 +572,17 @@ Prospective motion correction represents a significant advancement in fMRI techn
   + Effectiveness is more pronounced in compliant subjects.
   + Additional challenges in applying PMC to non-compliant patients without supplementary measures.
 
----
+<!-- ---
 
-![bg height:450px](images/pmc_paper.png)
+![bg height:450px](images/pmc_paper.png) -->
 
----
+<!-- --- -->
 <!-- # Retrospective Motion Artefacts Detection 
 # and Correction Using Deep Learning
 
 --- -->
 
-## Introduction to AI in Medical Imaging
+<!-- ## Introduction to AI in Medical Imaging
 
 - **Artificial Intelligence (AI)**: The simulation of human intelligence processes by machines, especially computer systems.
 - **Deep Learning**: A subset of AI that uses neural networks with many layers to analyze various factors of data.
@@ -479,11 +590,11 @@ Prospective motion correction represents a significant advancement in fMRI techn
 ### Role of AI in MRI
 
 - **Data Analysis**: AI algorithms can process and analyze large volumes of MRI data quickly and accurately.
-- **Pattern Recognition**: Deep learning models excel at identifying complex patterns in imaging data, including motion artefacts.
+- **Pattern Recognition**: Deep learning models excel at identifying complex patterns in imaging data, including motion artefacts. -->
 
 ---
 
-### Deep Learning Approaches
+<!-- ### Deep Learning Approaches
 
 - **Convolutional Neural Networks (CNNs)**: Commonly used for image processing tasks, including artifact detection.
 - **Generative Adversarial Networks (GANs)**: Can be employed to generate high-quality images from corrupted data.
@@ -496,22 +607,31 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - **Efficiency**: Reduces the need for repeat scans, saving time and resources.
 - **Automation**: Streamlines the workflow in clinical settings, allowing radiologists to focus on diagnosis.
 
----
+--- -->
+# Are we happy with the evaluation metrics used till now?
 
-## Image Quality Assessment Through SSIM Prediction
-### Importance of Image Quality
+- The evaluation metrics used for PMC@7T, specifically GE and AES, effectively demonstrate the benefits of the PMC system through comparisons of on vs. off conditions.
+  
+- However, in general MRI practice, there are no reference images available post-scan for quality assessment.
+
+- Existing no-reference image quality assessment (IQA) metrics are not always compliant with all acquisition types, highlighting the need for more robust evaluation methods.
+
+- To address this gap, it has been developed a novel approach utilizing **deep learning for SSIM prediction**, providing a more reliable assessment of image quality.
+
+<!-- ## Image Quality Assessment Through SSIM Prediction -->
+<!-- ### Importance of Image Quality
 - Motion artefacts can lower diagnostic accuracy.
-- May require repeat scans to avoid misdiagnosis.
+- May require repeat scans to avoid misdiagnosis. -->
 
-### Image Quality Assessment (IQA)
-- **IQA**: Quick, automated process to evaluate MR images.
-- Goal: Determine if images are diagnostically reliable and free of artefacts.
+<!-- ### Image Quality Assessment (IQA) -->
+<!-- - **IQA**: Quick, automated process to evaluate MR images.
+- Goal: Assess the image quality level 
 - Challenges:
   - Time-consuming and subjective evaluation.
   - Varying expertise among readers leads to inconsistent outcomes.
-  - Lack of reference images complicates assessment.
+  - Lack of reference images complicates assessment. -->
 
----
+<!-- ---
 ###  Advances in IQA
 - Reference-free IQA methods emerging, including machine learning approaches.
 - No gold standard IQA for MR images yet.
@@ -520,7 +640,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - Development of an automated IQA tool based on SSIM (Structural Similarity Index).
 - Tool identifies motion artefacts and measures distortion.
 - Applicable to various MR image contrasts (T1, T2, PD, FLAIR).
-- Incorporates contrast augmentation for broader weighting range.
+- Incorporates contrast augmentation for broader weighting range. -->
 
 ---
 ![bg right:60% height:710px](images/corruption.png)
@@ -529,7 +649,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
   1. In-house developed method.
   2. Implementation by Shaw et al. using TorchIO library.
 
-### ResNets Models:
+### ResNets Models (ready-to-use):
 - Two depths used: ResNet-18 and ResNet-101.
 
 
@@ -547,7 +667,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 4. **SSIM Calculation**: Determine SSIM between input and corrupted images.
 5. **Model Training**: Use corrupted image and SSIM for training.
 
----
+<!-- ---
 ## Datasets Used
 - **Training**: 200 volumes
 - **Validation**: 50 volumes
@@ -562,28 +682,28 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - Loss function: Mean Squared Error (MSE)
 - Optimizer: Adam
 - Epochs: 2000
-- Image size: 256x256
+- Image size: 256x256 -->
 ---
 
 ## Performance Assessment
 - Predicted SSIM vs. ground truth SSIM (10,000 images randomly selected).
 - Residuals calculated for model performance.
-- Prediction task converted to classification with 3, 5, and 10 classes.
+<!-- - Prediction task converted to classification with 3, 5, and 10 classes.
 
 ## Clinical Dataset Testing
 - Included images from five subjects with varying scans.
 - Subjective quality assessment by an expert using a classification scheme:
   - Class 1: Good quality (SSIM 0.85-1.00)
   - Class 2: Sufficient quality (SSIM 0.60-0.85)
-  - Class 3: Insufficient quality (SSIM 0.00-0.60)
+  - Class 3: Insufficient quality (SSIM 0.00-0.60) -->
 
 ## Comparison with MRIQC
 - MRIQC used as a baseline for comparison.
 - Limitations: Only works on properly transformed BIDS format images.
-- Metrics used: CNR, CJV, EFC, QI for structural images.
-- SIQA scores averaged and normalized for agreement analysis.
+<!-- - Metrics used: CNR, CJV, EFC, QI for structural images.
+- SIQA scores averaged and normalized for agreement analysis. -->
 
----
+<!-- ---
 
 - **CNR**: Contrast-to-noise Ratio, $\text{CNR} = \frac{C}{N}$, where:
   + $C$ = Contrast between the object and background.
@@ -593,7 +713,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 
 - **EFC**: Entropy Focus Criterion, $E =-\sum_{j=1}^{S}\frac{B_j}{B_{max}}ln\Big[\frac{B_j}{B_{max}}\Big]$, where $S$ is the number of image pixels and $B_j$ is the modulus of the complex value of the th image pixel, referred to here as the pixel “brightness”. If all the image energy were in one pixel, we would have the largest possible pixel brightness, $B_{max}$ , given by $B_{max}=\sqrt{\sum_{j=1}^{S}B_{j}^2}$
 
-- **QI**: Quality Index, Mortamet B, Bernstein MA, Jack CR Jr, et al. Automatic quality assessment in structural brain magnetic resonance imaging. Magn Reson Med. 2009;62(2):365-372. doi:10.1002/mrm.21992
+- **QI**: Quality Index, Mortamet B, Bernstein MA, Jack CR Jr, et al. Automatic quality assessment in structural brain magnetic resonance imaging. Magn Reson Med. 2009;62(2):365-372. doi:10.1002/mrm.21992 -->
 
 ---
 
@@ -608,7 +728,7 @@ Prospective motion correction represents a significant advancement in fMRI techn
 - **Figure 41**: Residual distribution analysis.
 - **Figure 42**: Confusion matrices for classification tasks.
 - **Table 10**: Precision, recall, F1-score, and accuracy. -->
----
+<!-- ---
 
 ![bg right:70% height:650px](images/classification-all.png)
 
@@ -621,60 +741,87 @@ ResNet-18 with contrast augmentation
     - 89% (10 classes)
 - **Impact of Contrast Augmentation**:
   - Reduced standard deviation
-  - Improved mean SSIM predictions
+  - Improved mean SSIM predictions -->
 
----
-![bg height:600px](images/FigureSSIM-SIQA.png)
+<!-- ---
+![bg height:600px](images/FigureSSIM-SIQA.png) -->
 
----
-![bg right:70% height:690px](images/MRIQC_results.png)
+<!-- ---
+![bg right:70% height:690px](images/MRIQC_results.png) -->
 
 <!-- ### Clinical Data Evaluation
 - **Agreement**: 76.6 ± 0.8%
   - ResNet-101: 
     - 75.5% (without contrast)
     - 77.7% (with contrast) -->
-
+<!-- 
 ### MRIQC Comparison
 - **Processed Scans**: 12 of 36 due to non-compliance
 - **Agreement Rates**:
   - CNR: 17%
   - CJV: 17%
   - EFC: 33%
-  - QI: 75%
+  - QI: 75% -->
 
 ---
 
 ## Discussion
 - Contrast augmentation improved performance.
-- Accuracy decreased with more classes.
-- Confusion matrices showed higher misclassification rates with more classes.
+<!-- - Accuracy decreased with more classes. -->
+<!-- - Confusion matrices showed higher misclassification rates with more classes. -->
 
 ## This work is under review:
 IEEE Access, "Automated SSIM Regression for Detection and Quantification of Motion Artefacts in Brain MR Images"
 
 ---
 
+## Is PMC Easily Usable in a Clinical Setting?
 
+- **Yes**, but there are several impractical limitations:
+  - Requires an optical tracking system
+  - Needs custom mouthpieces for each subject
+  - Limited field of view of the camera
+  - ...
 
-# Retrospective Motion Correction of MR Images using Prior-Assisted Deep Learning
+---
 
-## Data Preparation
-- **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
-- **Motion Corruption**: 
-  - Modified TorchIO’s RandomMotion transformation.
-  - Simulated movements: rotation from -1.75 to +1.75 degrees (no translation).
+## A Solution to Overcome These Limitations
 
-## Image Priors
-- **Similar Slices**: 
+- The RMC (Retrospective Motion Correction) approach utilizes deep learning to address the challenges of PMC.
+  
+- Trained and Tested deep learning models that can correct motion artefacts in MRI images retrospectively:
+  + **Retrospective Motion Correction of MR Images using Prior-Assisted Deep Learning**
+  + **Generalised Retrospective Motion Correction (RMC) using Deep Learning and Contrast Augmentation**
+<!-- ## Data Preparation -->
+<!-- - **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
+- **Artificial Motion Corruption** as done before  -->
+  <!-- - Modified TorchIO’s RandomMotion transformation.
+  - Simulated movements: rotation from -1.75 to +1.75 degrees (no translation). -->
+
+<!-- ## Image Priors -->
+<!-- - **Similar Slices**: 
   - 10 similar slices (same position, same contrast) from different subjects.
   - Used for motion correction of T2-weighted images.
   
-- **Different Contrasts**: 
-  - Utilized T1 and PD images from the same subject as priors for motion-corrupted T2 images.
+<!-- - **Different Contrasts**:  -->
+  <!-- - Utilized T1 and PD images from the same subject as priors for motion-corrupted T2 images. --> 
 ---
-![bg right:50% vertical width:600px](images/mocoprior_U.PNG)
-![bg right:50% width:600px](images/mocoprior_res.PNG)
+<!-- ![bg right:50% vertical width:600px](images/mocoprior_U.PNG)
+![bg right:50% width:600px](images/mocoprior_res.PNG) -->
+
+## Retrospective Motion Correction of MR Images using Prior-Assisted Deep Learning
+
+
+ - **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
+- **Artificial Motion Corruption** as done before
+  <!-- - Modified TorchIO’s RandomMotion transformation.
+  - Simulated movements: rotation from -1.75 to +1.75 degrees (no translation). -->
+
+- Image Priors (**Similar Slices**): 
+  - 10 similar slices (same position, same contrast) from different subjects.
+  - Used for motion correction of T2-weighted images.
+- **Different Contrasts**:
+  - Utilized T1 and PD images from the same subject as priors for motion-corrupted T2 images.
 ## Network Architectures
 - **Baselines**: Modified ReconResNet and U-Net.
 - **Prior Supply Techniques**:
@@ -715,7 +862,7 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 
 ## Introduction
 - Previous methods required image priors, limiting generalisability.
-- This research introduces a deep learning method for RMC in MRI using:
+- This extension introduces a deep learning method for RMC in MRI using:
   - ReconResNet model.
   - Novel contrast augmentation and artificial motion corruption techniques.
 
@@ -746,8 +893,8 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
   - Perceptual loss function using a pretrained ResNeXt 101 model.
 - Optimized using Adam with a learning rate of 3x10⁻⁴ for 2000 epochs.
 
----
-![bg fit](images/testMC_v01-2.png)
+<!-- ---
+![bg fit](images/testMC_v01-2.png) -->
 
 ---
 ![bg right:50% height:650px](images/resnet56_vol110_146_34_6.png)
