@@ -436,7 +436,8 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 - Notable improvements in image quality and robustness.
 
 ---
-## Something extra, application on clinical data!
+## Some test on clinical data!
+![](images/DL-RMC-clinical.jpg)
 
 ---
 
