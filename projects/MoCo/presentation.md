@@ -322,14 +322,24 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 ![bg right:50% width:600px](images/mocoprior_res.PNG) -->
 
 ## Study: Retrospective Motion Correction of MR Images using Prior-Assisted Deep Learning
+- Collection of 100 motion artefact-free MR scans from IXI public dataset
+- Artificial corruption of MR images
+- Image Priors (**Similar Slices**): 
+  + 10 similar slices (same position, same contrast) from different subjects.
+  + Used for motion correction of T2-weighted images.
+-  Network Architectures
+    + **Baselines**: Modified ReconResNet* and U-Net.
+    + **Prior Supply Techniques**:
+      - **Multi-Channel Network**: Concatenated motion-corrupted image with priors.
+      - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors.
 
-
- - **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
+*S. Chatterjee et al. A deep learning approach for reconstruction of undersampled cartesian and radial data. In ESMRMB 2019, Oct. 2019.
+ <!-- - **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
 - **Artificial Motion Corruption** as done before
   <!-- - Modified TorchIO’s RandomMotion transformation.
   - Simulated movements: rotation from -1.75 to +1.75 degrees (no translation). -->
 
-- Image Priors (**Similar Slices**): 
+<!-- - Image Priors (**Similar Slices**): 
   - 10 similar slices (same position, same contrast) from different subjects.
   - Used for motion correction of T2-weighted images.
 - **Different Contrasts**:
@@ -338,18 +348,18 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 - **Baselines**: Modified ReconResNet and U-Net.
 - **Prior Supply Techniques**:
   - **Multi-Channel Network**: Concatenated motion-corrupted image with priors.
-  - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors.
+  - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors. --> -->
 
 ---
-![bg right:50% height:690px](images/mocoprior_combine.png)
-## Results and Discussions
-- **Effectiveness**: 
+<!-- ![bg right:50% height:690px](images/mocoprior_combine.png) -->
+## Some results
+![height:550px](images/DL-MoCo-priors.jpeg)
+<!-- ## Results
+
   - Similar slices did not improve motion correction.
   - Different contrasts significantly enhanced motion correction.
-  
-- **Performance**: 
   - Multi-channel and dual-branch approaches outperformed ReconResNet.
-  - Only multi-channel strategy significantly improved U-Net.
+  - Only multi-channel strategy significantly improved U-Net. -->
 
 
 ---
@@ -359,9 +369,9 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
   - Multi-channel and dual-branch approaches showed improvements, especially for ReconResNet.
 
 
-- **Future Work**: 
+<!-- - **Future Work**: 
   - Explore dual-branch approach and impact of skip connections.
-  - Expand dataset and introduce different motion corruption types for robustness.
+  - Expand dataset and introduce different motion corruption types for robustness. -->
 
 ### 34th Conference on Neural Information Processing Systems (NeurIPS 2020), Vancouver, Canada
 
@@ -371,11 +381,19 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 
 <!-- Chatterjee, Soumick, et al. "Reconresnet: Regularised residual learning for mr image reconstruction of undersampled cartesian and radial data." Computers in biology and medicine 143 (2022): 105321. -->
 ## Study: Generalised Retrospective Motion Correction (RMC) using Deep Learning and Contrast Augmentation
+- Collection of 600 motion artefact-free MR scans from IXI public dataset, in-house scans @3.0 and 7.0T
+- **Data Augmentation** (brightness/contrast adjustment)
+- Artificial corruption of MR images
+- **No image priors required**
+- Training of a modified ReconResNet model*
+  + 64 feature maps, 56 residual blocks, and PReLU activation.
+  + Perceptual loss function using a pretrained ResNeXt 101 model.
 
-- Previous methods required image priors, limiting generalisability.
-- This extension introduces a deep learning method for RMC in MRI using:
+*Chatterjee, Soumick, et al. "Reconresnet: Regularised residual learning for mr image reconstruction of undersampled cartesian and radial data." Computers in biology and medicine 143 (2022): 105321.
+<!-- - This extension introduces a deep learning method for RMC in MRI using:
   - ReconResNet model.
   - Novel contrast augmentation and artificial motion corruption techniques.
+-  -->
 
 <!-- ---
 ## Methods
@@ -391,25 +409,24 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 - Padding and resizing to 256x256.
 - Contrast augmentation (as for the SSIM prediction). -->
 
----
 
 <!-- ### Motion Corruption (as for the SSIM prediction)
 - Two artificial motion corruption techniques:
   1. **TorchIO Functions**: Random ghosting and motion.
   2. **In-House Method**: Simulates real-world motion corruption using random parameters. -->
 
-### Model and Training
+<!-- ### Model and Training
 - Deeper version of ReconResNet with:
   - 64 feature maps, 56 residual blocks, and PReLU activation.
   - Perceptual loss function using a pretrained ResNeXt 101 model.
-- Optimized using Adam with a learning rate of 3x10⁻⁴ for 2000 epochs.
+- Optimized using Adam with a learning rate of 3x10⁻⁴ for 2000 epochs. -->
 
 <!-- ---
 ![bg fit](images/testMC_v01-2.png) -->
 
 ---
-![bg right:50% height:650px](images/resnet56_vol110_146_34_6.png)
-## Results and Discussion
+![bg right:50% height:650px](images/reconresnet_results.jpg)
+## Results
 - Average SSIM improvement from 0.688 to 0.886.
 - Consistent performance across different experimental runs.
 - Qualitative results show significant enhancement in image quality.
@@ -417,7 +434,9 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 ## Conclusion
 - Proposed method demonstrates broad generalisation across various MRI contrasts and artefacts.
 - Notable improvements in image quality and robustness.
-- Future work may explore combining prospective and retrospective motion correction techniques.
+
+---
+## Something extra, application on clinical data!
 
 ---
 
