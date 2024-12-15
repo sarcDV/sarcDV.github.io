@@ -112,19 +112,7 @@ style: |
 - Uses strong magnetic fields and radio waves
 - Produces detailed images of organs and tissues
 
----
 
-###  Motion comes in "many forms" ...
-- Motion artefacts in MRI are distortions or errors in the images caused by patient movement during the scanning process.
-- These artefacts can be caused by:
-  + Patient Movement
-  + Physiological Motion
-
-- Types of Motion Artefacts:
-  + Ghosting Artefacts
-  + Blurring Artefacts
-
-![bg right](images/example-motion-artifacts.png)
 
 ---
 ![bg vertical left fit](images/MRacquisition.gif)
@@ -150,14 +138,29 @@ Bottom image: left magnitude k-space, center phase k-space, right reconstructed 
 From left: Reconstructed Image, Magnitude (k-space) and Phase (k-space)
 
 ---
+
+###  Motion comes in "many forms" ...
+- Motion artefacts in MRI are distortions or errors in the images caused by patient movement during the scanning process.
+- These artefacts can be caused by:
+  + Patient Movement
+  + Physiological Motion
+
+- Types of Motion Artefacts:
+  + Ghosting Artefacts
+  + Blurring Artefacts
+
+![bg right](images/example-motion-artifacts.png)
+
+---
 # Possible solutions: (1) Prospective Motion Correction (PMC)
 - **Real-Time Monitoring**: Uses motion tracking to detect head movements during scans.
 
 - **Dynamic Adjustments**: Adjusts imaging parameters in real-time to correct detected motion.
 
-- **Affine Transformations**: Aligns images with real-time adjustments for consistency.
+<!-- - **Affine Transformations**: Aligns images with real-time adjustments for consistency. -->
 
-- **Integration with Sequences**: Can be used with various imaging sequences; effectiveness varies by sequence and motion type.
+- **Integration with Sequences**: Can be used with various imaging sequences.
+<!-- effectiveness varies by sequence and motion type. -->
 
 **[1]** Maclaren et al. Magn Reson Med. 2013 Mar 1;69(3):621-36. doi: 10.1002/mrm.24314. Epub 2012 May 8. PMID: 22570274.
 
@@ -223,7 +226,7 @@ population of subjects inexperienced with MRI -->
   
 - **Blinded Comparison**:
   + Raters performed side-by-side comparisons of images with and without PMC.
-  + Image presentations were randomized to avoid bias.
+  + Image presentations were randomised to avoid bias.
 
 - **Scoring System**:
   + Image quality rated from 1 (worst) to 10 (best) based on motion artefacts.
@@ -238,8 +241,9 @@ population of subjects inexperienced with MRI -->
 ## Objective Image Quality Assessment
 
 ### Evaluation Metrics
-- **Average Edge Strength (AES)**: Measures the average strength of edges in an image, indicating the clarity and sharpness of structural details.
+- **Average Edge Strength (AES)**: Measures the average strength of edges in an image, indicating the clarity and sharpness of structural details. (higher AES -> higher image quality)
 - **Gradient Entropy (GE)**: Evaluates the randomness and complexity of the gradient distribution, reflecting the overall texture and contrast of the image.
+(lower GE -> higher image quality)
 
 ---
 
@@ -263,9 +267,11 @@ population of subjects inexperienced with MRI -->
 # Image Quality Assessment (IQA)
 - Limits for **Subjective IQA**: Variability Among Observers, Bias, Limited Reproducibility, Time-Consuming, Lack of Objectivity, ... 
 <!-- Influence of Context, Inability to Capture All Aspects, Training and Expertise Required. -->
-- Current no-reference IQA metrics do not consistently apply to all MR acquisition types, indicating a need for more robust evaluation methods.
+- Current no-reference IQA metrics are not always robust and reliable for MR images
+<!-- do not consistently apply to all MR acquisition types -->
+<!-- , indicating a need for more robust evaluation methods. -->
 
-**To address this gap, a novel approach has been developed that leverages deep learning for SSIM prediction, providing a more reliable and accurate assessment of image quality.**
+<!-- **To address this gap, a novel approach has been developed that leverages deep learning for SSIM prediction, providing a more reliable and accurate assessment of image quality.** -->
 
 ---
 # Study: SSIM Prediction for Detection and Quantification of Motion Artefacts in Brain MR Images
@@ -273,7 +279,7 @@ population of subjects inexperienced with MRI -->
 ![bg right:40% fit](images/AI_model_SSIM.jpg)
 [Structural Similarity Index Measures: **SSIM**]
 - Collection of motion artefact-free MR scans (from 1.5 to 7.0T)
-- **Data Augmentation** (brightness/contrast adjustment)
+- With/Without **Data Augmentation** (brightness/contrast adjustment)
 - Artificial corruption of MR images
 - SSIM calculation between corrupted and motion-free images
 - Training ResNet models (ResNet-18 and ResNet-101) to predict SSIM using only corrupted images as input and the calculated SSIM value
@@ -291,6 +297,7 @@ population of subjects inexperienced with MRI -->
 
 ### This work is under review:
 IEEE Access, "Automated SSIM Regression for Detection and Quantification of Motion Artefacts in Brain MR Images"
+Preprint: arXiv:2206.06725
 
 ---
 ## What does it happen when the extra hardware required by PMC is not available? 
@@ -330,12 +337,14 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
   + using T1 and PD-weighted images from the same subject.
   + motion correction only for T2-weighted images.
 -  Network Architectures
-    + **Baselines**: ReconResNet* and U-Net.
+    + **Baselines**: ReconResNet* and U-Net**.
     + **Prior Supply Techniques**:
       - **Multi-Channel Network**: Concatenated motion-corrupted image with priors.
       - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors.
 
-*S. Chatterjee et al. A deep learning approach for reconstruction of undersampled cartesian and radial data. In ESMRMB 2019, Oct. 2019.
+*Chatterjee, Soumick, et al. "Reconresnet: Regularised residual learning for mr image reconstruction of undersampled cartesian and radial data." Computers in biology and medicine 143 (2022): 105321. 
+**Ronneberger, Olaf, et al. "U-net: Convolutional networks for biomedical image segmentation." MICCAI 2015
+<!-- *S. Chatterjee et al. A deep learning approach for reconstruction of undersampled cartesian and radial data. In ESMRMB 2019, Oct. 2019. -->
  <!-- - **Dataset**: 100 participants’ T1, T2, and PD images from IXI Dataset.
 - **Artificial Motion Corruption** as done before
   <!-- - Modified TorchIO’s RandomMotion transformation.
@@ -354,6 +363,9 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 
 <!-- ---
 ![bg fit](images/mocoprior_U.PNG) -->
+---
+![bg fit vertical](images/mcUNet.PNG)
+![bg fit](images/dbUNet.PNG)
 
 ---
 <!-- ![bg right:50% height:690px](images/mocoprior_combine.png) -->
@@ -378,7 +390,7 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
   - Explore dual-branch approach and impact of skip connections.
   - Expand dataset and introduce different motion corruption types for robustness. -->
 
-### 34th Conference on Neural Information Processing Systems (NeurIPS 2020), Vancouver, Canada
+### Medical Imaging Workshop of 34th Conference on Neural Information Processing Systems (NeurIPS 2020), Vancouver, Canada
 
 ![bg right:50% height:720px](images/RetroMoCoDL.png)
 
@@ -433,7 +445,7 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 ---
 ![bg right:50% height:650px](images/reconresnet_results.jpg)
 ## Results
-- Average SSIM improvement from 0.688 to 0.886.
+- Average SSIM improvement from 0.7 to 0.9.
 - Consistent performance across different experimental runs.
 - Qualitative results show significant enhancement in image quality.
 
@@ -441,12 +453,31 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 - Proposed method demonstrates broad generalisation across various MRI contrasts and artefacts.
 - Notable improvements in image quality and robustness.
 
+Manuscript under preparation
+
 ---
 ## Some test on clinical data!
 ![](images/DL-RMC-clinical.jpg)
 
 ---
+# Conclusions 
+- **Demonstrated the effectiveness of PMC** 
+- **Presented a novel method for motion artefacts evaluation**
+- **Novel Deep Learning methods for RMC**
+  + Using image priors
+  + Using generalised correction models
 
+# Future work
+- **Amalgamation of PMC and RMC with DL**
+  + Motion model approach
+  + PMC, then DL-based RMC
+  <!-- + Motion model approach
+  + PACE with SVR
+  + PMC with IRS
+  + PMC, then DL-based RMC -->
+
+
+---
 # A big thank you to:
 
 <div class="two-columns">

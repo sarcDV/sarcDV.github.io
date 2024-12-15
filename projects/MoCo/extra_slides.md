@@ -156,6 +156,40 @@ style: |
 # - conclusion
 # - Future Work -->
 ---
+![bg fit](images/mocoprior_combine.png)
+
+---
+![bg fit](images/mocoprior_U.PNG)
+
+---
+![bg fit](images/mocoprior_res.PNG)
+
+---
+![bg fit](images/mocoprior_violin.png)
+
+---
+![bg fit](images/SSIM-RN18-101-gt-vs-pred.png)
+
+---
+![bg fit](images/regression-residuals.png)
+
+---
+![bg fit](images/testMC_v01-2.png)
+
+---
+![bg fit](images/mcReconResNet.PNG)
+
+---
+![bg fit](images/dbReconResNet.PNG)
+
+
+---
+![bg fit](images/mcUNet.PNG)
+
+---
+![bg fit](images/dbUNet.PNG)
+
+---
 
 ## Magnetic Resonance Imaging: 
 ### How does it work?
