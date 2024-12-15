@@ -56,7 +56,7 @@ style: |
 
 ---
 ![bg left:17% height:750px](images/3DMPRAGE-sag-ax-corv.png)
-## Prospective and Deep Learning Based Retrospective Motion Correction for Magnetic Resonance Imaging
+# Prospective and Deep Learning Based Retrospective Motion Correction for Magnetic Resonance Imaging
 
 <div class="left-align">
     M.Sc. Alessandro Sciarra<br>
@@ -142,7 +142,7 @@ Bottom image: left magnitude k-space, center phase k-space, right reconstructed 
 ---
 
 # K-space and Motion Artefacts
-1. Movement of the object during imaging causes inconsistencies in phase and amplitude.  
+1. Movement of the subject during imaging causes inconsistencies in phase and amplitude.  
 2. These inconsistencies lead to blurring and ghosting in the images.  
 3. The nature of the motion artefact depends on the timing of the motion relative to the acquisition.  
 
@@ -150,7 +150,7 @@ Bottom image: left magnitude k-space, center phase k-space, right reconstructed 
 From left: Reconstructed Image, Magnitude (k-space) and Phase (k-space)
 
 ---
-# Possible solutions (1): Prospective Motion Correction (PMC)
+# Possible solutions: (1) Prospective Motion Correction (PMC)
 - **Real-Time Monitoring**: Uses motion tracking to detect head movements during scans.
 
 - **Dynamic Adjustments**: Adjusts imaging parameters in real-time to correct detected motion.
@@ -164,13 +164,13 @@ From left: Reconstructed Image, Magnitude (k-space) and Phase (k-space)
 ![bg right:40% height:700px](images/howPMCworks.png)
 
 ---
-# Possible solutions (2): Retrospective Motion Correction (RMC)
+# Possible solutions: (2) Retrospective Motion Correction (RMC)
 
 ### How RMC Works:
-1. **Data Acquisition**: MRI data is collected during patient movement.
-2. **Motion Detection**: The system identifies motion artefacts in the data.
-3. **Image Reconstruction**: The algorithm adjusts the data to compensate for motion.
-4. **Final Image**: Corrected images are reconstructed for clearer anatomical representation.
+1. **Data Acquisition**
+2. **Motion Detection**: post-processing algorithms identify motion in the data.
+3. **Image Reconstruction**: the algorithm adjusts the data to compensate for motion.
+4. **Final Image**: corrected images are reconstructed for clearer anatomical representation.
 
 ![](images/RMC.jpg)
 
@@ -179,7 +179,7 @@ From left: Reconstructed Image, Magnitude (k-space) and Phase (k-space)
 ## Goal of this thesis
 ### Investigate and address the challenge of motion correction in MRI on both ends of the motion correction spectrum:
 
-- **Quantitative evaluation of PMC in structural imaging** for  small involuntary motion in ultra-high resolution imaging
+- **Quantitative evaluation of PMC** for  small involuntary motion in ultra-high resolution imaging
 
 - **Deep Learning-Based Retrospective Motion Correction (RMC)** for gross motion in clinical (1.5-3.0 Tesla) imaging
 ![bg left fit](images/from_clinical_to_research.jpg)
@@ -269,9 +269,10 @@ population of subjects inexperienced with MRI -->
 
 ---
 # Study: SSIM Prediction for Detection and Quantification of Motion Artefacts in Brain MR Images
-![bg right:40% height:650px](images/Pipeline001test.png)
-
-- Collection of motion artifact-free MR scans (from 1.5 to 7.0T)
+<!-- ![bg right:40% height:650px](images/Pipeline001test.png) -->
+![bg right:40% fit](images/AI_model_SSIM.jpg)
+[Structural Similarity Index Measures: **SSIM**]
+- Collection of motion artefact-free MR scans (from 1.5 to 7.0T)
 - **Data Augmentation** (brightness/contrast adjustment)
 - Artificial corruption of MR images
 - SSIM calculation between corrupted and motion-free images
@@ -320,15 +321,16 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 ---
 <!-- ![bg right:50% vertical width:600px](images/mocoprior_U.PNG)
 ![bg right:50% width:600px](images/mocoprior_res.PNG) -->
-
+![bg right:30% fit](images/AI_model_Priors.jpg)
 ## Study: Retrospective Motion Correction of MR Images using Prior-Assisted Deep Learning
 - Collection of 100 motion artefact-free MR scans from IXI public dataset
 - Artificial corruption of MR images
 - Image Priors (**Similar Slices**): 
   + 10 similar slices (same position, same contrast) from different subjects.
-  + Used for motion correction of T2-weighted images.
+  + using T1 and PD-weighted images from the same subject.
+  + motion correction only for T2-weighted images.
 -  Network Architectures
-    + **Baselines**: Modified ReconResNet* and U-Net.
+    + **Baselines**: ReconResNet* and U-Net.
     + **Prior Supply Techniques**:
       - **Multi-Channel Network**: Concatenated motion-corrupted image with priors.
       - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors.
@@ -350,9 +352,12 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
   - **Multi-Channel Network**: Concatenated motion-corrupted image with priors.
   - **Dual-Branch Network**: Main branch for corrupted image, auxiliary branch for priors. --> -->
 
+<!-- ---
+![bg fit](images/mocoprior_U.PNG) -->
+
 ---
 <!-- ![bg right:50% height:690px](images/mocoprior_combine.png) -->
-## Some results
+## Some result
 ![height:550px](images/DL-MoCo-priors.jpeg)
 <!-- ## Results
 
@@ -380,14 +385,15 @@ IEEE Access, "Automated SSIM Regression for Detection and Quantification of Moti
 ---
 
 <!-- Chatterjee, Soumick, et al. "Reconresnet: Regularised residual learning for mr image reconstruction of undersampled cartesian and radial data." Computers in biology and medicine 143 (2022): 105321. -->
+![bg right:50% width:600px](images/AI_model_RMC.jpg)
 ## Study: Generalised Retrospective Motion Correction (RMC) using Deep Learning and Contrast Augmentation
 - Collection of 600 motion artefact-free MR scans from IXI public dataset, in-house scans @3.0 and 7.0T
 - **Data Augmentation** (brightness/contrast adjustment)
 - Artificial corruption of MR images
 - **No image priors required**
-- Training of a modified ReconResNet model*
-  + 64 feature maps, 56 residual blocks, and PReLU activation.
-  + Perceptual loss function using a pretrained ResNeXt 101 model.
+- Training of ReconResNet model*
+  <!-- + 64 feature maps, 56 residual blocks, and PReLU activation.
+  + Perceptual loss function using a pretrained ResNeXt 101 model. -->
 
 *Chatterjee, Soumick, et al. "Reconresnet: Regularised residual learning for mr image reconstruction of undersampled cartesian and radial data." Computers in biology and medicine 143 (2022): 105321.
 <!-- - This extension introduces a deep learning method for RMC in MRI using:
