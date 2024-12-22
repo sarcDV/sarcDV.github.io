@@ -89,7 +89,7 @@ style: |
     <img src="images/bmmr_logo_RGB_125.png" height="80px" />
     <img src="images/himr-logo.png" height="80px" />
     <img src="images/marie_curie.jpg" height="80px" />
-    <img src="images/FP7_people.jpg" height="80px" />
+    <img src="images/FP7_People.jpg" height="80px" />
     <img src="images/eu-flag.png" height="80px" />
     <img src="images/MedDigit.png" height="80px" />
 </div>
@@ -517,7 +517,7 @@ Manuscript under preparation
   </div>
 </div>
 
----
+<!-- ---
 
 # An extraordinary thank you to:
 
@@ -531,4 +531,4 @@ Manuscript under preparation
   </div>
   <div class="column">
   </div>
-</div>
+</div> -->
