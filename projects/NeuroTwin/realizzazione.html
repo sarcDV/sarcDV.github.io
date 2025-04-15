@@ -9,6 +9,7 @@
   <link href="styles.css" rel="stylesheet">
 </head>
 <body>
+  <div id="page-background"></div>
   <!-- Header -->
   <header class="p-4 gradient-bg text-white">
     <div class="container mx-auto flex justify-between items-center">
@@ -95,5 +96,21 @@
       </div>
     </div>
   </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.topology.min.js"></script>
+<script>
+  VANTA.TOPOLOGY({
+    el: "#page-background", // Selettore del contenitore del background
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.00,
+    scaleMobile: 1.00,
+    color: 0x6c63ff, // Colore personalizzato (opzionale)
+    backgroundColor: 0x000000 // Colore di sfondo (nero)
+  });
+</script>
 </body>
 </html>
