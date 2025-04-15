@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroTwin - Rivoluzione della Salute Neurologica</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="p-4 gradient-bg text-white">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-bold">NeuroTwin</h1>
+      <!-- <div>
+        <button id="helpButton" class="px-4 py-2 bg-white text-purple-600 rounded-full hover:bg-purple-100 transition-all">
+          <i class="fas fa-question-circle mr-1"></i> Aiuto
+        </button>
+      </div> -->
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-white-800 mb-3">Gestione Intelligente delle Patologie Neurologiche</h2>
+      <p class="text-lg text-white-600 max-w-3xl mx-auto">Scopri come NeuroTwin utilizza tecnologie avanzate di intelligenza artificiale per prevedere, monitorare e curare le patologie neurologiche.</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <!-- <div class="flex justify-center mb-8">
+      <div class="flex items-center">
+        <div id="step1" class="w-10 h-10 rounded-full flex items-center justify-center bg-purple-600 text-white">1</div>
+        <div class="h-1 w-16 bg-purple-200">
+          <div id="step1to2" class="h-1 bg-purple-600" style="width: 0%"></div>
+        </div>
+        <div id="step2" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-600">2</div>
+        <div class="h-1 w-16 bg-purple-200">
+          <div id="step2to3" class="h-1 bg-purple-600" style="width: 0%"></div>
+        </div>
+        <div id="step3" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-600">3</div>
+      </div>
+    </div> -->
+
+    <!-- Step Labels -->
+    <!-- <div class="flex justify-center text-sm text-gray-600 mb-10 px-4">
+      <div class="w-12 text-center mr-10">Integrazione</div>
+      <div class="w-12 text-center mr-10">Analisi</div>
+      <div class="w-12 text-center">Monitoraggio</div>
+    </div> -->
+
+    <!-- Section 1: Integrazione dei Dati -->
+    <section id="integrationSection" class="mb-8">
+      <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+        <h3 class="text-2xl font-bold text-white mb-4">Integrazione dei Dati Clinici</h3>
+        <p class="text-white-400 mb-6">NeuroTwin integra dati provenienti da diverse fonti, tra cui MRI, EEG, CT e dati clinici del paziente, per creare un gemello digitale completo del cervello.</p>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-gray-700 p-4 rounded-lg">
+            <img src="images/2D-gre-sample.png" alt="MRI" class="w-full rounded-md mb-2">
+            <p class="text-gray-300 text-center">MRI</p>
+          </div>
+          <div class="bg-gray-700 p-4 rounded-lg">
+            <img src="images/EEG.jpeg" alt="EEG" class="w-full rounded-md mb-2">
+            <p class="text-gray-300 text-center">EEG</p>
+          </div>
+          <div class="bg-gray-700 p-4 rounded-lg">
+            <img src="images/gettyimages-458176948-640x640.jpg" alt="CT" class="w-full rounded-md mb-2">
+            <p class="text-gray-300 text-center">CT</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Analisi e Monitoraggio -->
+    <section id="analysisSection" class="mb-8">
+      <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+        <h3 class="text-2xl font-bold text-white mb-4">Analisi e Monitoraggio Continuo</h3>
+        <p class="text-white-600 mb-6">Utilizziamo algoritmi di machine e deep learning per analizzare i dati e prevedere lo sviluppo di patologie neurologiche.</p>
+        <!-- <div class="flex justify-center">
+          <button id="startAnalysisButton" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full hover:from-purple-600 hover:to-pink-600 transition-all pulse-animation">
+            <i class="fas fa-chart-line mr-2"></i> Avvia Analisi
+          </button>
+        </div> -->
+      </div>
+    </section>
+
+    <!-- Section: Supporto ai Professionisti -->
+    <section id="professionalSupportSection" class="mb-8">
+      <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+        <h3 class="text-2xl font-bold text-white mb-4">Supporto ai Professionisti</h3>
+        <p class="text-white-600 mb-6">
+          NeuroTwin offre una piattaforma veloce e intuitiva che permette ai professionisti sanitari di visualizzare i dati clinici del paziente in tempo reale, monitorare i progressi terapeutici e ottimizzare i processi decisionali. 
+        </p>
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Blocco 1: Dashboard Intuitiva -->
+          <div class="bg-gray-700 p-4 rounded-lg">
+            <img src="images/dashboard.png" alt="Dashboard" class="w-full rounded-md mb-2">
+            <p class="text-white-700 text-center">Dashboard Intuitiva</p>
+          </div>
+          <!-- Blocco 2: Monitoraggio Terapeutico -->
+          <div class="bg-gray-500 p-4 rounded-lg">
+            <img src="images/monitoraggio_2.png" alt="Monitoraggio" class="w-full rounded-md mb-2">
+            <p class="text-white-700 text-center">Monitoraggio Terapeutico</p>
+          </div>
+          <!-- Blocco 3: Report Clinici -->
+          <div class="bg-gray-300 p-4 rounded-lg">
+            <img src="images/report.png" alt="Report" class="w-full rounded-md mb-2">
+            <p class="text-gray-700 text-center">Report Clinici Dettagliati</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Risultati -->
+    <section id="resultsSection" class="hidden">
+      <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Risultati dell'Analisi</h3>
+        <p class="text-gray-600 mb-6">Ecco un rapporto dettagliato sui risultati dell'analisi:</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-purple-50 p-4 rounded-lg">
+            <h5 class="font-medium text-purple-800 mb-2">Previsione delle Patologie</h5>
+            <p class="text-gray-600">La probabilità di sviluppare Alzheimer è del 15% nei prossimi 5 anni.</p>
+          </div>
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <h5 class="font-medium text-blue-800 mb-2">Monitoraggio Continuo</h5>
+            <p class="text-gray-600">Il sistema monitora i tuoi dati in tempo reale e ti avvisa in caso di anomalie.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold text-accent mb-4">NeuroTwin</h3>
+          <p class="text-gray-400">Un Digital Twin innovativo per la gestione delle patologie neurologiche.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Link Utili</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="text-gray-400 hover:text-accent transition-colors">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-accent transition-colors">Come Funziona</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-accent transition-colors">Potenzialità</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-accent transition-colors">Realizzazione</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Informazioni</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">Termini di Servizio</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Seguici</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+        <p class="text-gray-400">&copy; 2025 NeuroTwin. Tutti i diritti riservati.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    document.getElementById('startAnalysisButton').addEventListener('click', () => {
+      document.getElementById('integrationSection').classList.add('hidden');
+      document.getElementById('analysisSection').classList.add('hidden');
+      document.getElementById('resultsSection').classList.remove('hidden');
+      // Aggiorna gli indicatori di progresso
+      document.getElementById('step1').classList.remove('bg-purple-600', 'text-white');
+      document.getElementById('step1').classList.add('bg-green-600', 'text-white');
+      document.getElementById('step1to2').style.width = '100%';
+      document.getElementById('step2').classList.remove('bg-gray-300', 'text-gray-600');
+      document.getElementById('step2').classList.add('bg-purple-600', 'text-white');
+      document.getElementById('step2to3').style.width = '100%';
+      document.getElementById('step3').classList.remove('bg-gray-300', 'text-gray-600');
+      document.getElementById('step3').classList.add('bg-purple-600', 'text-white');
+    });
+  </script>
+
+</body>
+</html>
