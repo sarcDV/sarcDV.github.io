@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #121212; /* Sfondo scuro per il tema dark mode */
+      color: #ffffff; /* Testo chiaro */
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #1796f0 0%, #069e528f 100%);
+    }
+    .card {
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1); /* Box shadow leggermente visibile su sfondo scuro */
+    }
+    /* Stili per il contenitore delle particelle */
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Posiziona le particelle sotto il contenuto principale */
+    }

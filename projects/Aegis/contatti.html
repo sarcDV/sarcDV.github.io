@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contatti - Aegis</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+     <!-- Contenitore delle Particelle -->
+  <div id="particles-js"></div>
+  <!-- Header -->
+  <header class="p-4 gradient-bg text-white">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-bold">Aegis</h1>
+      <nav>
+        <ul class="flex space-x-4">
+          <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors">Home</a></li>
+          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors">Come Funziona</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Potenzialità</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Realizzazione</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <!-- Hero Section -->
+<section class="py-16 bg-gray-800">
+    <div class="container mx-auto text-center">
+      <h2 class="text-4xl font-bold text-white mb-6">Contattaci</h2>
+      <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
+        Hai domande o vuoi saperne di più? Contattaci e ti risponderemo al più presto.
+      </p>
+    </div>
+  </section>
+  
+  <!-- Form di Contatto -->
+  <section class="py-16">
+    <div class="container mx-auto">
+      <form id="contact-form" class="max-w-2xl mx-auto bg-gray-700 rounded-xl p-8">
+        <div class="mb-4">
+          <label class="block text-white font-bold mb-2" for="name">Nome</label>
+          <input type="text" id="name" name="name" class="w-full p-2 rounded bg-gray-600 text-white" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-white font-bold mb-2" for="email">Email</label>
+          <input type="email" id="email" name="email" class="w-full p-2 rounded bg-gray-600 text-white" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-white font-bold mb-2" for="title">Oggetto</label>
+          <input type="text" id="title" name="title" class="w-full p-2 rounded bg-gray-600 text-white" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-white font-bold mb-2" for="message">Messaggio</label>
+          <textarea id="message" name="message" rows="4" class="w-full p-2 rounded bg-gray-600 text-white" required></textarea>
+        </div>
+        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-full hover:from-blue-700 hover:to-green-600 transition-all">
+          Invia
+        </button>
+      </form>
+    </div>
+  </section>
+  
+  <!-- Script EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init({
+        publicKey: "-wzGluMNgTAfqM-3h", // Sostituisci con la tua Public Key
+      });
+    })();
+  
+    document.getElementById("contact-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+  
+      emailjs.sendForm("service_tnqikkr", "template_ib85m2m", this).then(
+        function () {
+          alert("Messaggio inviato con successo!");
+          document.getElementById("contact-form").reset();
+        },
+        function (error) {
+          alert("Errore durante l'invio del messaggio. Riprova più tardi.");
+          console.error(error);
+        }
+      );
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4">Aegis</h3>
+          <p class="text-gray-400">Un sistema innovativo per le indagini investigative.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors">Come Funziona</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors">Potenzialità</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors">Realizzazione</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Informazioni</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Termini di Servizio</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Seguici</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+        <p class="text-gray-400">&copy; 2025 Aegis. Tutti i diritti riservati.</p>
+      </div>
+    </div>
+  </footer>
+  <!-- Configurazione di Particles.js -->
+  <script src="script.js"></script>
+  
+</body>
+</html>
