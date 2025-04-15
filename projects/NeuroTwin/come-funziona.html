@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Come Funziona - NeuroTwin</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="p-4 gradient-bg text-white">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-bold">NeuroTwin</h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-white-800 mb-3">Come Funziona NeuroTwin?</h2>
+      <p class="text-lg text-white-600 max-w-3xl mx-auto">Scopri il processo innovativo che sta alla base di NeuroTwin.</p>
+    </div>
+
+    <section class="mb-8">
+        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+            <!-- Titolo della Sezione -->
+            <div class="flex items-center mb-4">
+                <h3 class="text-xl font-bold ml-4 text-purple-400">Step 1: Raccolta dei Dati</h3>
+            </div>
+    
+            <!-- Introduzione -->
+            <p class="text-gray-200 mb-6">
+                NeuroTwin trasforma la complessità del cervello umano in un modello digitale preciso e personalizzato. Tutto inizia con la raccolta di dati provenienti da diverse fonti avanzate, tra cui imaging medico, dati clinici e informazioni sullo stile di vita del paziente. Questo processo è il cuore pulsante della creazione del gemello digitale, abilitando diagnosi precise, monitoraggio continuo e trattamenti su misura.
+            </p>
+    
+            <!-- Flusso di Dati Olistico -->
+            <h4 class="text-lg font-semibold text-purple-400 mb-4">1. Un Flusso di Dati Olistico</h4>
+            <p class="text-gray-300 mb-4">
+                La raccolta dei dati è un processo multidimensionale che combina tecnologie all'avanguardia e informazioni dettagliate sul paziente. Ecco come avviene:
+            </p>
+    
+            <!-- Imaging Medico -->
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">1.1. Imaging Medico</h5>
+                <ul class="list-disc pl-6 text-gray-300">
+                    <li><strong>MRI (Risonanza Magnetica):</strong> Fornisce immagini ad alta risoluzione della struttura cerebrale, evidenziando dettagli anatomici come la corteccia, i ventricoli e le strutture sottocorticali. Utilizzata per identificare anomalie strutturali come atrofia, lesioni o tumori.</li>
+                    <li><strong>CT (Tomografia Computerizzata):</strong> Offre immagini rapide e dettagliate delle strutture ossee e delle aree con densità variabile, essenziale in situazioni di emergenza come traumi cranici o ictus emorragici.</li>
+                    <li><strong>EEG (Elettroencefalografia):</strong> Registra l'attività elettrica del cervello in tempo reale, fornendo preziose informazioni sui pattern neurali e aiutando a diagnosticare condizioni come epilessia e disturbi del sonno.</li>
+                    <li><strong>PET (Tomografia a Emissione di Positroni):</strong> Studia il metabolismo cerebrale, identificando aree di iperattività o ipoattività.</li>
+                    <li><strong>SPECT (Tomografia Computerizzata a Singolo Fotone):</strong> Fornisce una mappa dettagliata del flusso sanguigno cerebrale.</li>
+                    <li><strong>NIRS (Spettroscopia nel Vicino Infrarosso):</strong> Misura l'ossigenazione del tessuto cerebrale, monitorando l'attività neurale in tempo reale.</li>
+                </ul>
+            </div>
+    
+            <!-- Dati Clinici del Paziente -->
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">1.2. Dati Clinici del Paziente</h5>
+                <ul class="list-disc pl-6 text-gray-300">
+                    <li><strong>Dati Anagrafici:</strong> Informazioni demografiche come età, sesso e background genetico, fondamentali per contestualizzare i risultati dell'imaging.</li>
+                    <li><strong>Storia Clinica:</strong> Include diagnosi precedenti, trattamenti effettuati e risultati di esami di laboratorio, offrendo una visione longitudinale delle condizioni neurologiche del paziente.</li>
+                    <li><strong>Dati Lifestyle:</strong> Informazioni sullo stile di vita, come attività fisica, dieta e abitudini, che influenzano lo stato di salute generale e possono essere correlati a patologie neurologiche.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section class="mb-8">
+        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+        
+            <!-- Standardizzazione e Pre-elaborazione -->
+            <h4 class="text-lg font-semibold text-purple-400 mb-4">2. Standardizzazione e Pre-elaborazione dei Dati</h4>
+            <p class="text-gray-300 mb-4">
+                Una volta raccolti, i dati vengono preparati per garantire coerenza e compatibilità. Questo passaggio cruciale include:
+            </p>
+    
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">2.1. Formattazione Uniforme</h5>
+                <p class="text-gray-300">
+                    I dati grezzi provenienti da diverse fonti vengono convertiti in formati standardizzati come DICOM o NIfTI, facilitando l'integrazione e l'analisi successiva.
+                </p>
+            </div>
+    
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">2.2. Controllo Qualità</h5>
+                <p class="text-gray-300">
+                    Strumenti avanzati come MRIQC analizzano i dati per identificare e correggere anomalie, garantendo un'elevata qualità delle immagini e riducendo il rumore.
+                </p>
+            </div>
+    
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">2.3. Normalizzazione</h5>
+                <p class="text-gray-300">
+                    Le differenze tecniche tra dispositivi e protocolli di acquisizione vengono armonizzate per garantire la comparabilità dei dati, indipendentemente dalla fonte.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-8">
+        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+            
+            <!-- Integrazione dei Dati -->
+            <h4 class="text-lg font-semibold text-purple-400 mb-4">3. Integrazione dei Dati – Il Cuore del Modello</h4>
+            <p class="text-gray-300 mb-4">
+                Dopo la pre-elaborazione, i dati vengono integrati in un unico modello digitale utilizzando tecniche avanzate di fusione multimodale e machine learning. Questo processo crea un gemello digitale completo e coerente del cervello del paziente.
+            </p>
+    
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">3.1. Fusione Multimodale</h5>
+                <p class="text-gray-300">
+                    Le informazioni provenienti da diverse fonti vengono combinate per creare un modello che unisce struttura anatomica e funzionalità cerebrale. Ad esempio, i dati MRI forniscono la struttura, mentre i dati EEG aggiungono dettagli sulla funzionalità.
+                </p>
+            </div>
+    
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">3.2. Segmentazione e Ricostruzione</h5>
+                <p class="text-gray-300">
+                    Algoritmi avanzati come FreeSurfer e SPM suddividono le immagini in regioni anatomiche specifiche e ricostruiscono il cervello in 3D, creando un modello visivo dettagliato.
+                </p>
+            </div>
+    
+            <div class="mb-6">
+                <h5 class="text-md font-semibold text-purple-300 mb-2">3.3. Imputazione dei Dati Mancanti</h5>
+                <p class="text-gray-300">
+                    In caso di dati incompleti, modelli di deep learning sintetizzano le informazioni mancanti, garantendo un modello digitale completo anche in assenza di dati completi.
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- Step 2: Analisi dei Dati -->
+    <section class="mb-8">
+        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+            <!-- Titolo della Sezione -->
+            <div class="flex items-center mb-4">
+                <h3 class="text-xl font-bold ml-4 text-purple-400">Step 4: Analisi e Generazione del Gemello Digitale</h3>
+            </div>
+    
+            <!-- Introduzione -->
+            <p class="text-gray-200 mb-6">
+                Una volta integrati, i dati vengono analizzati per generare il gemello digitale del cervello. Questo processo combina estrazione di caratteristiche avanzate, modellazione predittiva e creazione di una rappresentazione dinamica e personalizzata del cervello del paziente.
+            </p>
+    
+            <!-- Estrazione di Caratteristiche -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">4.1. Estrazione di Caratteristiche</h4>
+                <p class="text-gray-300 mb-4">
+                    Vengono estratte caratteristiche quantitative dai dati, come volumi cerebrali, spessore corticale, densità della materia grigia e parametri funzionali. Queste caratteristiche costituiscono la base per l'identificazione di biomarcatori specifici.
+                </p>
+            </div>
+    
+            <!-- Modellazione Predittiva -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">4.2. Modellazione Predittiva</h4>
+                <p class="text-gray-300 mb-4">
+                    Utilizzando algoritmi di machine learning e deep learning, i dati vengono analizzati per prevedere lo sviluppo di patologie neurologiche come Alzheimer, Parkinson o altre condizioni degenerative. Il sistema genera previsioni personalizzate basate sui dati del paziente, consentendo interventi tempestivi e mirati.
+                </p>
+            </div>
+    
+            <!-- Creazione del Gemello Digitale -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">4.3. Creazione del Gemello Digitale</h4>
+                <p class="text-gray-300 mb-4">
+                    Il gemello digitale è una rappresentazione dinamica e interattiva del cervello del paziente. Include sia la struttura anatomica che i parametri funzionali, consentendo ai professionisti sanitari di esplorare lo stato del cervello in tempo reale. Questa visualizzazione avanzata abilita diagnosi più precise, monitoraggio continuo e trattamenti su misura.
+                </p>
+            </div>
+    
+            <!-- Perché Questo Processo è Rivoluzionario? -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">Perché Questo Processo è Rivoluzionario?</h4>
+                <p class="text-gray-300">
+                    L'analisi e la generazione del gemello digitale non si limitano a rappresentare il cervello: trasformano i dati in un potente strumento diagnostico e predittivo. Questo approccio permette di:
+                </p>
+                <ul class="list-disc pl-6 text-gray-300">
+                    <li>Identificare precocemente biomarcatori di patologie neurologiche.</li>
+                    <li>Prevedere l'evoluzione delle condizioni del paziente con elevata accuratezza.</li>
+                    <li>Ottimizzare i trattamenti personalizzati, migliorando la qualità della vita del paziente.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-8">
+        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+            <!-- Monitoraggio Continuo e Aggiornamento -->
+            <div class="flex items-center mb-4">
+                <h3 class="text-xl font-bold ml-4 text-purple-400">Step 5: Monitoraggio Continuo e Aggiornamento</h3>
+            </div>
+    
+            <p class="text-gray-200 mb-6">
+                Il gemello digitale non è statico ma viene continuamente aggiornato con nuovi dati provenienti dal paziente. Questo processo garantisce che il modello rifletta sempre lo stato attuale del cervello, abilitando un monitoraggio dinamico e tempestivo.
+            </p>
+    
+            <!-- Acquisizione di Dati in Tempo Reale -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">5.1. Acquisizione di Dati in Tempo Reale</h4>
+                <p class="text-gray-300">
+                    Dispositivi indossabili o sensori remoti possono fornire dati aggiuntivi, come EEG portatile o monitoraggio del sonno, per arricchire il modello. Questi dati in tempo reale migliorano la precisione e la completezza del gemello digitale.
+                </p>
+            </div>
+    
+            <!-- Aggiornamento Automatico -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">5.2. Aggiornamento Automatico</h4>
+                <p class="text-gray-300">
+                    Il sistema integra automaticamente i nuovi dati, aggiornando il gemello digitale per riflettere lo stato attuale del paziente. Questo processo garantisce che il modello rimanga sempre allineato con le condizioni neurologiche del paziente.
+                </p>
+            </div>
+    
+            <!-- Avvisi e Allerte -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">5.3. Avvisi e Allerte</h4>
+                <p class="text-gray-300">
+                    In caso di anomalie o cambiamenti significativi, il sistema invia avvisi ai professionisti sanitari per intervenire tempestivamente. Questo meccanismo di allerta garantisce una risposta rapida e mirata.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="mb-8">
+        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-md p-6 dark-section">
+            <!-- Visualizzazione e Reporting -->
+            <div class="flex items-center mb-4">
+                <h3 class="text-xl font-bold ml-4 text-purple-400">Step 6: Visualizzazione e Reporting</h3>
+            </div>
+    
+            <p class="text-gray-200 mb-6">
+                Infine, i dati elaborati vengono presentati in modo intuitivo per facilitare l'interpretazione da parte dei professionisti sanitari. Questa fase è cruciale per trasformare i dati complessi in informazioni utilizzabili.
+            </p>
+    
+            <!-- Dashboard Interattiva -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">6.1. Dashboard Interattiva</h4>
+                <p class="text-gray-300">
+                    Una dashboard visiva permette di esplorare il gemello digitale, visualizzare i dati analizzati e accedere a report dettagliati. L'interfaccia interattiva consente ai professionisti di navigare facilmente tra le diverse funzionalità del modello.
+                </p>
+            </div>
+    
+            <!-- Report Clinici -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">6.2. Report Clinici</h4>
+                <p class="text-gray-300 mb-4">
+                    Vengono generati report personalizzati che includono:
+                </p>
+                <ul class="list-disc pl-6 text-gray-300">
+                    <li>Biomarcatori identificati.</li>
+                    <li>Previsioni sullo sviluppo di patologie.</li>
+                    <li>Consigli terapeutici basati sui dati.</li>
+                </ul>
+            </div>
+    
+            <!-- Condivisione Sicura -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-purple-400 mb-4">6.3. Condivisione Sicura</h4>
+                <p class="text-gray-300">
+                    I dati e i risultati possono essere condivisi in modo sicuro con altri specialisti o istituzioni sanitarie, garantendo la privacy del paziente. Questo processo abilita una collaborazione efficace tra i membri del team medico.
+                </p>
+            </div>
+        </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold text-accent mb-4">NeuroTwin</h3>
+          <p class="text-gray-400">Un Digital Twin innovativo per la gestione delle patologie neurologiche.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Link Utili</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="text-gray-400 hover:text-accent transition-colors">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-accent transition-colors">Come Funziona</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-accent transition-colors">Potenzialità</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-accent transition-colors">Realizzazione</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Informazioni</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-accent transition-colors">Termini di Servizio</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-4">Seguici</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-accent transition-colors"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+        <p class="text-gray-400">&copy; 2025 NeuroTwin. Tutti i diritti riservati.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
