@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAIAT - Malware AI Analysis Tool</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Contenitore delle Particelle -->
+  <div id="page-background"></div>
+
+  <!-- Header -->
+  <header class="p-4 gradient-bg text-white">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-bold">MAIAT</h1>
+      <nav>
+        <ul class="flex space-x-4">
+          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors">How it works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
+          <!-- <li><a href="contatti.html" class="text-white hover:text-gray-300 transition-colors">Contatti</a></li> -->
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 bg-dark-700"> 
+    <div class="container mx-auto text-center">
+      <h2 class="text-2xl font-bold text-white mb-2">Your AI assistant for malware analysis</h2>
+      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
+      The goal is to classify the file (e.g., malware type), identify indicators of compromise (IOCs), and assess its risk.
+      </p> -->
+      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
+        Un sistema avanzato di supporto investigativo che integra tecnologie di IA per raccogliere, analizzare e correlare informazioni provenienti da fonti aperte e chiuse.
+      </p>  -->
+      
+    </div>
+  </section>
+
+  <!-- Caratteristiche Principali -->
+  <section class="py-16">
+    <div class="container mx-auto">
+      <!-- <h2 class="text-3xl font-bold text-center text-white mb-10">Caratteristiche Principali</h2> -->
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Validazione delle Informazioni -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a href="pe-analysis.html">PE Analysis</a></h3>
+          <p class="text-gray-300">
+            PE (Portable Executable) analysis examines Windows executables for malicious behavior, using static and dynamic methods. 
+            Static analysis inspects the file's structure, headers, and metadata without execution, 
+            while dynamic analysis observes the file's behavior in a controlled environment, such as a sandbox. 
+            Advanced techniques like unpacking, debugging, and disassembling help uncover hidden threats. 
+             
+            <!-- PE (Portable Executable) analysis is a critical process in malware research and cybersecurity, 
+            used to examine Windows executable files for malicious behavior. The analysis typically involves two main 
+            approaches: static analysis and dynamic analysis. 
+            Static analysis focuses on inspecting the file's structure, headers, imported functions, strings, and metadata without executing it, 
+            often using tools like PEStudio or IDA Pro. 
+            Dynamic analysis, on the other hand, involves running the file in a controlled environment (such as a sandbox) to observe its behavior, 
+            including network activity, file modifications, and system interactions. 
+            Advanced techniques, such as unpacking, debugging, and disassembling, may also be employed to uncover obfuscated code or hidden payloads. 
+            The goal of PE analysis is to classify the file (e.g., virus, trojan, ransomware), identify indicators of compromise (IOCs), 
+            and assess the potential risk it poses to systems. 
+            Proper documentation and mitigation strategies are essential to effectively respond to any identified threats. -->
+          </p>
+        </div>
+        <!-- OSINT e SOCMINT -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a href="ms-office-analysis.html">MS Office Document Analysis</a></h3>
+          <p class="text-gray-300">
+            Analyzing MS Office documents involves inspecting files like Word, Excel, or PowerPoint for hidden threats. 
+            Static inspection looks at macros, embedded objects, and metadata without running the file, using tools like olevba or ViperMonkey. 
+            Dynamic analysis observes the document's behavior in a secure environment, such as macro execution or network activity. 
+            Malicious code is often concealed in VBA scripts, ActiveX, or OLE objects.
+          </p>
+        </div>
+        <!-- OSINT e SOCMINT -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a href="pdf-analysis">PDF Analysis</a></h3>
+          <p class="text-gray-300">
+            PDF analysis detects threats in PDF files by examining embedded scripts, links, or objects. 
+            Static analysis inspects metadata and structure using tools like pdfid or pdf-parser, 
+            while dynamic analysis observes behavior in a secure environment, such as script execution or network activity. 
+            Malicious PDFs often exploit reader vulnerabilities or use obfuscated JavaScript. 
+            
+          </p>
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a href="elf-analysis.html">ELF Analysis</a></h3>
+          <p class="text-gray-300">
+            ELF (Executable and Linkable Format) analysis involves examining Linux executable files for malicious behavior. 
+            Static analysis inspects the file's headers, sections, symbols, and metadata using tools like readelf or objdump, 
+            while dynamic analysis observes runtime behavior in a controlled environment, such as system calls or network activity. 
+            Malicious ELF files may include backdoors, rootkits, or crypto-miners, 
+            often employing obfuscation or packing techniques. Advanced methods like debugging or unpacking help uncover hidden payloads.
+          </p>
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a href="scripting-analysis.html">Scripting Analysis</a></h3>
+          <p class="text-gray-300">
+            Scripting analysis involves examining scripts (e.g., Python, PowerShell, Bash, JavaScript) for malicious behavior. 
+            Static analysis reviews the code for suspicious patterns, obfuscated commands, or harmful functions using text editors or 
+            specialized tools like PowerShell Script Block Logging or deobfuscators. 
+            Dynamic analysis executes the script in a sandboxed environment to monitor its actions, such as file modifications, 
+            network connections, or system commands. Scripts often serve as initial payloads or tools for lateral movement. 
+          </p>
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a href="archive-analysis.html">Archive Analysis</a></h3>
+          <p class="text-gray-300">
+            Archive analysis involves inspecting compressed files (e.g., ZIP, RAR, 7z) for hidden threats. 
+            Static analysis examines metadata, file headers, and embedded content without extraction, using tools like binwalk or archive-specific utilities. 
+            Dynamic analysis involves extracting and analyzing the contents in a secure environment to detect malicious files, scripts, or payloads. 
+            Archives often conceal malware through obfuscation, password protection, or nested compression.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4">MAIAT</h3>
+          <p class="text-gray-400">An innovative AI assistant to support malware analysts.</p>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors">How it works</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors">Advantages</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors">Implementation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-4">Info</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Terms</a></li>
+          </ul>
+        </div>
+        <!-- <div>
+          <h4 class="text-lg font-semibold mb-4">Seguici</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div> -->
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+        <p class="text-gray-400">&copy; 2025 MAIAT. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Configurazione di Particles.js -->
+  <script src="script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+  <script>
+  VANTA.BIRDS({
+    el: "#page-background",
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.00,
+    scaleMobile: 1.00,
+    backgroundColor: 0x0,
+    color1: 0x3e2626,
+    color2: 0x841bc3
+  })
+  </script>
+</body>
+</html>
