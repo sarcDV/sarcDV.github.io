@@ -58,3 +58,22 @@
       height: 100vh;
       z-index: -1; /* Posiziona dietro tutti gli altri elementi */
     }
+
+    .svg-container {
+      display: flex;
+      justify-content: center; /* Center the SVG horizontally */
+      align-items: center; /* Center the SVG vertically */
+      margin: 20px 0; /* Add some margin around the SVG */
+      background-color: rgba(30, 30, 30, 0.8); /* Dark background with 80% opacity */
+      border-radius: 10px; /* Optional: Round the corners */
+      padding: 20px; /* Optional: Add some padding */
+    }
+    
+    .svg-object {
+        width: 100%; /* Make the SVG responsive */
+        max-width: 600px; /* Set a max width for the SVG */
+        height: auto; /* Maintain aspect ratio */
+        border: 2px solid rgba(255, 111, 97, 0.8); /* Optional: Add a semi-transparent border to the SVG */
+    }
+  
+  

@@ -19,6 +19,7 @@
       <h1 class="text-3xl font-bold">MAIAT</h1>
       <nav>
         <ul class="flex space-x-4">
+          <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors">Home</a></li>
           <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors">How it works</a></li>
           <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
           <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
@@ -32,17 +33,165 @@
   <section class="py-16 bg-dark-700"> 
     <div class="container mx-auto text-center">
       <h2 class="text-2xl font-bold text-white mb-2">PE analysis</h2>
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-      The goal is to classify the file (e.g., malware type), identify indicators of compromise (IOCs), and assess its risk.
-      </p> -->
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-        Un sistema avanzato di supporto investigativo che integra tecnologie di IA per raccogliere, analizzare e correlare informazioni provenienti da fonti aperte e chiuse.
-      </p>  -->
+      <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
+      Analyzing a PE (Portable Executable) file is a fundamental practice for malware analysts, as it allows them to understand the behavior, functionalities, and potential risks associated with an executable. Below is a detailed guide that includes all the typical steps performed during the analysis of a PE file, organized into logical phases.
+      </p>
       
     </div>
   </section>
 
-  
+  <!-- Caratteristiche Principali -->
+  <section class="py-16">
+    <div class="container mx-auto">
+      <!-- <h2 class="text-3xl font-bold text-center text-white mb-10">Caratteristiche Principali</h2> -->
+      <div class="grid md:grid-cols-1 gap-8">
+        <!-- Validazione delle Informazioni -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>1 - Environment Preparation</a></h3>
+          <p class="text-gray-300">
+        An AI agent configures a secure, isolated environment to prevent malware from spreading or causing harm:
+      </p>   
+        <ul class="text-gray-300">
+            <li><strong>Virtual Machine Setup</strong>: Uses tools like VirtualBox, VMware, or Hyper-V with network isolation (NAT or host-only).</li>
+            <li><strong>Snapshot Management</strong>: Creates and restores clean snapshots after each analysis.</li>
+            <li><strong>Tool Deployment</strong>: Ensures the availability of essential tools:
+                <ul>
+                    <li><strong>Disassemblers/Decompilers</strong>: IDA Pro, Ghidra, Radare2.</li>
+                    <li><strong>Debuggers</strong>: x64dbg, OllyDbg.</li>
+                    <li><strong>Analyzers</strong>: PEStudio, CFF Explorer, pefile (Python library).</li>
+                    <li><strong>Sandboxes</strong>: Cuckoo Sandbox, Hybrid Analysis, Any.Run.</li>
+                    <li><strong>Monitoring Tools</strong>: Process Monitor, Wireshark, Process Hacker.</li>
+                </ul>
+            </li>
+        </ul>
+         
+        </div>
+        <!-- OSINT e SOCMINT -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>2 - Static Analysis</a></h3>
+          <p class="text-gray-300">An AI-driven static analysis agent evaluates the file without executing it, concentrating on its properties and structure:</p>
+            <ul class="text-gray-300">
+                <li>
+                    <strong>File Type Verification</strong>: Validates the file type using commands such as <code>file</code> or tools like PEStudio.
+                </li>
+                <li>
+                    <strong>Header Analysis</strong>: Examines the PE headers, including the DOS Header, NT Headers, and Section Headers, while identifying any anomalies in sections like <code>.text</code>, <code>.data</code>, and <code>.rsrc</code>.
+                </li>
+                <li>
+                    <strong>Entry Point and Tables</strong>:
+                    <ul>
+                        <li>Determines the program's entry point.</li>
+                        <li>Analyzes imported and exported functions and libraries (e.g., <code>kernel32.dll</code>, <code>user32.dll</code>).</li>
+                        <li>Flags potentially suspicious functions, such as <code>VirtualAlloc</code> and <code>WriteProcessMemory</code>.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>String Extraction</strong>: Extracts strings to identify URLs, file paths, registry keys, or malware signatures.
+                </li>
+                <li>
+                    <strong>Signature and Hash Validation</strong>:
+                    <ul>
+                        <li>Confirms the validity of digital signatures.</li>
+                        <li>Computes hashes (MD5, SHA256) and cross-references them with databases like VirusTotal or AlienVault OTX.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- OSINT e SOCMINT -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>3. Dynamic Analysis</a></h3>
+          <p  class="text-gray-300">A dynamic analysis agent executes the file in a controlled sandbox environment to observe its behavior:</p>
+          <ul  class="text-gray-300">
+              <li>
+                  <strong>Behavior Monitoring</strong>:
+                  <ul>
+                      <li>Tracks file modifications, network activity, and registry changes.</li>
+                      <li>Detects persistence mechanisms (e.g., Run keys, Task Scheduler).</li>
+                  </ul>
+              </li>
+              <li>
+                  <strong>API Monitoring</strong>: Uses tools like API Monitor to trace system calls, identifying suspicious activities such as process injection or remote thread creation.
+              </li>
+              <li>
+                  <strong>Network Traffic Analysis</strong>: Captures traffic using Wireshark to detect communication with C2 servers or data exfiltration.
+              </li>
+              <li>
+                  <strong>Debugging</strong>: Employs debuggers like x64dbg to analyze execution flow and identify payloads.
+              </li>
+          </ul>
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>4. Advanced Analysis</a></h3>
+          <p  class="text-gray-300">For complex cases, an advanced analysis agent employs deeper techniques:</p>
+          <ul  class="text-gray-300">
+              <li>
+                  <strong>Disassembly and Decompilation</strong>: Uses Ghidra or IDA Pro to reverse-engineer code, uncovering obfuscation, anti-debugging mechanisms, or cryptographic routines.
+              </li>
+              <li>
+                  <strong>Packer Detection</strong>: Identifies packers (e.g., UPX, Themida) and extracts payloads using unpacking tools or memory dumps.
+              </li>
+              <li>
+                  <strong>Persistence Analysis</strong>: Detects mechanisms like autorun entries, scheduled tasks, or hidden services.
+              </li>
+          </ul>
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>5. Classification and Risk Assessment</a></h3>
+          <p>An AI classification agent evaluates the file based on analysis results:</p>
+          <ul>
+              <li>
+                  <strong>Malware Type</strong>:
+                  <ul>
+                      <li>Virus: Self-replicating code.</li>
+                      <li>Worm: Autonomous propagation.</li>
+                      <li>Trojan: Masquerades as legitimate software.</li>
+                      <li>Ransomware: Encrypts files.</li>
+                      <li>Spyware: Steals sensitive information.</li>
+                      <li>Rootkit: Conceals presence.</li>
+                  </ul>
+              </li>
+              <li>
+                  <strong>Risk Level</strong>:
+                  <ul>
+                      <li>Low: No harmful activity detected.</li>
+                      <li>Medium: Suspicious but non-damaging behavior.</li>
+                      <li>High: Confirmed malicious activity (e.g., data theft, system infection).</li>
+                  </ul>
+              </li>
+          </ul>
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>6. Reporting</a></h3>
+          <p>A reporting agent generates a detailed report, including:</p>
+            <ul>
+                <li>Malware description and attack techniques.</li>
+                <li>Indicators of Compromise (IOCs): hashes, URLs, IPs, filenames.</li>
+                <li>Mitigation recommendations.</li>
+            </ul>
+
+            <!-- <p>A mitigation agent automates remediation:</p>
+            <ul>
+                <li>Removes malicious files, processes, and registry entries.</li>
+                <li>Applies patches and updates to address exploited vulnerabilities.</li>
+                <li>Notifies affected users or organizations.</li>
+            </ul> -->
+        </div>
+        <!-- Deep e Dark Web -->
+        <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+          <h3 class="text-xl font-bold text-white mb-4"><a>AI Agent Coordination</a></h3>
+          <p>The entire workflow is orchestrated by a central AI coordinator 
+            that assigns tasks to specialized agents, 
+            ensuring seamless integration and real-time decision-making. 
+            This approach enhances efficiency, reduces manual effort, 
+            and improves accuracy in malware detection and classification.</p>
+        </div>
+<!--  -->
+      </div>
+    </div>
+  </section>
 
   <!-- Footer -->
   <footer class="bg-black text-white py-8">
