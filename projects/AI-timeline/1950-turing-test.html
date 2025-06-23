@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>The Turing Test - AI History</title>
-  <script src="https://cdn.tailwindcss.com"></script> 
-  <script src="https://unpkg.com/lucide@latest"></script> 
+  <script src="https://cdn.tailwindcss.com"></script>  
+  <script src="https://unpkg.com/lucide@latest"></script>  
   <style>
     :root {
       --background: #1a1a1a;
@@ -24,7 +24,6 @@
   </style>
 </head>
 <body class="min-h-screen bg-background text-foreground">
-
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
     <div class="container mx-auto px-4 py-4">
@@ -42,7 +41,6 @@
       </div>
     </div>
   </header>
-
   <!-- Main Content -->
   <main class="container mx-auto px-4 py-12 max-w-4xl">
     <div class="bg-card border border-border rounded-xl p-8">
@@ -56,11 +54,34 @@
         </div>
       </div>
       <p class="text-muted-foreground leading-relaxed mb-6">
-        Alan Turing proposes the Turing Test as a measure of machine intelligence in his paper 'Computing Machinery and Intelligence'.
+        In 1950, Alan Turing proposed the "Turing Test" as a measure of machine intelligence in his groundbreaking paper titled "Computing Machinery and Intelligence", published in "Mind".
       </p>
       <p class="text-muted-foreground leading-relaxed mb-6">
-        This test involves a human evaluator who judges whether they are interacting with a human or a machine based purely on responses to questions.
-        If the machine can successfully mimic human behavior, it passes the test.
+        The paper opens by addressing the question, "Can machines think?" Turing acknowledges that defining the terms "machine" and "thinking" can lead to ambiguous debates. To avoid this, he reformulates the question into a more practical framework known as the Imitation Game.
+      </p>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        The Imitation Game involves three participants: a man (A), a woman (B), and an interrogator (C). Communication occurs through written messages, ensuring no visual or auditory clues are available. The interrogator's goal is to determine which participant is the man and which is the woman based solely on their responses. If the role of A is taken by a machine, and the interrogator cannot reliably distinguish between the machine and the human, the machine passes the test.
+      </p>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        Turing emphasizes that the focus is not on physical imitation but on intellectual interaction. He argues that digital computers—designed with components like a store for information, an executive unit for processing, and a control system for managing operations—are ideal candidates for participating in the Imitation Game. These computers are essentially universal discrete state machines capable of simulating human-like responses.
+      </p>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        Turing also addresses several objections to the idea of thinking machines:
+      </p>
+      <ul class="list-disc pl-6 text-muted-foreground leading-relaxed mb-6">
+        <li><strong>Theological Objection:</strong> Argues that thinking requires a soul, which machines lack. Turing counters that limiting God’s ability to grant a soul to a machine is presumptuous.</li>
+        <li><strong>"Heads in the Sand" Objection:</strong> Reflects fears that machines surpassing humans would diminish humanity's uniqueness. Turing dismisses this as resistance to technological progress.</li>
+        <li><strong>Mathematical Objection:</strong> Highlights limitations of formal systems like Gödel’s theorem. Turing notes similar limitations may apply to humans.</li>
+        <li><strong>Argument from Consciousness:</strong> Claims machines cannot feel emotions or self-awareness. Turing suggests consciousness is hard to define and verify even in humans.</li>
+        <li><strong>Arguments from Disabilities:</strong> States machines can never be creative or emotional. Turing replies these traits could potentially be simulated through programming.</li>
+        <li><strong>Informality of Behaviour:</strong> Suggests human behavior is too unpredictable for rule-based machines. Turing argues machines can still behave unpredictably despite following rules.</li>
+        <li><strong>Extra-Sensory Perception (ESP):</strong> Speculates ESP might affect the test results. Turing acknowledges this possibility but insists it can be mitigated with proper modifications.</li>
+      </ul>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        Turing concludes by envisioning a future where learning machines—akin to child brains—can be educated through rewards, punishments, and logical systems. By mimicking the learning process of a child, machines can develop complex, adaptive behaviors over time.
+      </p>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        Ultimately, the Turing Test serves not only as a benchmark for artificial intelligence but also as a catalyst for research into creating machines capable of sophisticated, human-like interactions.
       </p>
       <div class="flex items-center gap-2 mt-6">
         <span class="text-sm text-muted-foreground">Category:</span>
@@ -69,7 +90,6 @@
         </span>
       </div>
     </div>
-
     <!-- Context Section -->
     <section class="mt-12">
       <h3 class="text-xl font-semibold mb-4">Before & After</h3>
@@ -90,12 +110,24 @@
         </div>
       </div>
     </section>
-  </main>
 
+    <!-- PDF Embed Section -->
+    <section class="mt-12">
+      <h3 class="text-xl font-semibold mb-4">Original Source (1950)</h3>
+      <div class="bg-card border border-border rounded-xl overflow-hidden shadow-md">
+        <embed 
+          src="TuringComputing.pdf" 
+          type="application/pdf" 
+          width="100%" 
+          style="height: 80vh;" 
+          class="w-full"
+        />
+      </div>
+    </section>
+  </main>
   <footer class="py-12 px-4 border-t border-border text-center text-muted-foreground">
     © 2025 Alessandro Sciarra. All rights reserved.
   </footer>
-
   <script>
     lucide.createIcons();
   </script>
