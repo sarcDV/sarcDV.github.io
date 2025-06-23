@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI History Timeline - Interactive Journey Through Artificial Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://unpkg.com/lucide@latest"></script> 
+  <style>
+    :root {
+      --background: #ffffff;
+      --foreground: #1a1a1a;
+      --card: #f9fafb;
+      --border: #e5e7eb;
+      --primary: #3b82f6;
+      --muted: #f3f4f6;
+      --accent: #f3f4f6;
+      --text-muted: #6b7280;
+    }
+
+    .dark {
+      --background: #1a1a1a;
+      --foreground: #f9fafb;
+      --card: #1f2937;
+      --border: #374151;
+      --primary: #60a5fa;
+      --muted: #111827;
+      --accent: #1f2937;
+      --text-muted: #9ca3af;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+    }
+
+    .bg-card {
+      background-color: var(--card);
+    }
+
+    .border-border {
+      border-color: var(--border);
+    }
+
+    .text-muted-foreground {
+      color: var(--text-muted);
+    }
+
+    .hover\:border-primary\/50:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .hover\:bg-accent:hover {
+      background-color: var(--accent);
+    }
+
+    .bg-gradient-to-r.from-blue-500.to-cyan-500 {
+      background: linear-gradient(to right, #3b82f6, #06b6d4);
+    }
+    .bg-gradient-to-r.from-purple-500.to-pink-500 {
+      background: linear-gradient(to right, #9333ea, #ec4899);
+    }
+    .bg-gradient-to-r.from-green-500.to-emerald-500 {
+      background: linear-gradient(to right, #10b981, #10b981);
+    }
+    .bg-gradient-to-r.from-orange-500.to-red-500 {
+      background: linear-gradient(to right, #f97316, #ef4444);
+    }
+    .bg-gradient-to-r.from-yellow-500.to-orange-500 {
+      background: linear-gradient(to right, #eab308, #f97316);
+    }
+
+    .modal-enter {
+    animation: fadeInScale 0.3s ease-out forwards;
+    }
+
+    .modal-exit {
+    animation: fadeOutScale 0.3s ease-in forwards;
+    }
+
+    @keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+    }
+
+    @keyframes fadeOutScale {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-foreground dark:bg-[#1a1a1a]">
+  <div id="app"></div>
+
+  <script type="text/javascript">
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    let isDarkMode = false;
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark', isDarkMode);
+      localStorage.setItem('darkMode', isDarkMode);
+      updateDarkModeButton();
+    }
+
+    function updateDarkModeButton() {
+      const btn = document.getElementById("dark-mode-toggle");
+      if (btn) {
+        btn.innerHTML = isDarkMode ? `
+          <svg data-lucide="Sun" class="w-4 h-4 mr-2"></svg> Light Mode
+        ` : `
+          <svg data-lucide="Moon" class="w-4 h-4 mr-2"></svg> Dark Mode
+        `;
+        lucide.createIcons();
+      }
+    }
+
+    // Check user preference or system setting
+    function initDarkMode() {
+      const saved = localStorage.getItem('darkMode');
+      if (saved === 'true') {
+        isDarkMode = true;
+        document.body.classList.add('dark');
+      } else {
+        isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDarkMode) document.body.classList.add('dark');
+      }
+      updateDarkModeButton();
+    }
+
+    // Timeline Data
+    const timelineData = [
+      {
+        year: "1950",
+        title: "The Turing Test",
+        description: "Alan Turing proposes the Turing Test as a measure of machine intelligence in his paper 'Computing Machinery and Intelligence'.",
+        category: "foundation",
+        icon: "Brain",
+        slug: "1950-turing-test"
+      },
+      {
+        year: "1956",
+        title: "Birth of AI",
+        description: "The Dartmouth Conference coins the term 'Artificial Intelligence' and establishes AI as a field of study.",
+        category: "foundation",
+        icon: "Brain",
+        slug: "1956-birth-of-ai"
+      },
+      {
+        year: "1958",
+        title: "The Perceptron",
+        description: "Frank Rosenblatt develops the perceptron, an early artificial neural network that could learn from data.",
+        category: "neural",
+        icon: "Cpu", 
+        slug: "1958-perceptron"
+      },
+      {
+        year: "1965",
+        title: "ELIZA",
+        description: "Joseph Weizenbaum creates ELIZA, one of the first chatbots that could engage in natural language conversation.",
+        category: "nlp",
+        icon: "Brain", 
+        slug: "1965-eliza"
+      },
+      {
+        year: "1970",
+        title: "Backpropagation",
+        description: "Seppo Linnainmaa publishes the reverse mode of automatic differentiation, later known as backpropagation.",
+        category: "neural",
+        icon: "Cpu", 
+        slug: "1970-backpropagation"
+      },
+      {
+        year: "1980s",
+        title: "Expert Systems",
+        description: "Expert systems become commercially viable, marking the first AI boom with systems like MYCIN and DENDRAL.",
+        category: "expert",
+        icon: "Zap", 
+        slug: "1980s-expert-systems"
+      },
+      {
+        year: "1997",
+        title: "Deep Blue vs Kasparov",
+        description: "IBM's Deep Blue defeats world chess champion Garry Kasparov, demonstrating AI's strategic capabilities.",
+        category: "games",
+        icon: "Zap", 
+        slug: "1997-deep-blue"
+      },
+      {
+        year: "2011",
+        title: "Watson Wins Jeopardy!",
+        description: "IBM Watson defeats human champions in Jeopardy!, showcasing natural language processing and knowledge retrieval.",
+        category: "nlp",
+        icon: "Brain", 
+        slug: "2011-watson"
+      },
+      {
+        year: "2012",
+        title: "AlexNet Revolution",
+        description: "AlexNet wins ImageNet competition, sparking the deep learning revolution in computer vision.",
+        category: "neural",
+        icon: "Cpu", 
+        slug: "2012-alexnet"
+      },
+      {
+        year: "2016",
+        title: "AlphaGo Triumph",
+        description: "Google DeepMind's AlphaGo defeats world Go champion Lee Sedol, mastering the ancient game of Go.",
+        category: "games",
+        icon: "Zap", 
+        slug: "2016-alphago"
+      },
+      {
+        year: "2020",
+        title: "GPT-3 & Language Models",
+        description: "OpenAI releases GPT-3, demonstrating unprecedented natural language generation capabilities.",
+        category: "nlp",
+        icon: "Brain", 
+        slug: "2020-gpt3"
+      },
+      {
+        year: "2022",
+        title: "ChatGPT Era",
+        description: "ChatGPT launches, bringing conversational AI to mainstream users and sparking global AI adoption.",
+        category: "nlp",
+        icon: "Brain", 
+        slug: "2022-chatgpt"
+      }
+    ];
+
+    const categories = {
+      foundation: { name: "Foundation", color: "from-blue-500 to-cyan-500" },
+      neural: { name: "Neural Networks", color: "from-purple-500 to-pink-500" },
+      nlp: { name: "Natural Language", color: "from-green-500 to-emerald-500" },
+      expert: { name: "Expert Systems", color: "from-orange-500 to-red-500" },
+      games: { name: "Game AI", color: "from-yellow-500 to-orange-500" }
+    };
+
+    let selectedItem = null;
+    let selectedCategory = 'all';
+    let isModalOpen = false;
+    let isMobileMenuOpen = false;
+
+    function getCategoryColor(category) {
+      return categories[category] ? categories[category].color : "from-gray-500 to-gray-500";
+    }
+
+    function createTimelineItem(item, index) {
+        const container = document.createElement('div');
+        container.className = `flex items-center mb-8 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`;
+        container.innerHTML = `
+            <!-- Left Side Card -->
+            <div class="${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'} w-1/2">
+            <div class="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50" onclick="handleItemClick(${index})">
+                <div class="flex items-center gap-3 mb-3">
+                <div class="p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(item.category)}">
+                    <svg data-lucide="${item.icon}" class="w-5 h-5 text-white"></svg>
+                </div>
+                <span class="text-sm font-medium text-muted-foreground">${item.year}</span>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">${item.title}</h3>
+                <p class="text-sm text-muted-foreground leading-relaxed">${item.description}</p>
+                <div class="mt-3">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(item.category)} text-white">
+                    ${categories[item.category]?.name || ''}
+                </span>
+                </div>
+            </div>
+            </div>
+
+            <!-- Timeline Dot & Line -->
+            <div class="relative flex items-center justify-center w-8 h-24">
+            <!-- Vertical Line -->
+            <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20"></div>
+            <!-- Dot -->
+            <div class="w-4 h-4 z-10 rounded-full bg-gradient-to-r ${getCategoryColor(item.category)} border-2 border-background"></div>
+            </div>
+
+            <!-- Right Side Empty Space -->
+            <div class="w-1/2"></div>
+        `;
+        lucide.createIcons();
+        return container;
+    }
+
+
+    function renderTimeline() {
+      const container = document.getElementById("timeline");
+      container.innerHTML = '';
+      const filteredData = selectedCategory === 'all'
+        ? timelineData
+        : timelineData.filter(item => item.category === selectedCategory);
+
+      filteredData.forEach((item, index) => {
+        const el = createTimelineItem(item, index);
+        container.appendChild(el);
+      });
+    }
+
+    // function handleItemClick(index) {
+    //     showModal(index);
+    // }
+    function handleItemClick(index) {
+        const filteredData = selectedCategory === 'all'
+            ? timelineData
+            : timelineData.filter(item => item.category === selectedCategory);
+
+        selectedItem = filteredData[index];
+        showModal(index);
+    }
+
+    function showModal(index) {
+        const filteredData = selectedCategory === 'all'
+            ? timelineData
+            : timelineData.filter(item => item.category === selectedCategory);
+
+        selectedItem = filteredData[index];
+        isModalOpen = true;
+
+        const modal = document.getElementById("modal");
+        const modalContent = document.getElementById("modal-content");
+
+        // Reset classes before showing
+        modal.classList.remove("hidden", "modal-exit");
+        modal.classList.add("modal-enter");
+
+        const category = categories[selectedItem.category];
+
+        modalContent.innerHTML = `
+            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-gradient-to-r ${getCategoryColor(selectedItem.category)}">
+                <svg data-lucide="${selectedItem.icon}" class="w-6 h-6 text-white"></svg>
+                </div>
+                <div>
+                <h2 class="text-2xl font-bold text-foreground">${selectedItem.title}</h2>
+                <p class="text-lg text-muted-foreground">${selectedItem.year}</p>
+                </div>
+            </div>
+            <button onclick="hideModal()" class="hover:bg-accent p-2 rounded-full">
+                <svg data-lucide="X" class="w-5 h-5"></svg>
+            </button>
+            </div>
+            <div class="space-y-4">
+            <p class="text-foreground leading-relaxed">${selectedItem.description}</p>
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-muted-foreground">Category:</span>
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(selectedItem.category)} text-white">
+                ${category.name}
+                </span>
+            </div>
+            <!-- New Link Button -->
+            <div class="mt-6">
+                <a href="${selectedItem.slug}.html" class="inline-block px-4 py-2 rounded-md bg-gradient-to-r ${getCategoryColor(selectedItem.category)} text-white hover:opacity-90 transition-opacity">
+                View Full Details →
+                </a>
+            </div>
+            </div>
+        `;
+        lucide.createIcons();
+    }
+
+    function hideModal() {
+        isModalOpen = false;
+        const modal = document.getElementById("modal");
+        modal.classList.remove("modal-enter");
+        modal.classList.add("modal-exit");
+
+        setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("modal-exit");
+        }, 300);
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      renderTimeline();
+      if (isMobileMenuOpen) toggleMobileMenu();
+    }
+
+    function toggleMobileMenu() {
+      isMobileMenuOpen = !isMobileMenuOpen;
+      const menu = document.getElementById("mobile-menu");
+      menu.style.display = isMobileMenuOpen ? "block" : "none";
+    }
+
+    function initApp() {
+      const app = document.getElementById("app");
+
+      // Header
+    //   <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="px-3 py-1 rounded-md hover:bg-accent flex items-center">
+    //           </button> this button goes after <div class="hidden md:flex items-center gap-2">
+      const header = document.createElement("header");
+      header.className = "sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border";
+      header.innerHTML = `
+        <div class="container mx-auto px-4 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500">
+                <svg data-lucide="Brain" class="w-6 h-6 text-white"></svg>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold">AI History Timeline</h1>
+                <p class="text-sm text-muted-foreground">Interactive Journey Through Artificial Intelligence</p>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center gap-2">
+              
+              <button onclick="setCategory('all')" class="px-3 py-1 rounded-md hover:bg-accent">All</button>
+              ${Object.entries(categories).map(([key, val]) => `
+                <button onclick="setCategory('${key}')" class="px-3 py-1 rounded-md hover:bg-accent">${val.name}</button>
+              `).join('')}
+            </div>
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2">
+              <svg data-lucide="Menu" class="w-5 h-5"></svg>
+            </button>
+          </div>
+          <div id="mobile-menu" class="md:hidden mt-4 pt-4 border-t border-border hidden">
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCategory('all')" class="px-3 py-1 rounded-md hover:bg-accent">All</button>
+              ${Object.entries(categories).map(([key, val]) => `
+                <button onclick="setCategory('${key}')" class="px-3 py-1 rounded-md hover:bg-accent">${val.name}</button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+      app.appendChild(header);
+      lucide.createIcons();
+
+      // Hero Section
+      const hero = document.createElement("section");
+      hero.className = "py-20 px-4";
+      hero.innerHTML = `
+        <div class="container mx-auto text-center">
+          <h2 class="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            The Evolution of AI
+          </h2>
+          <p class="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            Explore the fascinating journey of artificial intelligence from its theoretical foundations 
+            to today's revolutionary breakthroughs. Click on any milestone to learn more.
+          </p>
+          <div class="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <svg data-lucide="Calendar" class="w-4 h-4"></svg>
+            <span>1950 - Present</span>
+            <span>•</span>
+            <span>${timelineData.length} Major Milestones</span>
+          </div>
+        </div>
+      `;
+      app.appendChild(hero);
+      lucide.createIcons();
+
+      // Timeline Section
+      const timelineSection = document.createElement("section");
+      timelineSection.className = "py-12 px-4";
+      timelineSection.innerHTML = `<div class="container mx-auto max-w-6xl"><div id="timeline" class="relative"></div></div>`;
+      app.appendChild(timelineSection);
+
+      // Footer
+      const footer = document.createElement("footer");
+      footer.className = "py-12 px-4 border-t border-border text-center text-muted-foreground";
+      footer.textContent = "© 2025 Alessandro Sciarra. All rights reserved.";
+      app.appendChild(footer);
+
+      // Modal
+      const modal = document.createElement("div");
+      modal.id = "modal";
+      modal.className = "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden";
+      modal.onclick = () => hideModal();
+      modal.innerHTML = `
+        <div id="modal-content" class="bg-card border border-border rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
+        </div>
+      `;
+      app.appendChild(modal);
+
+      // Render timeline
+      renderTimeline();
+
+      // Init dark mode
+      initDarkMode();
+    }
+
+    window.setCategory = setCategory;
+    window.handleItemClick = handleItemClick;
+    window.hideModal = hideModal;
+    window.toggleMobileMenu = toggleMobileMenu;
+    window.toggleDarkMode = toggleDarkMode;
+
+    window.onload = () => {
+      initApp();
+    };
+  </script>
+</body>
+</html>
