@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <title>ELIZA - AI History</title>
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://unpkg.com/lucide@latest"></script> 
+  <style>
+    :root {
+      --background: #1a1a1a;
+      --foreground: #f9fafb;
+      --card: #1f2937;
+      --border: #374151;
+      --primary: #60a5fa;
+      --muted: #111827;
+      --accent: #1f2937;
+      --text-muted: #9ca3af;
+    }
+    body { background-color: var(--background); color: var(--foreground); }
+    .bg-card { background-color: var(--card); }
+    .border-border { border-color: var(--border); }
+    .text-muted-foreground { color: var(--text-muted); }
+    .hover\:bg-accent:hover { background-color: var(--accent); }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-foreground">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500">
+            <svg data-lucide="Brain" class="w-6 h-6 text-white"></svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold">AI History Timeline</h1>
+            <p class="text-sm text-muted-foreground">Interactive Journey Through Artificial Intelligence</p>
+          </div>
+        </div>
+        <a href="index.html" class="px-3 py-1 rounded-md hover:bg-accent">Back to Timeline</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-12 max-w-4xl">
+    <div class="bg-card border border-border rounded-xl p-8">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500">
+          <svg data-lucide="Brain" class="w-6 h-6 text-white"></svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold">ELIZA</h2>
+          <p class="text-muted-foreground">1965</p>
+        </div>
+      </div>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        Joseph Weizenbaum creates ELIZA, one of the first chatbots that could engage in natural language conversation.
+      </p>
+      <p class="text-muted-foreground leading-relaxed mb-6">
+        ELIZA mimicked a psychotherapist and used pattern matching techniques to respond to user input, marking an early step in NLP research.
+      </p>
+      <div class="flex items-center gap-2 mt-6">
+        <span class="text-sm text-muted-foreground">Category:</span>
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+          Natural Language
+        </span>
+      </div>
+    </div>
+
+    <!-- Context Section -->
+    <section class="mt-12">
+      <h3 class="text-xl font-semibold mb-4">Before & After</h3>
+      <div class="space-y-4">
+        <div class="bg-card border border-border rounded-xl p-4 flex items-start gap-4">
+          <svg data-lucide="ChevronUp" class="w-5 h-5 text-muted-foreground mt-1"></svg>
+          <div>
+            <p class="font-medium">The Perceptron (1958)</p>
+            <p class="text-sm text-muted-foreground">Frank Rosenblatt develops an early neural network model.</p>
+          </div>
+        </div>
+        <div class="bg-card border border-border rounded-xl p-4 flex items-start gap-4">
+          <svg data-lucide="ChevronDown" class="w-5 h-5 text-muted-foreground mt-1"></svg>
+          <div>
+            <p class="font-medium">Watson Wins Jeopardy! (2011)</p>
+            <p class="text-sm text-muted-foreground">IBM Watson demonstrates advanced natural language processing capabilities.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-12 px-4 border-t border-border text-center text-muted-foreground">
+    © 2025 Alessandro Sciarra. All rights reserved.
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
