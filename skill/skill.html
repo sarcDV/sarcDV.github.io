@@ -143,11 +143,18 @@
   <div class="container mx-auto px-4 py-12">
     <!-- Header -->
     <header class="text-center mb-16">
-      <h1 class="text-4xl font-bold mb-4">Skills & Expertise</h1>
-      <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
-        Interactive visualization of my technical skills and professional competencies
-      </p>
-    </header>
+  <h1 class="text-4xl font-bold mb-4">Skills & Expertise</h1>
+  <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
+    Interactive visualization of my technical skills and professional competencies
+  </p>
+  <button 
+    onclick="window.location.href='https://sarcdv.github.io/'" 
+    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5"
+  >
+    <i data-lucide="home" class="w-5 h-5"></i>
+    <span>Return Home</span>
+  </button>
+</header>
 
     <!-- Skill Categories Navigation -->
     <div class="flex flex-wrap justify-center gap-4 mb-12">
@@ -167,6 +174,8 @@
         Research & Analysis
       </button>
     </div>
+
+
 
     <!-- Skills Grid -->
     <div class="skills-grid text-center mb-16">
@@ -367,7 +376,8 @@
           projects: [
             "Malware AI-assisted Analysis Tool (MAIAT)",
             "SentimentAnalyzer for Twitter",
-            "MRI Motion Correction Research"
+            "MRI Motion Correction Research",
+            "Super-Resolution for MRI"
           ],
           related: ["TensorFlow", "PyTorch", "Scikit-learn"]
         },
@@ -378,7 +388,7 @@
           level: 80,
           projects: [
             "Deep Learning models for MRI analysis",
-            "Malware classification system"
+            "Malware detection & classification system"
           ],
           related: ["Keras", "Python", "NumPy"]
         },
@@ -467,5 +477,12 @@
       document.querySelector('.category-btn').click();
     });
   </script>
+
+<script>
+  // Add this to your existing script to ensure the home icon loads
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
 </body>
 </html>
