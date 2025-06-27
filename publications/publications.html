@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A. Sciarra Publications Timeline - Interactive Journey Through My Own Works</title>
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://unpkg.com/lucide@latest"></script> 
+  <style>
+    :root {
+      --background: #ffffff;
+      --foreground: #1a1a1a;
+      --card: #f9fafb;
+      --border: #e5e7eb;
+      --primary: #3b82f6;
+      --muted: #f3f4f6;
+      --accent: #f3f4f6;
+      --text-muted: #6b7280;
+    }
+
+    .dark {
+      --background: #1a1a1a;
+      --foreground: #f9fafb;
+      --card: #1f2937;
+      --border: #374151;
+      --primary: #60a5fa;
+      --muted: #111827;
+      --accent: #1f2937;
+      --text-muted: #9ca3af;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+    }
+
+    .bg-card {
+      background-color: var(--card);
+    }
+
+    .border-border {
+      border-color: var(--border);
+    }
+
+    .text-muted-foreground {
+      color: var(--text-muted);
+    }
+
+    .hover\:border-primary\/50:hover {
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .hover\:bg-accent:hover {
+      background-color: var(--accent);
+    }
+
+    .bg-gradient-to-r.from-blue-500.to-cyan-500 {
+      background: linear-gradient(to right, #3b82f6, #06b6d4);
+    }
+    .bg-gradient-to-r.from-purple-500.to-pink-500 {
+      background: linear-gradient(to right, #9333ea, #ec4899);
+    }
+    .bg-gradient-to-r.from-green-500.to-emerald-500 {
+      background: linear-gradient(to right, #10b981, #10b981);
+    }
+    .bg-gradient-to-r.from-orange-500.to-red-500 {
+      background: linear-gradient(to right, #f97316, #ef4444);
+    }
+    .bg-gradient-to-r.from-yellow-500.to-orange-500 {
+      background: linear-gradient(to right, #eab308, #f97316);
+    }
+
+    .modal-enter {
+    animation: fadeInScale 0.3s ease-out forwards;
+    }
+
+    .modal-exit {
+    animation: fadeOutScale 0.3s ease-in forwards;
+    }
+
+    @keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+    }
+
+    @keyframes fadeOutScale {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-foreground dark:bg-[#1a1a1a]">
+  <div id="app"></div>
+
+  <script type="text/javascript">
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    let isDarkMode = false;
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark', isDarkMode);
+      localStorage.setItem('darkMode', isDarkMode);
+      updateDarkModeButton();
+    }
+
+    function updateDarkModeButton() {
+      const btn = document.getElementById("dark-mode-toggle");
+      if (btn) {
+        btn.innerHTML = isDarkMode ? `
+          <svg data-lucide="Sun" class="w-4 h-4 mr-2"></svg> Light Mode
+        ` : `
+          <svg data-lucide="Moon" class="w-4 h-4 mr-2"></svg> Dark Mode
+        `;
+        lucide.createIcons();
+      }
+    }
+
+    // Check user preference or system setting
+    function initDarkMode() {
+      const saved = localStorage.getItem('darkMode');
+      if (saved === 'true') {
+        isDarkMode = true;
+        document.body.classList.add('dark');
+      } else {
+        isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDarkMode) document.body.classList.add('dark');
+      }
+      updateDarkModeButton();
+    }
+
+    function getFilteredData() {
+        return selectedCategory === 'all'
+            ? timelineData
+            : timelineData.filter(item => item.category === selectedCategory);
+    }
+    // Timeline Data
+    const timelineData = [
+      {
+        year: "2008",
+        title: "Synthesis and Characterization of Hafnium Oxide and Hafnium Tantalum Oxide Nanocomposite Thin Films by a Sol-gel Spin Coating Process as High k Dielectric Materials for MEMS Applications.",
+        description: "In this work, we investigate the synthesis and characterization of hafnium oxide (HfO₂) and hafnium tantalum oxide (HfTaOₓ) nanocomposite thin films, utilizing a sol-gel spin coating process. These materials are of significant interest due to their high dielectric constant (k), which is essential for applications in microelectromechanical systems (MEMS), where efficient electrical insulation and capacitance are critical.\
+                        The sol-gel method involves the preparation of a homogeneous sol containing metal alkoxides or other precursors of hafnium and tantalum. Upon spin coating, the sol is deposited onto a substrate, and the centrifugal force facilitates the formation of a uniform thin film. Subsequent thermal treatment (calcination) is employed to promote the conversion of the sol into a dense, crystalline oxide film, enhancing its dielectric properties.\
+                        The resultant thin films undergo comprehensive characterization to elucidate their structural, morphological, and electrical properties. Techniques such as X-ray diffraction (XRD) are employed to determine the crystallinity and phase composition, while scanning electron microscopy (SEM) provides insights into the surface morphology and thickness of the films. Electrical characterization, including capacitance-voltage (C-V) and current-voltage (I-V) measurements, is conducted to assess the dielectric constant, leakage current, and breakdown voltage, which are critical for evaluating the films' suitability for MEMS applications.\
+                        The synthesized HfO₂ and HfTaOₓ nanocomposite thin films are evaluated for their potential integration into MEMS devices, where their high dielectric constant and thermal stability can significantly enhance device performance. This research aims to contribute to the development of advanced dielectric materials that meet the stringent requirements of modern MEMS technology, thereby improving device reliability and functionality.\
+                        This study underscores the importance of material engineering in advancing MEMS applications, highlighting the potential of hafnium-based dielectrics in next-generation electronic devices.",
+        authors:"A.R. Phani, A. Sciarra, S. Santucci",
+        details: "3rd International Conference Smart Materials, Structures and Systems - Acireale, Italy, 08-13/06/2008.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2011",
+        title: "An investigation of iron deposition in Parkinson’s disease using quantitative T2* mapping: an in vivo 3T MRI study.",
+        description: "The study aims to correlate iron levels with clinical features and potentially identify biomarkers for PD diagnosis and progression.",
+        authors:"A. Sciarra, A.M. Oros-Peusquens, K. Reetz, M. Alecci, N.J. Shah",
+        details: "ISMRM Italian Chapter - Rome 31/03/2011- 01/04/2011",
+        link: "https://www.ismrm.org/italy/Images/Programma_scientifico.pdf",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2011",
+        title: "An Accurate T2* Mapping Method in the Human Brain at 3T.",
+        description: "An Accurate T2* Mapping Method in the Human Brain at 3T.",
+        authors:"A. Sciarra, A.M. Oros-Peusquens, K. Reetz, M. Alecci, N.J. Shah",
+        details: "ISMRM Italian Chapter - Rome 31/03/2011- 01/04/2011",
+        link: "https://www.ismrm.org/italy/Images/Programma_scientifico.pdf",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2011",
+        title: "A study of lipid droplets accumulation in human tumour cells by high resolution fluorescence microscopy.",
+        description: "A study of lipid droplets accumulation in human tumour cells by high resolution fluorescence microscopy.",
+        authors:"E. Benedetti, D. Aversa, A. Sciarra, A.M. Cimini, M. Alecci",
+        details: "SIF - University of L'Aquila - Italy 26/09/2011- 30/09/2011.",
+        link: "https://www.sif.it/attivita/congresso/xcvii",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2014",
+        title: "Low field (0.14 T) Magnetic Resonance Imaging for freshness assessment of truffle Tuber melanosporum.",
+        description: "In this study we present a novel low field (6 MHz) MRI scanner developed to assess the freshness of truffles.\
+         Spin-echo (SE) images at different TE were acquired to map the proton density (S0) and T2 of Tuber melanosporum at \
+         3, 12, 17, 19 days post-harvest.",
+        authors:"G. Pacioni, A. Sciarra, E. Stagnini, A.M. Ragnelli, A. Sotgiu, P. Sebastiani, A. Galante, M. Alecci",
+        details: "The XII International Conference on the Applications of Magnetic Resonance in Food Science: Defining Food by Magnetic Resonance.\
+                    FOODMR 2014,Tuesday 20 - Friday 23, Cesena, Italy.",
+        link: "https://www.researchgate.net/publication/262985706_Low_field_014_T_Magnetic_Resonance_Imaging_for_freshness_assessment_of_truffle_Tuber_melanosporum",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Combination of Individual Coil QSM at High Field Strength (7T).",
+        description: "Phase image reconstruction from multi-channel data at high field strength becomes challenging since a volume body coil that provides the phase offset information is generally not available. Several coil combination techniques are still computation intensive and prone to errors for strongly T2*-weighted data due to the requirement of spatial smoothness of image phases, required phase reference from body coil scan, and also hampered for strongly localized B1 coil sensitivities. These limitations lead to phase image inconsistencies and may cause artifacts in QSMs. We demonstrated here that the coil combination should be considered after performing individual physical and/or virtual coil QSM.",
+        authors:"U.Yarach, H. Mattern, A. Sciarra, O. Speck",
+        details: "24th ISMRM, May 2016, Singapore.",
+        link: "https://cds.ismrm.org/protected/16MProceedings/PDFfiles/1795.html",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Beyond High Resolution MPRAGE: In Vivo T1-Weighted Imaging at 7T with 250 μm Isotropic Resolution Using Prospective Motion Correction.",
+        description: "Increasing the spatial resolution is of major importance to structural imaging as this may build bridges to optical microscopy and may lead to superior diagnostics and segmentations. Increasing the spatial resolution with sufficient SNR usually prolongs time of acquisition. This inevitably introduces more motion artifacts even with experienced subjects. However, this can be compensated by prospective motion correction. Increasing the resolution to a few hundred micrometers inherently reduces SNR such that reconstruction by sum of squares is not adequate anymore. Here we demonstrate our work on the acquisition and reconstruction of the currently highest resolution in vivo MPRAGE at 7T.",
+        authors:"F. Lüsebrink, A. Sciarra, H. Mattern, R. Yakupov, O. Speck",
+        details: "24th ISMRM, May 2016, Singapore.",
+        link: "https://cds.ismrm.org/protected/16MPresentations/abstracts/4258.html",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Prospective motion correction for ultra-high resolution Time of Flight angiography at 7T under SAR constraints.",
+        description: "At 7T, venous saturation and magnetization transfer for Time of Flight (ToF) angiography cannot be applied directly due to the increased specific absorption rate. Additionally, motion artifacts can degrade the image quality. A sequence with prospective motion correction (PMC) and sparse saturation was implemented to overcome these challenges. In vivo ultra-high resolution ToF angiograms were acquired, providing dramatically improved level of detail and image quality if PMC and sparse saturation is used. Thus, the proposed sequence unleashes the full potential of ToF angiography at 7T.",
+        authors:"H. Mattern, A. Sciarra, F. Godenschweger, D Stucht, F. Lüsebrink, O. Speck",
+        details: "24th ISMRM, May 2016, Singapore.",
+        link: "https://cds.ismrm.org/protected/16MProceedings/PDFfiles/0746.html",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: " Prospectively motion corrected QSM-based venograms at 7 Tesla.",
+        description: "",
+        authors:"H.Mattern, J. Acosta-Cabronero, A. Sciarra, O. Speck",
+        details: "7th Annual Scientific Symposium Ultrahigh Field Magnetic Resonance. June, 2016 Berlin.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Prospective Motion Correction Applications at 7T.",
+        description: "",
+        authors:"A. Sciarra, H. Mattern, D. Stucht, R. Yakupov, P. Schulze, F. Godenschweger, O. Speck",
+        details: "ITN Network HiMR Final Meeting. June 2016, Magdeburg.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Beyond high resolution: Prospectively motion corrected Time of Flight angiography with 150μm isotropic resolution at 7T under SAR constraints.",
+        description: "",
+        authors:"H. Mattern, A. Sciarra, F. Godenschweger, D. Stucht, F. Lüsebrink, O. Speck",
+        details: "28th Annual International Conference of Society of Magnetic Resonance Angiography. SMRA, September 2016, Chicago.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Prospectively motion-corrected QSM at 7T.",
+        description: "",
+        authors:"H. Mattern, J. Acosta-Cabronero, A. Sciarra, O. Speck",
+        details: "33rd Annual Scientific Meeting of European Society for Magnetic Resonance in Medicine and Biology. ESMRMB, September 2016, Vienna. ",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2016",
+        title: "Prospective motion correction for high-resolution QSM.",
+        description: "",
+        authors:"H. Mattern, J. Acosta-Cabronero, A. Sciarra, O. Speck",
+        details: "4th International Workshop on Quantitative Susceptibility Mapping. September 2016, Graz.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "Impact of Prospective Motion Correction in 7T FMRI Studies.",
+        description: "",
+        authors:"A. Cardenas-Blanco, D. Berron, Y. Chen, H. Mattern, R. Yakupov, A. Sciarra, O. Speck, E. Düzel",
+        details: "25th ISMRM, April 2017, Honolulu, Hi, USA.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "Quantitative and qualitative evaluation of bias field correction methods.",
+        description: "",
+        authors:"F. Lüsebrink, H. Mattern, A. Sciarra, O. Speck",
+        details: "25th ISMRM, April 2017, Honolulu, Hi, USA.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "More than meets the eye: Quantitative evaluation of prospective motion correction at 7T.",
+        description: "",
+        authors:"H. Mattern, F. Lüsebrink, A. Sciarra, O. Speck",
+        details: "25th ISMRM, April 2017, Honolulu, Hi, USA.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "More than meets the eye: Quantitative evaluation of prospective motion correction at 7T.",
+        description: "",
+        authors:"H. Mattern, F. Lüsebrink, A. Sciarra, O. Speck",
+        details: "25th ISMRM, April 2017, Honolulu, Hi, USA.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "Beyond the biological resolution limit: Prospectively motion corrected Time of Flight angiography at 7T.",
+        description: "",
+        authors:"H. Mattern, A. Sciarra, F. Godenschweger, D. Stucht, F. Lüsebrink, O. Speck",
+        details: "25th ISMRM, April 2017, Honolulu, Hi, USA.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "Quantitative evaluation of prospective motion correction for structural imaging at 7T.",
+        description: "",
+        authors:"A. Sciarra, H. Mattern, R. Yakupov, D. Stucht, P. Schulze, F. Godenschweger, O. Speck",
+        details: "25th ISMRM, April 2017, Honolulu, Hi, USA.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "Non-iterative, retrospective back- ground suppression in time of flight angiography.",
+        description: "",
+        authors:"H. Mattern, A. Sciarra, O. Speck",
+        details: "34th Annual Scientific Meeting ESMRMB, October 2017, Barcelona, Spain.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2017",
+        title: "Wavelet entropy: quantifying small- scale head motion artifacts.",
+        description: "",
+        authors:"H. Mattern, A. Sciarra, O. Speck",
+        details: "34th Annual Scientific Meeting ESMRMB, October 2017, Barcelona, Spain.",
+        link: "",
+        category: "prcc",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      
+    //   --------
+      {
+        year: "2022",
+        title: " Artificial Intelligence and Machine Learning for Healthcare: Vol. 1: Image and Data Analytics.",
+        description: "Chapter 3: Artificial Intelligence Based Strategies for Data-Driven Radial MRI.",
+        authors:"G. Placidi, L. Cinque, F. Mignosi, M. Polsinelli, A. Sciarra",
+        link:"https://books.google.de/books?id=qR44zwEACAAJ",
+        category: "books",
+        icon: "Brain",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2021",
+        title: "Perceived and mentally rotated contents are differentially represented in cortical depth of V1.",
+        description: "Primary visual cortex (V1) in humans is known to represent both veridically perceived external input and internally-generated contents underlying imagery and mental rotation. However, it is unknown how the brain keeps these contents separate thus avoiding a mixture of the perceived and the imagined which could lead to potentially detrimental consequences. Inspired by neuroanatomical studies showing that feedforward and feedback connections in V1 terminate in different cortical layers, we hypothesized that this anatomical compartmentalization underlies functional segregation of external and internally-generated visual contents, respectively. We used high-resolution layer-specific fMRI to test this hypothesis in a mental rotation task. We found that rotated contents were predominant at outer cortical depth bins (i.e. superficial and deep). At the same time perceived contents were represented stronger at the middle cortical bin. These results identify how through cortical depth compartmentalization V1 functionally segregates rather than confuses external from internally-generated visual contents. These results indicate that feedforward and feedback manifest in distinct subdivisions of the early visual cortex, thereby reflecting a general strategy for implementing multiple cognitive functions within a single brain region.",
+        authors: "P. Iamshchinina, D. Kaiser, R. Yakupov, D. Haenelt, A. Sciarra, H.Mattern, F. Luesebrink, E. Duezel, O. Speck, N. Weiskopf, R. M. Cichy",   
+        link: "https://doi.org/10.1038/s42003-021-02582-4",
+        details: "Nature, Communications Biology.",
+        category: "prja",
+        icon: "cpu",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2022",
+        title: "Quantitative evaluation of prospective motion correction in healthy subjects at 7T MRI.",
+        description: "Quantitative assessment of prospective motion correction (PMC) capability at 7T MRI for compliant healthy subjects to improve high-resolution images in the absence of intentional motion.\
+                      Twenty-one healthy subjects were imaged at 7 T. They were asked not to move, to consider only unintentional motion. An in-bore optical tracking system was used to monitor head motion and consequently update the imaging volume. For all subjects, high-resolution T1 (3D-MPRAGE), T2 (2D turbo spin echo), proton density (2D turbo spin echo), and T2* (2D gradient echo) weighted images were acquired with and without PMC. The images were evaluated through subjective and objective analysis.\
+                      Subjective evaluation overall has shown a statistically significant improvement (5.5%) in terms of image quality with PMC ON. In a separate evaluation of every contrast, three of the four contrasts (T1, T2, and proton density) have shown a statistically significant improvement (9.62%, 9.85%, and 9.26%), whereas the fourth one (T2*) has shown improvement, although not statistically significant. In the evaluation with objective metrics, average edge strength has shown an overall improvement \
+                      of 6% with PMC ON, which was statistically significant; and gradient entropy has shown an overall improvement of 2%, which did not reach statistical significance.\
+                      Based on subjective assessment, PMC improved image quality in high-resolution images of healthy compliant subjects in the absence of intentional motion for all contrasts except urn:x-wiley:07403194:media:mrm28998:mrm28998-math-0003, in which no significant differences were observed. Quantitative metrics showed an overall trend for an improvement with PMC, but not all differences were significant.",
+        authors: "A. Sciarra, H. Mattern, R. Yakupov, S. Chatterjee, D.l Stucht, S. Oeltze-Jafra, F. Godenschweger, O. Speck",   
+        link: "https://doi.org/10.1002/mrm.28998",
+        category: "prja",
+        icon: "cpu",
+        // slug: "1950-turing-test"
+      },
+      {
+        year: "2022",
+        title: "StRegA: Unsupervised anomaly detection in brain MRIs using a compact context-encoding variational autoencoder.",
+        description: "Expert interpretation of anatomical images of the human brain is the central part of neuroradiology. Several machine learning-based techniques have been proposed to assist in the analysis process. However, the ML models typically need to be trained to perform a specific task, e.g., brain tumour segmentation or classification. Not only do the corresponding training data require laborious manual annotations, but a wide variety of abnormalities can be present in a human brain MRI — even more than one simultaneously, which renders a representation of all possible anomalies very challenging. Hence, a possible solution is an unsupervised anomaly detection (UAD) system that can learn a data distribution from an unlabelled dataset of healthy subjects and then be applied to detect out-of-distribution samples. Such a technique can then be used to detect anomalies — lesions or abnormalities, for example, brain tumours, without explicitly training the model for that specific pathology. Several Variational Autoencoder (VAE) based techniques have been proposed in the past for this task. Even though they perform very well on controlled artificially simulated anomalies, many of them perform poorly while detecting anomalies in clinical data. This research proposes a compact version of the “context-encoding” VAE (ceVAE) model, combined with pre and post-processing steps, creating a UAD pipeline (StRegA), which is more robust on clinical data and shows its applicability in detecting anomalies such as tumours in brain MRIs. The proposed pipeline achieved a Dice score of 0.642 ± 0.101 while detecting tumours in T2w images of the BraTS dataset and 0.859 ± 0.112 while detecting artificially induced anomalies, while the best performing baseline achieved 0.522 ± 0.135 and 0.783 ± 0.111, respectively.",
+        authors: " S. Chatterjee, A. Sciarra, M. Dünnwald, P. Tummala, S. Kumar Agrawal, A. Jauhari, A. Kalra, S. Oeltze-Jafra, O. Speck, A. Nürnberger",   
+        link: "https://doi.org/10.1016/j.compbiomed.2022.106093",
+        category: "prja",
+        icon: "cpu",
+        // slug: "1950-turing-test"
+      },
+     
+      {
+        year: "2025",
+        title: "PULASki: Learning inter-rater variability using statistical distances to improve probabilistic segmentation.",
+        description: "In the domain of medical imaging, many supervised learning based methods for segmentation face several challenges such as \
+                        high variability in annotations from multiple experts, paucity of labelled data and class imbalanced datasets. \
+                        These issues may result in segmentations that lack the requisite precision for clinical analysis and can be misleadingly \
+                        overconfident without associated uncertainty quantification. This work proposes the PULASki method as a computationally \
+                        efficient generative tool for biomedical image segmentation that accurately captures variability in expert annotations, even in small datasets. \
+                        This approach makes use of an improved loss function based on statistical distances in a conditional variational autoencoder structure (Probabilistic UNet) , \
+                        which improves learning of the conditional decoder compared to the standard cross-entropy particularly in class imbalanced problems. \
+                        The proposed method was analysed for two structurally different segmentation tasks (intracranial vessel and multiple sclerosis (MS) lesion) \
+                        and compare our results to four well-established baselines in terms of quantitative metrics and qualitative output. \
+                        These experiments involve class-imbalanced datasets characterised by challenging features, including suboptimal signal-to-noise ratios and high ambiguity. \
+                        Empirical results demonstrate the PULASKi method outperforms all baselines at the 5% significance level. Our experiments are also of the first to present\
+                         a comparative study of the computationally feasible segmentation of complex geometries using 3D patches and the traditional use of 2D slices. \
+                         The generated segmentations are shown to be much more anatomically plausible than in the 2D case, particularly for the vessel task. \
+                         Our method can also be applied to a wide range of multi-label segmentation tasks and is useful for downstream tasks such as hemodynamic \
+                         modelling (computational fluid dynamics and data assimilation), clinical decision making, and treatment planning.",
+        authors: "S. Chatterjee, F. Gaidzik, A. Sciarra, H. Mattern, G. Janiga, O. Speck, A. Nürnberger, S. Pathiraja",
+        details: "Medical Image Analysis",
+        link: "https://doi.org/10.1016/j.media.2025.103623",
+        category: "prja",
+        icon: "cpu",
+        // slug: "1950-turing-test"
+      },
+       {
+        year: "2025",
+        title: "Fully automated MRI-based analysis of the locus coeruleus in aging and Alzheimer's disease dementia using ELSI-Net.",
+        description: "The locus coeruleus (LC) is linked to the development and pathophysiology of neurodegenerative diseases such as Alzheimer's disease (AD). Magnetic resonance imaging–based LC features have shown potential to assess LC integrity in vivo.\
+                        We present a deep learning-based LC segmentation and feature extraction method called Ensemble-based Locus Coeruleus Segmentation Network (ELSI-Net) and apply it to healthy aging and AD dementia datasets. Agreement to expert raters and previously published LC atlases were assessed. We aimed to reproduce previously reported differences in LC integrity in aging and AD dementia and correlate extracted features to cerebrospinal fluid (CSF) biomarkers of AD pathology.\
+                        ELSI-Net demonstrated high agreement to expert raters and published atlases. Previously reported group differences in LC integrity were detected and correlations to CSF biomarkers were found.\
+                        Although we found excellent performance, further evaluations on more diverse datasets from clinical cohorts are required for a conclusive assessment of ELSI-Net's general applicability.\
+                        We provide a thorough evaluation of a fully automatic locus coeruleus (LC) segmentation method termed Ensemble-based Locus Coeruleus Segmentation Network (ELSI-Net) in aging and Alzheimer's disease (AD) dementia.\
+                        ELSI-Net outperforms previous work and shows high agreement with manual ratings and previously published LC atlases.\
+                        ELSI-Net replicates previously shown LC group differences in aging and AD.\
+                        ELSI-Net's LC mask volume correlates with cerebrospinal fluid biomarkers of AD pathology.",
+        authors: "M. Dünnwald, F. Krohn, A. Sciarra, M. Sarkar, A. Schneider, K. Fliessbach, O. Kimmich, F. Jessen, A. Rostamzadeh, W. Glanz, E. I. Incesoy, S. Teipel, I. Kilimann, D. Goerss, A. Spottke, J. Brustkern, M. T. Heneka, F. Brosseron, F. Lüsebrink, D. Hämmerer, E. Düzel, K. Tönnies, S. Oeltze-Jafra, M. J. Betts",   
+        link: "https://doi.org/10.1002/dad2.70118",
+        category: "prja",
+        icon: "cpu",
+        // slug: "1950-turing-test"
+      }
+      
+    ];
+
+    // const categories = {
+    //   foundation: { name: "Foundation", color: "from-blue-500 to-cyan-500" },
+    //   neural: { name: "Neural Networks", color: "from-purple-500 to-pink-500" },
+    //   nlp: { name: "Natural Language", color: "from-green-500 to-emerald-500" },
+    //   expert: { name: "Expert Systems", color: "from-orange-500 to-red-500" },
+    //   games: { name: "Game AI", color: "from-yellow-500 to-orange-500" }
+    // };
+
+    const categories = {
+      prja: { name: "Peer-Reviewed Journal Articles", color: "from-blue-500 to-cyan-500" },
+      books: { name: "Books", color: "from-purple-500 to-pink-500" },
+      prcc: { name: "Peer-Reviewed Conferences Contributions", color: "from-green-500 to-emerald-500" },
+    };
+    let selectedItem = null;
+    let selectedCategory = 'all';
+    let isModalOpen = false;
+    let isMobileMenuOpen = false;
+
+    function getCategoryColor(category) {
+      return categories[category] ? categories[category].color : "from-gray-500 to-gray-500";
+    }
+
+    function createTimelineItem(item, index) {
+        const container = document.createElement('div');
+        container.className = `flex items-center mb-8 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`;
+        container.innerHTML = `
+            <!-- Left Side Card -->
+            <div class="${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'} w-1/2">
+            <div class="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50" onclick="handleItemClick(${index})">
+                <div class="flex items-center gap-3 mb-3">
+                <div class="p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(item.category)}">
+                    <svg data-lucide="${item.icon}" class="w-5 h-5 text-white"></svg>
+                </div>
+                <span class="text-sm font-medium text-muted-foreground">${item.year}</span>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">${item.title}</h3>
+                <p class="text-sm text-muted-foreground leading-relaxed">${item.description}</p>
+                <p class="text-sm text-muted-foreground leading-relaxed">${item.authors}</p>
+                <p class="text-sm text-muted-foreground leading-relaxed">${item.details}</p>
+                ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Read more</a>` : ''}
+                <div class="mt-3">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(item.category)} text-white">
+                    ${categories[item.category]?.name || ''}
+                </span>
+                </div>
+            </div>
+            </div>
+
+            <!-- Timeline Dot & Line -->
+            <div class="relative flex items-center justify-center w-8 h-24">
+            <!-- Vertical Line -->
+            <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20"></div>
+            <!-- Dot -->
+            <div class="w-4 h-4 z-10 rounded-full bg-gradient-to-r ${getCategoryColor(item.category)} border-2 border-background"></div>
+            </div>
+
+            <!-- Right Side Empty Space -->
+            <div class="w-1/2"></div>
+        `;
+        lucide.createIcons();
+        return container;
+    }
+
+
+    function renderTimeline() {
+        const container = document.getElementById("timeline");
+        container.innerHTML = '';
+        const filteredData = getFilteredData();
+
+        // Sort by year descending (latest first)
+        filteredData.sort((a, b) => parseInt(b.year) - parseInt(a.year));
+
+        filteredData.forEach((item, index) => {
+            const el = createTimelineItem(item, index);
+            container.appendChild(el);
+        });
+    }
+
+    function handleItemClick(index) {
+        const filteredData = getFilteredData();
+        selectedItem = filteredData[index];
+        showModal();
+    }
+
+    function createTimelineItem(item, index) {
+        const container = document.createElement('div');
+        container.className = `flex items-center mb-8 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`;
+        container.innerHTML = `
+            <div class="${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'} w-1/2">
+            <div class="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+                    onclick="handleItemClick(${index})">
+                <div class="flex items-center gap-3 mb-3">
+                <div class="p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(item.category)}">
+                    <svg data-lucide="${item.icon}" class="w-5 h-5 text-white"></svg>
+                </div>
+                <span class="text-sm font-medium text-muted-foreground">${item.year}</span>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">${item.title}</h3>
+                <p class="text-sm text-muted-foreground leading-relaxed">${item.description}</p>
+                <p class="text-sm text-muted-foreground leading-relaxed">${item.authors}</p>
+                ${item.details ? `<p class="text-sm text-muted-foreground leading-relaxed">${item.details}</p>` : ''}
+                ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Read more</a>` : ''}
+                <div class="mt-3">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(item.category)} text-white">
+                    ${categories[item.category]?.name || ''}
+                </span>
+                </div>
+            </div>
+            </div>
+            <!-- Timeline Dot & Line -->
+            <div class="relative flex items-center justify-center w-8 h-24">
+            <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20"></div>
+            <div class="w-4 h-4 z-10 rounded-full bg-gradient-to-r ${getCategoryColor(item.category)} border-2 border-background"></div>
+            </div>
+            <!-- Right Side Empty Space -->
+            <div class="w-1/2"></div>
+        `;
+        lucide.createIcons();
+        return container;
+    }
+
+    function showModal() {
+        isModalOpen = true;
+        const modal = document.getElementById("modal");
+        const modalContent = document.getElementById("modal-content");
+        modal.classList.remove("hidden", "modal-exit");
+        modal.classList.add("modal-enter");
+
+        const category = categories[selectedItem.category];
+
+        modalContent.innerHTML = `
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r ${getCategoryColor(selectedItem.category)}">
+                        <svg data-lucide="${selectedItem.icon}" class="w-6 h-6 text-white"></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-foreground">${selectedItem.title}</h2>
+                        <p class="text-lg text-muted-foreground">${selectedItem.year}</p>
+                    </div>
+                </div>
+                <button onclick="hideModal()" class="hover:bg-accent p-2 rounded-full">
+                    <svg data-lucide="X" class="w-5 h-5"></svg>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-foreground leading-relaxed">${selectedItem.description}</p>
+                <p class="text-foreground leading-relaxed">${selectedItem.authors}</p>
+                <p class="text-foreground leading-relaxed">${selectedItem.details}</p>
+                ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-primary hover:underline"><svg data-lucide="ExternalLink" class="w-4 h-4"></svg> Visit Link</a>` : ''}
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-muted-foreground">Category:</span>
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(selectedItem.category)} text-white">
+                        ${category.name}
+                    </span>
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+    }
+
+    function hideModal() {
+        isModalOpen = false;
+        const modal = document.getElementById("modal");
+        modal.classList.remove("modal-enter");
+        modal.classList.add("modal-exit");
+
+        setTimeout(() => {
+            modal.classList.add("hidden");
+            modal.classList.remove("modal-exit");
+        }, 300);
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      renderTimeline();
+      if (isMobileMenuOpen) toggleMobileMenu();
+    }
+
+    function toggleMobileMenu() {
+      isMobileMenuOpen = !isMobileMenuOpen;
+      const menu = document.getElementById("mobile-menu");
+      menu.style.display = isMobileMenuOpen ? "block" : "none";
+    }
+
+    function initApp() {
+      const app = document.getElementById("app");
+
+      // Header
+    //   <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="px-3 py-1 rounded-md hover:bg-accent flex items-center">
+    //           </button> this button goes after <div class="hidden md:flex items-center gap-2">
+      const header = document.createElement("header");
+      header.className = "sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border";
+      header.innerHTML = `
+        <div class="container mx-auto px-4 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500">
+                <svg data-lucide="Brain" class="w-6 h-6 text-white"></svg>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold">A. Sciarra Publication Timeline</h1>
+                <p class="text-sm text-muted-foreground">Interactive Journey Through My Own Works</p>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center gap-2">
+              
+              <button onclick="setCategory('all')" class="px-3 py-1 rounded-md hover:bg-accent">All</button>
+              ${Object.entries(categories).map(([key, val]) => `
+                <button onclick="setCategory('${key}')" class="px-3 py-1 rounded-md hover:bg-accent">${val.name}</button>
+              `).join('')}
+            </div>
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2">
+              <svg data-lucide="Menu" class="w-5 h-5"></svg>
+            </button>
+          </div>
+          <div id="mobile-menu" class="md:hidden mt-4 pt-4 border-t border-border hidden">
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setCategory('all')" class="px-3 py-1 rounded-md hover:bg-accent">All</button>
+              ${Object.entries(categories).map(([key, val]) => `
+                <button onclick="setCategory('${key}')" class="px-3 py-1 rounded-md hover:bg-accent">${val.name}</button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+      app.appendChild(header);
+      lucide.createIcons();
+
+      // Hero Section
+      const hero = document.createElement("section");
+      hero.className = "py-20 px-4";
+      hero.innerHTML = `
+        <div class="container mx-auto text-center">
+          <h2 class="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            Some of my contributions include
+          </h2>       
+          <div class="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <svg data-lucide="Calendar" class="w-4 h-4"></svg>
+            <span>2008 - Present</span>
+            <span>•</span>
+            <span>${timelineData.length} Major Milestones</span>
+          </div>
+        </div>
+      `;
+      app.appendChild(hero);
+      lucide.createIcons();
+
+      // Timeline Section
+      const timelineSection = document.createElement("section");
+      timelineSection.className = "py-12 px-4";
+      timelineSection.innerHTML = `<div class="container mx-auto max-w-6xl"><div id="timeline" class="relative"></div></div>`;
+      app.appendChild(timelineSection);
+
+      // Footer
+      const footer = document.createElement("footer");
+      footer.className = "py-12 px-4 border-t border-border text-center text-muted-foreground";
+      footer.textContent = "© 2025 Alessandro Sciarra. All rights reserved.";
+      app.appendChild(footer);
+
+      // Modal
+      const modal = document.createElement("div");
+      modal.id = "modal";
+      modal.className = "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden";
+      modal.onclick = () => hideModal();
+      modal.innerHTML = `
+        <div id="modal-content" class="bg-card border border-border rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
+        </div>
+      `;
+      app.appendChild(modal);
+
+      // Render timeline
+      renderTimeline();
+
+      // Init dark mode
+      initDarkMode();
+    }
+
+    window.setCategory = setCategory;
+    window.handleItemClick = handleItemClick;
+    window.hideModal = hideModal;
+    window.toggleMobileMenu = toggleMobileMenu;
+    window.toggleDarkMode = toggleDarkMode;
+
+    window.onload = () => {
+      initApp();
+    };
+  </script>
+</body>
+</html>
