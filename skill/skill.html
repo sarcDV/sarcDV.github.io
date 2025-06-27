@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alessandro Sciarra - Skills & Expertise</title>
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+  <style>
+    :root {
+      --background: #1a1a1a;
+      --foreground: #f9fafb;
+      --card: #1f2937;
+      --border: #374151;
+      --primary: #60a5fa;
+      --muted: #111827;
+      --accent: #1f2937;
+      --text-muted: #9ca3af;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .bg-card {
+      background-color: var(--card);
+    }
+
+    .border-border {
+      border-color: var(--border);
+    }
+
+    .text-muted-foreground {
+      color: var(--text-muted);
+    }
+
+    /* Gradient backgrounds for skill categories */
+    .bg-gradient-ai {
+      background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+    }
+    .bg-gradient-cyber {
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    }
+    .bg-gradient-data {
+      background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
+    }
+    .bg-gradient-dev {
+      background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    }
+    .bg-gradient-research {
+      background: linear-gradient(135deg, #eab308 0%, #f97316 100%);
+    }
+
+    /* Skill hexagon styling */
+    .hexagon {
+      width: 120px;
+      height: 138px;
+      position: relative;
+      margin: 0 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .hexagon:before, .hexagon:after {
+      content: "";
+      position: absolute;
+      width: 0;
+      border-left: 60px solid transparent;
+      border-right: 60px solid transparent;
+    }
+    
+    .hexagon:before {
+      bottom: 100%;
+      border-bottom: 30px solid;
+    }
+    
+    .hexagon:after {
+      top: 100%;
+      border-top: 30px solid;
+    }
+
+    .hexagon-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      padding: 20px;
+    }
+
+    .hexagon-content i {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    /* Animation for skill details */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .skill-detail {
+      animation: fadeInUp 0.3s ease-out forwards;
+    }
+
+    /* Progress bars */
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      background-color: white;
+      transition: width 1s ease-in-out;
+    }
+
+    /* Active category button */
+    .category-btn.active {
+      box-shadow: 0 0 0 2px white;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-foreground dark:bg-[#1a1a1a]">
+  <div class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <header class="text-center mb-16">
+      <h1 class="text-4xl font-bold mb-4">Skills & Expertise</h1>
+      <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+        Interactive visualization of my technical skills and professional competencies
+      </p>
+    </header>
+
+    <!-- Skill Categories Navigation -->
+    <div class="flex flex-wrap justify-center gap-4 mb-12">
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium" data-category="ai">
+        AI & Machine Learning
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium" data-category="cyber">
+        Cybersecurity
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium" data-category="data">
+        Data Science
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium" data-category="dev">
+        Development
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium" data-category="research">
+        Research & Analysis
+      </button>
+    </div>
+
+    <!-- Skills Grid -->
+    <div class="skills-grid text-center mb-16">
+      <!-- AI & ML Skills -->
+      <div id="ai-skills" class="skill-category">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="python">
+          <div class="hexagon-content">
+            <i class="devicon-python-plain"></i>
+            <span>Python</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="tensorflow">
+          <div class="hexagon-content">
+            <i class="devicon-tensorflow-original"></i>
+            <span>TensorFlow</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="pytorch">
+          <div class="hexagon-content">
+            <i class="devicon-pytorch-original"></i>
+            <span>PyTorch</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="keras">
+          <div class="hexagon-content">
+            <i class="devicon-keras-plain"></i>
+            <span>Keras</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="scikitlearn">
+          <div class="hexagon-content">
+            <i class="devicon-scikitlearn-plain"></i>
+            <span>Scikit-learn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cybersecurity Skills -->
+      <div id="cyber-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="malware">
+          <div class="hexagon-content">
+            <i data-lucide="shield"></i>
+            <span>Malware Analysis</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="threat">
+          <div class="hexagon-content">
+            <i data-lucide="alert-triangle"></i>
+            <span>Threat Detection</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="network">
+          <div class="hexagon-content">
+            <i data-lucide="network"></i>
+            <span>Network Security</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="gnn">
+          <div class="hexagon-content">
+            <i data-lucide="brain"></i>
+            <span>GNN Security</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Science Skills -->
+      <div id="data-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="pandas">
+          <div class="hexagon-content">
+            <i class="devicon-pandas-plain"></i>
+            <span>Pandas</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="numpy">
+          <div class="hexagon-content">
+            <i class="devicon-numpy-plain"></i>
+            <span>NumPy</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="matplotlib">
+          <div class="hexagon-content">
+            <i class="devicon-matplotlib-plain"></i>
+            <span>Matplotlib</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="sql">
+          <div class="hexagon-content">
+            <i class="devicon-mysql-plain"></i>
+            <span>SQL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Development Skills -->
+      <div id="dev-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="bash">
+          <div class="hexagon-content">
+            <i class="devicon-bash-plain"></i>
+            <span>Bash</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="git">
+          <div class="hexagon-content">
+            <i class="devicon-git-plain"></i>
+            <span>Git</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="docker">
+          <div class="hexagon-content">
+            <i class="devicon-docker-plain"></i>
+            <span>Docker</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="html">
+          <div class="hexagon-content">
+            <i class="devicon-html5-plain"></i>
+            <span>HTML5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Skills -->
+      <div id="research-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="physics">
+          <div class="hexagon-content">
+            <i data-lucide="atom"></i>
+            <span>Physics Research</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="mri">
+          <div class="hexagon-content">
+            <i data-lucide="scan"></i>
+            <span>MRI Analysis</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="publications">
+          <div class="hexagon-content">
+            <i data-lucide="book-open"></i>
+            <span>Scientific Writing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Details Panel -->
+    <div id="skill-detail-panel" class="max-w-4xl mx-auto bg-card border border-border rounded-xl p-8 hidden shadow-lg">
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h3 id="skill-title" class="text-2xl font-bold mb-2"></h3>
+          <p id="skill-category" class="text-sm uppercase tracking-wider font-semibold"></p>
+        </div>
+        <button id="close-detail" class="p-2 rounded-full hover:bg-accent transition-colors">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2">
+          <p id="skill-description" class="mb-6 text-muted-foreground"></p>
+          
+          <div class="mb-6">
+            <h4 class="font-semibold mb-2">Experience Level</h4>
+            <div class="progress-container">
+              <div id="skill-progress" class="progress-bar"></div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="font-semibold mb-2">Related Projects</h4>
+            <ul id="related-projects" class="space-y-2 text-muted-foreground">
+              <!-- Projects will be added here dynamically -->
+            </ul>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Related Skills</h4>
+          <div id="related-skills" class="flex flex-wrap gap-2">
+            <!-- Related skills will be added here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Lucide icons
+      lucide.createIcons();
+      
+      // Skill data - you'll complete this with your actual skills
+      const skillsData = {
+        python: {
+          title: "Python",
+          category: "AI & Machine Learning",
+          description: "Extensive experience with Python for data analysis, machine learning, and scientific computing. Proficient in NumPy, Pandas, Matplotlib, and other key libraries.",
+          level: 90,
+          projects: [
+            "Malware AI-assisted Analysis Tool (MAIAT)",
+            "SentimentAnalyzer for Twitter",
+            "MRI Motion Correction Research"
+          ],
+          related: ["TensorFlow", "PyTorch", "Scikit-learn"]
+        },
+        tensorflow: {
+          title: "TensorFlow",
+          category: "AI & Machine Learning",
+          description: "Practical experience building and deploying neural networks with TensorFlow for various applications including malware detection and medical imaging analysis.",
+          level: 80,
+          projects: [
+            "Deep Learning models for MRI analysis",
+            "Malware classification system"
+          ],
+          related: ["Keras", "Python", "NumPy"]
+        },
+        malware: {
+          title: "Malware Analysis",
+          category: "Cybersecurity",
+          description: "Specialized in static and dynamic malware analysis techniques. Developed AI models for automated malware detection and classification.",
+          level: 85,
+          projects: [
+            "MAIAT tool development",
+            "Malware behavior research"
+          ],
+          related: ["Threat Detection", "Python", "Machine Learning"]
+        }
+        // Add your complete skills data here
+      };
+
+      // Category buttons
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const skillCategories = document.querySelectorAll('.skill-category');
+      
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const category = this.dataset.category;
+          
+          // Update active button
+          categoryBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Show selected category
+          skillCategories.forEach(cat => cat.classList.add('hidden'));
+          document.getElementById(`${category}-skills`).classList.remove('hidden');
+        });
+      });
+
+      // Hexagon skill click
+      const hexagons = document.querySelectorAll('.hexagon');
+      const detailPanel = document.getElementById('skill-detail-panel');
+      const closeBtn = document.getElementById('close-detail');
+      
+      hexagons.forEach(hex => {
+        hex.addEventListener('click', function() {
+          const skill = this.dataset.skill;
+          const data = skillsData[skill];
+          
+          if (data) {
+            // Update panel content
+            document.getElementById('skill-title').textContent = data.title;
+            document.getElementById('skill-category').textContent = data.category;
+            document.getElementById('skill-description').textContent = data.description;
+            document.getElementById('skill-progress').style.width = `${data.level}%`;
+            
+            // Update projects
+            const projectsList = document.getElementById('related-projects');
+            projectsList.innerHTML = '';
+            data.projects.forEach(project => {
+              const li = document.createElement('li');
+              li.className = 'flex items-center';
+              li.innerHTML = `<i data-lucide="chevron-right" class="mr-2 w-4 h-4"></i> ${project}`;
+              projectsList.appendChild(li);
+            });
+            
+            // Update related skills
+            const relatedSkills = document.getElementById('related-skills');
+            relatedSkills.innerHTML = '';
+            data.related.forEach(skill => {
+              const span = document.createElement('span');
+              span.className = 'px-3 py-1 rounded-full text-sm bg-accent text-foreground';
+              span.textContent = skill;
+              relatedSkills.appendChild(span);
+            });
+            
+            // Show panel
+            detailPanel.classList.remove('hidden');
+            lucide.createIcons(); // Refresh icons
+          }
+        });
+      });
+      
+      // Close panel
+      closeBtn.addEventListener('click', function() {
+        detailPanel.classList.add('hidden');
+      });
+      
+      // Initialize first category
+      document.querySelector('.category-btn').click();
+    });
+  </script>
+</body>
+</html>
