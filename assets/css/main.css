@@ -5134,3 +5134,7 @@ a img {
     margin: 0;
     color: #fff
 }
+
+p, li, span {
+  color: #dcdcdc;
+}
