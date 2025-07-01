@@ -9,12 +9,13 @@ html {
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-size: 100%;
-    line-height: 1.5;
-    color: #555;
-    font-family: 'Nunito Sans', sans-serif
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  line-height: 1.5;
+  color: #f0f0f0; /* Light gray text */
+  background-color: #121212; /* Dark background */
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 article,
@@ -4789,7 +4790,7 @@ strong {
     margin-top: 1em;
     padding-top: 1em;
     line-height: 1.25;
-    color: #333
+    color: #ffffff;
 }
 
 h2 {
@@ -4820,21 +4821,29 @@ a img {
     border: 0
 }
 
-#particles-js {
-    background: #0a0b0c;
-    /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #2B32B2, #1488CC);
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #000000, #1488CC);
+/*#particles-js {
+//    background: #0a0b0c;
+//    /* fallback for old browsers */
+/*    background: -webkit-linear-gradient(to right, #2B32B2, #1488CC);
+//    /* Chrome 10-25, Safari 5.1-6 */
+/*    background: linear-gradient(to right, #000000, #1488CC);
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-    display: flex;
+/*    display: flex;
     vertical-align: bottom;
     width: 100%;
     min-height: 100vh;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed
+}*/
+
+#particles-js {
+  background: linear-gradient(to bottom right, #121212, #1e1e1e);
+  display: flex;
+  vertical-align: bottom;
+  width: 100%;
+  min-height: 100vh;
 }
 
 #particles-js .particles-js-canvas-el {
