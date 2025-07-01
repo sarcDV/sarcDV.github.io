@@ -5113,7 +5113,7 @@ a img {
 }
 
 .footer {
-    background: #1b1e20;
+    background: #1e1e1e;
     /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #000000, #1488CC);
     /* Chrome 10-25, Safari 5.1-6 */
@@ -5122,7 +5122,7 @@ a img {
     padding: 10px 0;
     margin-top: 100px;
     text-align: center;
-    color: #fff
+    color: #aaa
 }
 
 .footer .love {
