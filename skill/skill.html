@@ -38,19 +38,34 @@
     }
 
     /* Gradient backgrounds for skill categories */
-    .bg-gradient-ai {
+    .bg-gradient-programming {
       background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
     }
-    .bg-gradient-cyber {
+    .bg-gradient-database {
       background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
     }
-    .bg-gradient-data {
+    .bg-gradient-os {
       background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
     }
-    .bg-gradient-dev {
+    .bg-gradient-virtualization {
       background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
     }
-    .bg-gradient-research {
+    .bg-gradient-image {
+      background: linear-gradient(135deg, #eab308 0%, #f97316 100%);
+    }
+    .bg-gradient-ml {
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    }
+    .bg-gradient-web {
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    }
+    .bg-gradient-office {
+      background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
+    }
+    .bg-gradient-electronics {
+      background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    }
+    .bg-gradient-languages {
       background: linear-gradient(135deg, #eab308 0%, #f97316 100%);
     }
 
@@ -143,144 +158,139 @@
   <div class="container mx-auto px-4 py-12">
     <!-- Header -->
     <header class="text-center mb-16">
-  <h1 class="text-4xl font-bold mb-4">Skills & Expertise</h1>
-  <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
-    Interactive visualization of my technical skills and professional competencies
-  </p>
-  <button 
-    onclick="window.location.href='https://sarcdv.github.io/'" 
-    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5"
-  >
-    <i data-lucide="home" class="w-5 h-5"></i>
-    <span>Return Home</span>
-  </button>
-</header>
+      <h1 class="text-4xl font-bold mb-4">Skills & Expertise</h1>
+      <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
+        Interactive visualization of my technical skills and professional competencies
+      </p>
+      <button 
+        onclick="window.location.href='https://sarcdv.github.io/'" 
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5"
+      >
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span>Return Home</span>
+      </button>
+    </header>
 
     <!-- Skill Categories Navigation -->
     <div class="flex flex-wrap justify-center gap-4 mb-12">
-      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium" data-category="ai">
-        AI & Machine Learning
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium" data-category="programming">
+        Programming & Scripting
       </button>
-      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium" data-category="cyber">
-        Cybersecurity
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium" data-category="database">
+        Database
       </button>
-      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium" data-category="data">
-        Data Science
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium" data-category="os">
+        Operating Systems
       </button>
-      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium" data-category="dev">
-        Development
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium" data-category="virtualization">
+        Virtualization & Container
       </button>
-      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium" data-category="research">
-        Research & Analysis
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium" data-category="image">
+        Image Processing
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium" data-category="ml">
+        Machine & Deep Learning
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium" data-category="web">
+        Web Development
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium" data-category="office">
+        Office
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium" data-category="electronics">
+        Electronics
+      </button>
+      <button class="category-btn px-6 py-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium" data-category="languages">
+        Languages
       </button>
     </div>
 
-
-
     <!-- Skills Grid -->
     <div class="skills-grid text-center mb-16">
-      <!-- AI & ML Skills -->
-      <div id="ai-skills" class="skill-category">
+      <!-- Programming & Scripting Skills -->
+      <div id="programming-skills" class="skill-category">
         <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="python">
           <div class="hexagon-content">
             <i class="devicon-python-plain"></i>
             <span>Python</span>
           </div>
         </div>
-        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="tensorflow">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="matlab">
           <div class="hexagon-content">
-            <i class="devicon-tensorflow-original"></i>
-            <span>TensorFlow</span>
+            <i class="devicon-matlab-plain"></i>
+            <span>MATLAB</span>
           </div>
         </div>
-        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="pytorch">
-          <div class="hexagon-content">
-            <i class="devicon-pytorch-original"></i>
-            <span>PyTorch</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="keras">
-          <div class="hexagon-content">
-            <i class="devicon-keras-plain"></i>
-            <span>Keras</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="scikitlearn">
-          <div class="hexagon-content">
-            <i class="devicon-scikitlearn-plain"></i>
-            <span>Scikit-learn</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cybersecurity Skills -->
-      <div id="cyber-skills" class="skill-category hidden">
-        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="malware">
-          <div class="hexagon-content">
-            <i data-lucide="shield"></i>
-            <span>Malware Analysis</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="threat">
-          <div class="hexagon-content">
-            <i data-lucide="alert-triangle"></i>
-            <span>Threat Detection</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="network">
-          <div class="hexagon-content">
-            <i data-lucide="network"></i>
-            <span>Network Security</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="gnn">
-          <div class="hexagon-content">
-            <i data-lucide="brain"></i>
-            <span>GNN Security</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Data Science Skills -->
-      <div id="data-skills" class="skill-category hidden">
-        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="pandas">
-          <div class="hexagon-content">
-            <i class="devicon-pandas-plain"></i>
-            <span>Pandas</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="numpy">
-          <div class="hexagon-content">
-            <i class="devicon-numpy-plain"></i>
-            <span>NumPy</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="matplotlib">
-          <div class="hexagon-content">
-            <i class="devicon-matplotlib-plain"></i>
-            <span>Matplotlib</span>
-          </div>
-        </div>
-        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="sql">
-          <div class="hexagon-content">
-            <i class="devicon-mysql-plain"></i>
-            <span>SQL</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Development Skills -->
-      <div id="dev-skills" class="skill-category hidden">
-        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="bash">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="bash">
           <div class="hexagon-content">
             <i class="devicon-bash-plain"></i>
             <span>Bash</span>
           </div>
         </div>
-        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="git">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="csh">
+          <div class="hexagon-content">
+            <i data-lucide="terminal"></i>
+            <span>Csh</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="git">
           <div class="hexagon-content">
             <i class="devicon-git-plain"></i>
             <span>Git</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Database Skills -->
+      <div id="database-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="mariadb">
+          <div class="hexagon-content">
+            <i class="devicon-mysql-plain"></i>
+            <span>MariaDB</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="mysql">
+          <div class="hexagon-content">
+            <i class="devicon-mysql-plain"></i>
+            <span>MySQL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operating Systems Skills -->
+      <div id="os-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="unix">
+          <div class="hexagon-content">
+            <i data-lucide="server"></i>
+            <span>Unix</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="linux">
+          <div class="hexagon-content">
+            <i class="devicon-linux-plain"></i>
+            <span>Linux</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="macos">
+          <div class="hexagon-content">
+            <i class="devicon-apple-plain"></i>
+            <span>MacOS</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="windows">
+          <div class="hexagon-content">
+            <i class="devicon-windows8-plain"></i>
+            <span>Windows</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Virtualization & Container Skills -->
+      <div id="virtualization-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="virtualbox">
+          <div class="hexagon-content">
+            <i data-lucide="box"></i>
+            <span>VirtualBox</span>
           </div>
         </div>
         <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="docker">
@@ -289,32 +299,262 @@
             <span>Docker</span>
           </div>
         </div>
-        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="html">
+      </div>
+
+      <!-- Image Processing Skills -->
+      <div id="image-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="imagemagick">
           <div class="hexagon-content">
-            <i class="devicon-html5-plain"></i>
-            <span>HTML5</span>
+            <i data-lucide="image"></i>
+            <span>ImageMagick</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="spm">
+          <div class="hexagon-content">
+            <i data-lucide="brain"></i>
+            <span>SPM</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="fsl">
+          <div class="hexagon-content">
+            <i data-lucide="brain"></i>
+            <span>FSL</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="imagej">
+          <div class="hexagon-content">
+            <i data-lucide="image"></i>
+            <span>ImageJ</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="slicer">
+          <div class="hexagon-content">
+            <i data-lucide="box"></i>
+            <span>3D Slicer</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="freesurfer">
+          <div class="hexagon-content">
+            <i data-lucide="brain"></i>
+            <span>FreeSurfer</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="ants">
+          <div class="hexagon-content">
+            <i data-lucide="brain"></i>
+            <span>ANTs</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="scikit-image">
+          <div class="hexagon-content">
+            <i class="devicon-python-plain"></i>
+            <span>Scikit-image</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="opencv">
+          <div class="hexagon-content">
+            <i class="devicon-opencv-plain"></i>
+            <span>OpenCV</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="nipy">
+          <div class="hexagon-content">
+            <i class="devicon-python-plain"></i>
+            <span>Nipy/Nipype</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="dipy">
+          <div class="hexagon-content">
+            <i class="devicon-python-plain"></i>
+            <span>Dipy</span>
           </div>
         </div>
       </div>
 
-      <!-- Research Skills -->
-      <div id="research-skills" class="skill-category hidden">
-        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="physics">
+      <!-- Machine & Deep Learning Skills -->
+      <div id="ml-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="numpy">
           <div class="hexagon-content">
-            <i data-lucide="atom"></i>
-            <span>Physics Research</span>
+            <i class="devicon-numpy-plain"></i>
+            <span>Numpy</span>
           </div>
         </div>
-        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="mri">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="scipy">
           <div class="hexagon-content">
-            <i data-lucide="scan"></i>
-            <span>MRI Analysis</span>
+            <i class="devicon-scikitlearn-plain"></i>
+            <span>Scipy</span>
           </div>
         </div>
-        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="publications">
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="matplotlib">
           <div class="hexagon-content">
-            <i data-lucide="book-open"></i>
-            <span>Scientific Writing</span>
+            <i class="devicon-matplotlib-plain"></i>
+            <span>Matplotlib</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="seaborn">
+          <div class="hexagon-content">
+            <i class="devicon-python-plain"></i>
+            <span>Seaborn</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="pandas">
+          <div class="hexagon-content">
+            <i class="devicon-pandas-plain"></i>
+            <span>Pandas</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="scikit-learn">
+          <div class="hexagon-content">
+            <i class="devicon-scikitlearn-plain"></i>
+            <span>Scikit-learn</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="nilearn">
+          <div class="hexagon-content">
+            <i class="devicon-python-plain"></i>
+            <span>Nilearn</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="keras">
+          <div class="hexagon-content">
+            <i class="devicon-keras-plain"></i>
+            <span>Keras</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="tensorflow">
+          <div class="hexagon-content">
+            <i class="devicon-tensorflow-original"></i>
+            <span>Tensorflow</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="torch">
+          <div class="hexagon-content">
+            <i class="devicon-pytorch-plain"></i>
+            <span>Torch</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-purple-500 to-pink-500" data-skill="pytorch">
+          <div class="hexagon-content">
+            <i class="devicon-pytorch-plain"></i>
+            <span>Pytorch</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web Development Skills -->
+      <div id="web-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="html">
+          <div class="hexagon-content">
+            <i class="devicon-html5-plain"></i>
+            <span>HTML/HTML5</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="javascript">
+          <div class="hexagon-content">
+            <i class="devicon-javascript-plain"></i>
+            <span>Javascript</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="d3js">
+          <div class="hexagon-content">
+            <i class="devicon-d3js-plain"></i>
+            <span>d3js</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="plotly">
+          <div class="hexagon-content">
+            <i data-lucide="chart"></i>
+            <span>Plotly</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="css">
+          <div class="hexagon-content">
+            <i class="devicon-css3-plain"></i>
+            <span>CSS</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-blue-500 to-cyan-500" data-skill="php">
+          <div class="hexagon-content">
+            <i class="devicon-php-plain"></i>
+            <span>PHP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Office Skills -->
+      <div id="office-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="latex">
+          <div class="hexagon-content">
+            <i class="devicon-latex-plain"></i>
+            <span>Latex</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="msoffice">
+          <div class="hexagon-content">
+            <i data-lucide="file-text"></i>
+            <span>MS Office</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-green-500 to-emerald-500" data-skill="macoffice">
+          <div class="hexagon-content">
+            <i class="devicon-apple-plain"></i>
+            <span>MacOS Office</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Electronics Skills -->
+      <div id="electronics-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="orcad">
+          <div class="hexagon-content">
+            <i data-lucide="cpu"></i>
+            <span>OrCAD</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="pspice">
+          <div class="hexagon-content">
+            <i data-lucide="cpu"></i>
+            <span>PSpice</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="labview">
+          <div class="hexagon-content">
+            <i data-lucide="cpu"></i>
+            <span>LabVIEW</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="comsol">
+          <div class="hexagon-content">
+            <i data-lucide="cpu"></i>
+            <span>COMSOL</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-orange-500 to-red-500" data-skill="ansys">
+          <div class="hexagon-content">
+            <i data-lucide="cpu"></i>
+            <span>Ansys HFSS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Languages Skills -->
+      <div id="languages-skills" class="skill-category hidden">
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="italian">
+          <div class="hexagon-content">
+            <i data-lucide="languages"></i>
+            <span>Italian</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="english">
+          <div class="hexagon-content">
+            <i data-lucide="languages"></i>
+            <span>English</span>
+          </div>
+        </div>
+        <div class="hexagon bg-gradient-to-r from-yellow-500 to-orange-500" data-skill="german">
+          <div class="hexagon-content">
+            <i data-lucide="languages"></i>
+            <span>German</span>
           </div>
         </div>
       </div>
@@ -370,53 +610,258 @@
       const skillsData = {
         python: {
           title: "Python",
-          category: "AI & Machine Learning",
+          category: "Programming & Scripting",
           description: "Extensive experience with Python for data analysis, machine learning, and scientific computing. Proficient in NumPy, Pandas, Matplotlib, and other key libraries.",
           level: 90,
           projects: [
-            "Malware AI-assisted Analysis Tool (MAIAT)",
-            "SentimentAnalyzer for Twitter",
-            "MRI Motion Correction Research",
-            "Super-Resolution for MRI"
+            "Various machine learning projects",
+            "Data analysis scripts",
+            "Automation tools"
           ],
-          related: ["TensorFlow", "PyTorch", "Scikit-learn", "Numpy", "Pandas", "Seaborn", "Nilearn"]
+          related: ["NumPy", "Pandas", "Matplotlib", "Scikit-learn", "TensorFlow", "PyTorch"]
         },
-        tensorflow: {
-          title: "TensorFlow",
-          category: "AI & Machine Learning",
-          description: "Practical experience building and deploying neural networks with TensorFlow for various applications including malware detection and medical imaging analysis.",
+        matlab: {
+          title: "MATLAB",
+          category: "Programming & Scripting",
+          description: "Experience with MATLAB for numerical computing, algorithm development, and data visualization.",
           level: 80,
           projects: [
-            "Deep Learning models for MRI analysis",
-            "Malware detection & classification system"
+            "Signal processing projects",
+            "Academic research"
           ],
-          related: ["Keras", "Python", "NumPy"]
+          related: ["Python", "NumPy", "Scipy"]
         },
-        pytorch: {
-          title: "PyTorch",
-          category: "AI & Machine Learning",
-          description: "Practical experience building and deploying neural networks with PyTorch for various applications including medical imaging analysis (from 2 to N-Dimesion) and image processing in general.",
-          level: 80,
-          projects: [
-            "Deep Learning models for MRI analysis",
-            "Malware detection & classification system",
-            "Image-to-Image", "GAN", "DenseNet", "ResNet", "UNet",
-            "Data imputation", "Artefacts removal"
-          ],
-          related: ["Keras", "Python", "NumPy"]
-        },
-        malware: {
-          title: "Malware Analysis",
-          category: "Cybersecurity",
-          description: "Specialized in static and dynamic malware analysis techniques. Developed AI models for automated malware detection and classification.",
+        bash: {
+          title: "Bash",
+          category: "Programming & Scripting",
+          description: "Proficient in Bash scripting for automation and system administration tasks.",
           level: 85,
           projects: [
-            "MAIAT tool development",
-            "Malware behavior research"
+            "System automation scripts",
+            "Deployment scripts"
           ],
-          related: ["Threat Detection", "Python", "Machine Learning"]
+          related: ["Shell scripting", "Linux", "Unix"]
+        },
+        csh: {
+          title: "Csh",
+          category: "Programming & Scripting",
+          description: "Experience with C shell scripting for system tasks and automation.",
+          level: 75,
+          projects: [
+            "System administration scripts"
+          ],
+          related: ["Bash", "Shell scripting"]
+        },
+        git: {
+          title: "Git",
+          category: "Programming & Scripting",
+          description: "Proficient in version control with Git for collaborative software development.",
+          level: 85,
+          projects: [
+            "All software projects"
+          ],
+          related: ["GitHub", "Version control"]
+        },
+        mariadb: {
+          title: "MariaDB",
+          category: "Database",
+          description: "Experience with MariaDB database management and SQL queries.",
+          level: 80,
+          projects: [
+            "Database-backed applications"
+          ],
+          related: ["MySQL", "SQL"]
+        },
+        mysql: {
+          title: "MySQL",
+          category: "Database",
+          description: "Experience with MySQL database management and SQL queries.",
+          level: 80,
+          projects: [
+            "Database-backed applications"
+          ],
+          related: ["MariaDB", "SQL"]
+        },
+        unix: {
+          title: "Unix",
+          category: "Operating Systems",
+          description: "Experience with Unix systems administration and development.",
+          level: 85,
+          projects: [
+            "System administration",
+            "Server management"
+          ],
+          related: ["Linux", "Bash"]
+        },
+        linux: {
+          title: "Linux",
+          category: "Operating Systems",
+          description: "Proficient with various Linux distributions including Debian-based, Fedora, and Arch-based systems.",
+          level: 90,
+          projects: [
+            "System administration",
+            "Development environments"
+          ],
+          related: ["Unix", "Bash", "Shell scripting"]
+        },
+        macos: {
+          title: "MacOS",
+          category: "Operating Systems",
+          description: "Experience with MacOS system administration and development.",
+          level: 85,
+          projects: [
+            "Development environments",
+            "Productivity"
+          ],
+          related: ["Unix", "Bash"]
+        },
+        windows: {
+          title: "Windows",
+          category: "Operating Systems",
+          description: "Experience with Windows system administration and development.",
+          level: 80,
+          projects: [
+            "Development environments",
+            "Productivity"
+          ],
+          related: ["Virtualization"]
+        },
+        virtualbox: {
+          title: "VirtualBox",
+          category: "Virtualization & Container",
+          description: "Experience with VirtualBox for creating and managing virtual machines.",
+          level: 80,
+          projects: [
+            "Testing environments",
+            "Cross-platform development"
+          ],
+          related: ["Docker", "Virtualization"]
+        },
+        docker: {
+          title: "Docker",
+          category: "Virtualization & Container",
+          description: "Experience with Docker for containerization and deployment.",
+          level: 85,
+          projects: [
+            "Application deployment",
+            "Development environments"
+          ],
+          related: ["VirtualBox", "Containerization"]
+        },
+        imagemagick: {
+          title: "ImageMagick",
+          category: "Image Processing",
+          description: "Experience with ImageMagick for image processing and conversion.",
+          level: 80,
+          projects: [
+            "Image processing pipelines",
+            "Automated image conversion"
+          ],
+          related: ["Image processing", "OpenCV"]
+        },
+        spm: {
+          title: "SPM: Statistical Parametric Mapping",
+          category: "Image Processing",
+          description: "Experience with SPM for functional MRI data analysis. \
+                        https://www.fil.ion.ucl.ac.uk/spm/",
+          level: 98,
+          projects: [
+            "Statistical Analysis", "Image pre-processing",
+            "Image processing pipelines for fMRI data analysis",
+            "Neuroscience", "Magnetic Resonance Imaging", "Motion Correction"
+          ],
+          related: ["Image processing", "OpenCV", "SPM"]
+        },
+        fsl: {
+          title: "FSL:  FMRIB Software Library",
+          category: "Image Processing",
+          description: "Experience with SPM for functional MRI (task & resting-state), structural, diffusion and physiological data analysis. \
+                        https://fsl.fmrib.ox.ac.uk/fsl/docs/#/",
+          level: 98,
+          projects: [
+            "Statistical Analysis", "Image pre-processing",
+            "Image processing pipelines for fMRI data analysis",
+            "Structural Imaging", "Diffusion MRI",
+            "Motion Correction",
+            "Neuroscience", "Magnetic Resonance Imaging"
+          ],
+          related: ["Image processing", "OpenCV", "SPM"]
+        },
+        imagej: {
+          title: "ImageJ: Java image processing program ",
+          category: "Image Processing",
+          description: "I possess extensive expertise in manipulating images using ImageJ, a powerful software that excels in displaying, editing, analyzing, processing, saving, and printing images across 8-bit, 16-bit, and 32-bit formats. My proficiency allows me to leverage its capability to read a wide array of image formats, including TIFF, GIF, JPEG, BMP, DICOM, FITS, and \"raw\" files.\
+                        I am adept at utilizing \"stacks\", which enable the management of a series of images within a single window, enhancing workflow efficiency. ImageJ\'s multithreaded architecture allows me to perform time-consuming operations, such as image file reading, in parallel with other tasks, optimizing performance.\
+                        I can accurately calculate area and pixel value statistics for user-defined selections, as well as measure distances and angles with precision. My expertise extends to creating density histograms and line profile plots, and I am well-versed in standard image processing functions, including contrast manipulation, sharpening, smoothing, edge detection, and median filtering.\
+                        I am skilled in executing geometric transformations such as scaling, rotation, and flipping images, with the ability to zoom in up to 32:1 and out to 1:32. All analysis and processing functions remain accessible at any magnification factor, and I can manage multiple windows (images) simultaneously, constrained only by available memory.\
+                        I utilize spatial calibration techniques to provide real-world dimensional measurements in units like millimeters, and I am proficient in density or grayscale calibration. ImageJ's open architecture is a significant advantage, allowing for extensibility through Java plugins. I can develop custom acquisition, analysis, and processing plugins using ImageJ's built-in editor and Java compiler, enabling tailored solutions for complex image processing and analysis challenges.\
+                        My development work on ImageJ is conducted on Mac OS X, utilizing its built-in editor, the BBEdit editor, and the Ant build tool, with the source code readily available for further customization and enhancement.\
+                        https://imagej.net/ij/download.html",
+          level: 99,
+          projects: [
+            "Statistical Analysis", "Image pre-processing",
+            "Image processing pipelines",
+            "Structural Imaging", "Image enhancement",
+            "Computer Vision", "Image manipulation",
+            "Superresolution", "Magnetic Resonance Imaging"
+          ],
+          related: ["Image processing", "OpenCV", "SPM", "FSL"] 
+        },
+        slicer: {
+          title: "3D Slicer image computing platform",
+          category: "Image Processing",
+          description: "I possess deep expertise in utilizing this desktop software to tackle advanced image computing challenges, \
+          with a particular emphasis on clinical and biomedical applications. As a development platform, it allows me to swiftly build \
+          and deploy custom solutions for research, all while harnessing the power of free, open-source software.\
+          I actively engage with a community of knowledgeable users and developers, collaborating to enhance medical \
+          computing and drive innovation in the field.\
+          https://www.slicer.org/",
+          level: 78,
+          projects: [
+            "Statistical Analysis", "Image pre-processing",
+            "Image processing pipelines", "3D Imaging",
+            "Structural Imaging", "Image enhancement",
+            "Computer Vision", "Image manipulation",
+            "Superresolution", "Magnetic Resonance Imaging"
+          ],
+          related: ["Image processing", "OpenCV", "SPM", "FSL", "ImageJ"] 
+        },
+        numpy: {
+          title: "NumPy",
+          category: "Machine & Deep Learning",
+          description: "Proficient in NumPy for numerical computing in Python.",
+          level: 95,
+          projects: [
+            "Scientific computing",
+            "Data analysis"
+          ],
+          related: ["Python", "Pandas", "Scipy"]
+        },
+        italian: {
+          title: "Italian",
+          category: "Languages",
+          description: "Native proficiency in Italian.",
+          level: 100,
+          projects: [],
+          related: []
+        },
+        english: {
+          title: "English",
+          category: "Languages",
+          description: "Proficient in English.",
+          level: 90,
+          projects: [],
+          related: []
+        },
+        german: {
+          title: "German",
+          category: "Languages",
+          description: "Rudimentary knowledge of German.",
+          level: 30,
+          projects: [],
+          related: []
         }
-        // Add your complete skills data here
+        // Add more skills as needed
       };
 
       // Category buttons
