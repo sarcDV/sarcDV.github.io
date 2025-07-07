@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clair Clinique - AI-Powered Personalized Skincare</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Clair Clinique</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#solutions" class="nav-link">Solutions</a></li>
+                <li><a href="#team" class="nav-link">Team</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Clair Clinique</h1>
+                <p class="hero-subtitle">Your natural beauty,<br>
+                enhanced by AI and tailored for you</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary">Start Protecting Your Skin</a>
+                    <a href="#about" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="images/ai_skincare.jpg" alt="AI Skincare Technology" class="hero-img">
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our skin is unique</h2>
+                <p class="section-subtitle">Understanding the challenges with generic skincare</p>
+            </div>
+            
+            <div class="problem-statement">
+                <div class="problem-content">
+                    <h3>Challenges with Generic Skincare:</h3>
+                    <ul class="problem-list">
+                        <li><i class="fas fa-exclamation-triangle"></i> Ineffectiveness due to variability in skin types and concerns</li>
+                        <li><i class="fas fa-exclamation-triangle"></i> Potential for irritation or side effects</li>
+                        <li><i class="fas fa-exclamation-triangle"></i> Limited adaptability to changing environmental or lifestyle factors</li>
+                    </ul>
+                </div>
+                <div class="problem-image">
+                    <img src="images/personalized_skincare.jpg" alt="Personalized Skincare" class="problem-img">
+                </div>
+            </div>
+
+            <div class="transition-text">
+                <h2>Our Skin is different</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section id="solutions" class="solutions">
+        <div class="container">
+            <div class="section-header">
+                <h2>Personalized Solutions for Every Need</h2>
+                <p class="section-subtitle">AI-powered skincare that adapts to your unique requirements</p>
+            </div>
+
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3>Environment</h3>
+                    <p>Environmental and Lifestyle Induce specific Skin Stress: even a healthy skin faces varying levels of environmental stress (e.g., pollution, UV exposure, blue light, extreme weather)</p>
+                </div>
+
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Time</h3>
+                    <p>Our skin has different needs depending on seasons (e.g., winter dryness, summer oiliness) and even time of day (e.g., repair at night, protection in the morning). Generic routines often fail to address these dynamic changes.</p>
+                </div>
+
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h3>Diseases</h3>
+                    <p>Phototypes and skin diseases, play a crucial role in personalized skincare by guiding the selection of tailored products and treatments</p>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <div class="container">
+            <div class="section-header">
+                <h2>What we created</h2>
+                <p class="section-subtitle">Data Acquisition - Analysis - Final product</p>
+            </div>
+
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3>Simphonie</h3>
+                    <p>An AI cloud based
+                        proprietary software
+                        ecosystem that is
+                        integrated with the Opera
+                        device and transform
+                        input from biometrical
+                        parameter into a
+                        personalyzed recipee for
+                        the perfect skincare set.</p>
+                </div>
+
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Opera</h3>
+                    <p>A Robotic system fully
+                        integrated with our
+                        software ecosystem
+                        Simphonie that is
+                        composed by an input
+                        module and a robotic
+                        module for automatic
+                        skincare product
+                        preparation.</p>
+                </div>
+
+                <div class="solution-card">
+                    <div class="card-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h3>Adagio</h3>
+                    <p>An app leveraging facial scanning, deep learning, and real-time data to
+                    create tailored skincare
+                    solutions. Scalable, secure,
+                    and subscription-based
+                    (€1.99/month), driving
+                    engagement and long-term
+                    customer loyalty.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Expert Team</h2>
+                <p class="section-subtitle">Leading scientists and researchers driving innovation in personalized skincare</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/mirko_rocci.jpeg" alt="Dr. Mirko Rocci" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Dr. Mirko Rocci</h3>
+                        <p class="member-title">Condensed Matter Physicist</p>
+                        <p class="member-bio">Italian condensed matter physicist specializing in nanoscience, superconducting spintronics, and 2D materials. He earned his Ph.D. in Physics from the Universidad Complutense de Madrid, focusing on ferromagnetism and superconductivity in oxide interfaces. He continued his research at the NEST Laboratory (Scuola Normale Superiore) and later at Massachusetts Institute of Technology (MIT), working on superconducting spintronics and thin film deposition.</p>
+                        <p class="member-bio">As a Marie Skłodowska-Curie Global Fellow, he led the EuSuper project, developing superconducting magnetic RAM for next-generation supercomputers. His work is widely recognized, with numerous publications in high-impact journals.</p>
+                        <p class="member-bio">Currently, he applies his expertise at Thales Alenia Space, driving innovation in advanced materials and quantum technologies.</p>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/mattia_capulli.jpeg" alt="Prof. Mattia Capulli" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Prof. Mattia Capulli</h3>
+                        <p class="member-title">Associate Professor of Human Embryology</p>
+                        <p class="member-bio">Prof. Mattia Capulli is Associate Professor of human Embriology at University of L’Aquila in Italy and co-founder of Dante Genomics CORP and has served as Chief Scientific Officer of the Dante Genomics Group since December 2016. Prior to that he was a PostDoc Fellow at Columbia University Medical Center in New York. </p>
+                        <p class="member-bio">He is a medical Biotechnologist by training, he continued his education in the Biotechnological Sciences, and he obtained a PhD on Biotechnology
+                                                Prof. Capulli, is one of the pioneers to theorize and drive the application of the lean six sigma approach to lab analysis, especially to the sequencing process.
+                        </p>
+                        <p class="member-bio">Prof Capulli is author of more than 30+  peer-reviewed scientific articles (LINK: https://pubmed.ncbi.nlm.nih.gov/?term=capulli+m&filter=years.2003-2022&sort=date) and has been awarded 18 national and international scientific awards and 1 business award.</p>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/alex.jpeg" alt="Dr. Alessandro Sciarra" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Dr. Alessandro Sciarra</h3>
+                        <p class="member-title">Applied Physicist, AI Scientist</p>
+                        <p class="member-bio">Italian physicist Dr. Alessandro Sciarra specialises in cybersecurity, data science, and medical imaging, with an emphasis on AI and machine learning applications. As a Marie Skłodowska-Curie Fellow at Otto von Guericke University, he earned his Ph.D. in Physics and AI, working on the relationship between medical imaging and artificial intelligence. After earning his PhD, he went on to work for a number of tech firms, such as DEAS S.p.A. and DuskRise S.r.l., where he developed AI models for open-source threat intelligence and malware detection.</p>
+                        <p class="member-bio">Dr. Sciarra, a thought leader in the sector, has played a key role in developing novel strategies to improve medical imaging procedures using data-driven and non-AI solutions. Numerous articles in esteemed journals and speeches at international conferences attest to his contributions to academia.</p>
+                        <p class="member-bio">He currently leads projects that use AI applications.</p>
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/isabella.jpg" alt="Mrs Isabella Capannolo" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Mrs Isabella Capannolo</h3>
+                        <p class="member-title">Biotechnologist, Sales Leader</p>
+                        <p class="member-bio">Mrs Isabella Capannolo began her career as a biotechnologist but quickly transitioned into sales. 
+                            She served as Regional Sales Leader at Dante Genomics, a multinational genetic company, where she successfully coordinated customer 
+                            relations and upheld the highest service standards.</p>
+                        <p class="member-bio">Following this experience, Isabella co-founded CTO Studio, where she assumed the role of CEO, overseeing 
+                            the activities of medical and biological professionals. During the COVID-19 pandemic, she played a pivotal role in public health 
+                            by managing a highly successful drive-in testing collection point. Under her guidance, the site became one of the most efficient in Italy, 
+                            serving thousands of customers with exceptional quality and safety standards.</p>
+                        <p class="member-bio">With extensive hands-on expertise in managing high-skilled professionals, Isabella is recognized for her ability to cultivate cohesive teams, 
+                            drive operational excellence, and ensure full dedication to projects. 
+                            Her leadership is defined by strategic vision, adaptability, and an unwavering commitment to innovation and quality.</p> 
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="images/lorenzo.jpg" alt="Mr Lorenzo Di Marzio" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Mr. Lorenzo di Marzio</h3>
+                        <p class="member-title">Lawyer</p>
+                        <p class="member-bio">Mr. Lorenzo di Marzio: a lawyer and legal expert with over 30 years of experience, 
+                            Lorenzo Di Marzio stands out in bankruptcy law, administrative law, and contract law.</p>
+
+                        <p class="member-bio">He has held prominent roles as Bankruptcy Trustee and Judicial Administrator at the Courts of 
+                            L'Aquila, Teramo, and Ascoli Piceno, providing specialized advice to industrial groups and local public authorities in 
+                            complex procedures such as public tenders, expropriations, and urban planning.</p>
+                        <p class="member-bio">Alongside his professional practice, Lorenzo has contributed to educating new generations by serving as
+                             a lecturer and expert in Commercial Law at the Faculty of Economics in L'Aquila. His career is further enriched by institutional 
+                             roles such as serving as a Provincial Councilor and performing oversight functions for FI.R.A. and ARAP.
+                        </p> 
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact us</h2>
+                <p class="section-subtitle">Start protecting your skin today!</p>
+            </div>
+
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-card">
+                        <h3>Pre-order our solution</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:preorder@clairclinique.com">preorder@clairclinique.com</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <h3>Contact us</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:info@clairclinique.com">info@clairclinique.com</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <h3>Location</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>L'Aquila, Italy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                <script>
+                    // Initialize the map
+                    const map = L.map('map').setView([42.35779835492816, 13.364578905602608], 15); // Default center (Rome)
+
+                    // Add OpenStreetMap tile layer
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap'
+                    }).addTo(map);
+
+                    // Specify the address coordinates (latitude and longitude)
+                    const addressCoordinates = [42.35779835492816, 13.364578905602608]; // Example: Piazza Navona, Rome
+
+                    // Add a marker for the address
+                    const marker = L.marker(addressCoordinates).addTo(map);
+                    marker.bindPopup('Clair Clinique').openPopup();
+                </script>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Clair Clinique</h3>
+                    <p>Your natural beauty, enhanced by AI and tailored for you</p>
+                </div>
+                <div class="footer-links">
+                    <a href="mailto:info@clairclinique.com">info@clairclinique.com</a>
+                    <a href="mailto:preorder@clairclinique.com">preorder@clairclinique.com</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Clair Clinique. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU&callback=initMap"></script> -->
+</body>
+</html>
+
