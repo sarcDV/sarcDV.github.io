@@ -17,7 +17,6 @@
       --accent: #f3f4f6;
       --text-muted: #6b7280;
     }
-
     .dark {
       --background: #1a1a1a;
       --foreground: #f9fafb;
@@ -28,32 +27,30 @@
       --accent: #1f2937;
       --text-muted: #9ca3af;
     }
-
     body {
       background-color: var(--background);
       color: var(--foreground);
     }
-
+    .body-scroll-lock {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
     .bg-card {
       background-color: var(--card);
     }
-
     .border-border {
       border-color: var(--border);
     }
-
     .text-muted-foreground {
       color: var(--text-muted);
     }
-
     .hover\:border-primary\/50:hover {
       border-color: rgba(59, 130, 246, 0.5);
     }
-
     .hover\:bg-accent:hover {
       background-color: var(--accent);
     }
-
     .bg-gradient-to-r.from-blue-500.to-cyan-500 {
       background: linear-gradient(to right, #3b82f6, #06b6d4);
     }
@@ -69,54 +66,59 @@
     .bg-gradient-to-r.from-yellow-500.to-orange-500 {
       background: linear-gradient(to right, #eab308, #f97316);
     }
-
     .modal-enter {
-    animation: fadeInScale 0.3s ease-out forwards;
+      animation: fadeInScale 0.3s ease-out forwards;
     }
-
     .modal-exit {
-    animation: fadeOutScale 0.3s ease-in forwards;
+      animation: fadeOutScale 0.3s ease-in forwards;
     }
-
     @keyframes fadeInScale {
-    from {
+      from {
         opacity: 0;
         transform: scale(0.95);
-    }
-    to {
+      }
+      to {
         opacity: 1;
         transform: scale(1);
+      }
     }
-    }
-
     @keyframes fadeOutScale {
-    from {
+      from {
         opacity: 1;
         transform: scale(1);
-    }
-    to {
+      }
+      to {
         opacity: 0;
         transform: scale(0.95);
+      }
     }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   </style>
 </head>
 <body class="min-h-screen bg-background text-foreground dark:bg-[#1a1a1a]">
   <div id="app"></div>
-
+  
   <script type="text/javascript">
     // Initialize Lucide Icons
     lucide.createIcons();
-
+    
     let isDarkMode = false;
-
+    let isModalOpen = false;
+    let isMobileMenuOpen = false;
+    let isFilterSheetOpen = false;
+    
     function toggleDarkMode() {
       isDarkMode = !isDarkMode;
       document.body.classList.toggle('dark', isDarkMode);
       localStorage.setItem('darkMode', isDarkMode);
       updateDarkModeButton();
     }
-
+    
     function updateDarkModeButton() {
       const btn = document.getElementById("dark-mode-toggle");
       if (btn) {
@@ -128,7 +130,7 @@
         lucide.createIcons();
       }
     }
-
+    
     // Check user preference or system setting
     function initDarkMode() {
       const saved = localStorage.getItem('darkMode');
@@ -141,12 +143,13 @@
       }
       updateDarkModeButton();
     }
-
+    
     function getFilteredData() {
-        return selectedCategory === 'all'
-            ? timelineData
-            : timelineData.filter(item => item.category === selectedCategory);
+      return selectedCategory === 'all'
+        ? timelineData
+        : timelineData.filter(item => item.category === selectedCategory);
     }
+    
     // Timeline Data
     const timelineData = [
       {
@@ -830,197 +833,201 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
       
     ];
 
-    // const categories = {
-    //   foundation: { name: "Foundation", color: "from-blue-500 to-cyan-500" },
-    //   neural: { name: "Neural Networks", color: "from-purple-500 to-pink-500" },
-    //   nlp: { name: "Natural Language", color: "from-green-500 to-emerald-500" },
-    //   expert: { name: "Expert Systems", color: "from-orange-500 to-red-500" },
-    //   games: { name: "Game AI", color: "from-yellow-500 to-orange-500" }
-    // };
 
     const categories = {
       prja: { name: "Articles in Peer-Reviewed Journals", color: "from-blue-500 to-cyan-500" },
       books: { name: "Books", color: "from-purple-500 to-pink-500" },
       prcc: { name: "Contributions to Peer-Reviewed Conferences", color: "from-green-500 to-emerald-500" },
     };
+    
     let selectedItem = null;
     let selectedCategory = 'all';
-    let isModalOpen = false;
-    let isMobileMenuOpen = false;
-
+    
     function getCategoryColor(category) {
       return categories[category] ? categories[category].color : "from-gray-500 to-gray-500";
     }
-
+    
     function createTimelineItem(item, index) {
-        const container = document.createElement('div');
-        container.className = `flex items-center mb-8 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`;
-        container.innerHTML = `
-            <!-- Left Side Card -->
-            <div class="${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'} w-1/2">
-            <div class="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50" onclick="handleItemClick(${index})">
-                <div class="flex items-center gap-3 mb-3">
-                <div class="p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(item.category)}">
-                    <svg data-lucide="${item.icon}" class="w-5 h-5 text-white"></svg>
-                </div>
-                <span class="text-sm font-medium text-muted-foreground">${item.year}</span>
-                </div>
-                <h3 class="text-lg font-semibold text-foreground mb-2">${item.title}</h3>
-                <p class="text-sm text-muted-foreground leading-relaxed">${item.description}</p>
-                <p class="text-sm text-muted-foreground leading-relaxed">${item.authors}</p>
-                <p class="text-sm text-muted-foreground leading-relaxed">${item.details}</p>
-                ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Read more</a>` : ''}
-                <div class="mt-3">
-                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(item.category)} text-white">
-                    ${categories[item.category]?.name || ''}
-                </span>
-                </div>
+      const container = document.createElement('div');
+      container.className = `mb-6`;
+      container.innerHTML = `
+        <div class="bg-card border border-border rounded-xl p-4 cursor-pointer hover:shadow-md transition-all duration-300 hover:border-primary/50" onclick="handleItemClick(${index})">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(item.category)}">
+              <svg data-lucide="${item.icon}" class="w-5 h-5 text-white"></svg>
             </div>
-            </div>
-
-            <!-- Timeline Dot & Line -->
-            <div class="relative flex items-center justify-center w-8 h-24">
-            <!-- Vertical Line -->
-            <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20"></div>
-            <!-- Dot -->
-            <div class="w-4 h-4 z-10 rounded-full bg-gradient-to-r ${getCategoryColor(item.category)} border-2 border-background"></div>
-            </div>
-
-            <!-- Right Side Empty Space -->
-            <div class="w-1/2"></div>
-        `;
-        lucide.createIcons();
-        return container;
+            <span class="text-sm font-medium text-muted-foreground">${item.year}</span>
+          </div>
+          <h3 class="text-base font-semibold text-foreground mb-1">${item.title}</h3>
+          <p class="text-sm text-muted-foreground line-clamp-3">${item.description}</p>
+          <div class="mt-2 flex justify-between items-center pt-2 border-t border-border">
+            <span class="inline-block px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(item.category)} text-white">
+              ${categories[item.category]?.name || ''}
+            </span>
+            <span class="text-xs text-muted-foreground truncate max-w-[40%]">${item.authors}</span>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+      return container;
     }
-
-
+    
     function renderTimeline() {
-        const container = document.getElementById("timeline");
-        container.innerHTML = '';
-        const filteredData = getFilteredData();
-
-        // Sort by year descending (latest first)
-        filteredData.sort((a, b) => parseInt(b.year) - parseInt(a.year));
-
-        filteredData.forEach((item, index) => {
-            const el = createTimelineItem(item, index);
-            container.appendChild(el);
-        });
+      const container = document.getElementById("timeline");
+      container.innerHTML = '';
+      const filteredData = getFilteredData();
+      // Sort by year descending (latest first)
+      filteredData.sort((a, b) => parseInt(b.year) - parseInt(a.year));
+      filteredData.forEach((item, index) => {
+        const el = createTimelineItem(item, index);
+        container.appendChild(el);
+      });
     }
-
+    
     function handleItemClick(index) {
-        const filteredData = getFilteredData();
-        selectedItem = filteredData[index];
-        showModal();
+      const filteredData = getFilteredData();
+      selectedItem = filteredData[index];
+      showModal();
     }
-
-    function createTimelineItem(item, index) {
-        const container = document.createElement('div');
-        container.className = `flex items-center mb-8 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`;
-        container.innerHTML = `
-            <div class="${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'} w-1/2">
-            <div class="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50"
-                    onclick="handleItemClick(${index})">
-                <div class="flex items-center gap-3 mb-3">
-                <div class="p-2 rounded-lg bg-gradient-to-r ${getCategoryColor(item.category)}">
-                    <svg data-lucide="${item.icon}" class="w-5 h-5 text-white"></svg>
-                </div>
-                <span class="text-sm font-medium text-muted-foreground">${item.year}</span>
-                </div>
-                <h3 class="text-lg font-semibold text-foreground mb-2">${item.title}</h3>
-                <p class="text-sm text-muted-foreground leading-relaxed">${item.description}</p>
-                <p class="text-sm text-muted-foreground leading-relaxed">${item.authors}</p>
-                ${item.details ? `<p class="text-sm text-muted-foreground leading-relaxed">${item.details}</p>` : ''}
-                ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Read more</a>` : ''}
-                <div class="mt-3">
-                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(item.category)} text-white">
-                    ${categories[item.category]?.name || ''}
-                </span>
-                </div>
-            </div>
-            </div>
-            <!-- Timeline Dot & Line -->
-            <div class="relative flex items-center justify-center w-8 h-24">
-            <div class="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20"></div>
-            <div class="w-4 h-4 z-10 rounded-full bg-gradient-to-r ${getCategoryColor(item.category)} border-2 border-background"></div>
-            </div>
-            <!-- Right Side Empty Space -->
-            <div class="w-1/2"></div>
-        `;
-        lucide.createIcons();
-        return container;
-    }
-
+    
     function showModal() {
-        isModalOpen = true;
-        const modal = document.getElementById("modal");
-        const modalContent = document.getElementById("modal-content");
+      isModalOpen = true;
+      
+      if (window.innerWidth < 768) {
+        showMobileModal();
+      } else {
+        const modal = document.getElementById("desktop-modal");
+        const modalContent = document.getElementById("desktop-modal-content");
+        
         modal.classList.remove("hidden", "modal-exit");
         modal.classList.add("modal-enter");
-
+        
         const category = categories[selectedItem.category];
-
+        
         modalContent.innerHTML = `
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-xl bg-gradient-to-r ${getCategoryColor(selectedItem.category)}">
-                        <svg data-lucide="${selectedItem.icon}" class="w-6 h-6 text-white"></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-foreground">${selectedItem.title}</h2>
-                        <p class="text-lg text-muted-foreground">${selectedItem.year}</p>
-                    </div>
-                </div>
-                <button onclick="hideModal()" class="hover:bg-accent p-2 rounded-full">
-                    <svg data-lucide="X" class="w-5 h-5"></svg>
-                </button>
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+              <div class="p-3 rounded-xl bg-gradient-to-r ${getCategoryColor(selectedItem.category)}">
+                <svg data-lucide="${selectedItem.icon}" class="w-6 h-6 text-white"></svg>
+              </div>
+              <div>
+                <h2 class="text-xl md:text-2xl font-bold text-foreground">${selectedItem.title}</h2>
+                <p class="text-lg text-muted-foreground">${selectedItem.year}</p>
+              </div>
             </div>
-            <div class="space-y-4">
-                <p class="text-foreground leading-relaxed">${selectedItem.description}</p>
-                <p class="text-foreground leading-relaxed">${selectedItem.authors}</p>
-                <p class="text-foreground leading-relaxed">${selectedItem.details}</p>
-                ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-primary hover:underline"><svg data-lucide="ExternalLink" class="w-4 h-4"></svg> Visit Link</a>` : ''}
-                <div class="flex items-center gap-2">
-                    <span class="text-sm text-muted-foreground">Category:</span>
-                    <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(selectedItem.category)} text-white">
-                        ${category.name}
-                    </span>
-                </div>
+            <button onclick="hideModal()" class="hover:bg-accent p-2 rounded-full">
+              <svg data-lucide="X" class="w-5 h-5"></svg>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <p class="text-foreground leading-relaxed">${selectedItem.description}</p>
+            
+            ${selectedItem.authors ? `<p class="text-foreground leading-relaxed"><strong>Authors:</strong> ${selectedItem.authors}</p>` : ''}
+            
+            ${selectedItem.details ? `<p class="text-foreground leading-relaxed"><strong>Details:</strong> ${selectedItem.details}</p>` : ''}
+            
+            ${selectedItem.link ? `
+              <a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-primary hover:underline">
+                <svg data-lucide="ExternalLink" class="w-4 h-4"></svg>
+                Visit Link
+              </a>
+            ` : ''}
+            
+            <div class="flex items-center gap-2 pt-2 border-t border-border">
+              <span class="text-sm text-muted-foreground">Category:</span>
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor(selectedItem.category)} text-white">
+                ${category.name}
+              </span>
             </div>
+          </div>
         `;
+        
         lucide.createIcons();
+      }
     }
-
+    
     function hideModal() {
-        isModalOpen = false;
-        const modal = document.getElementById("modal");
+      isModalOpen = false;
+      
+      if (window.innerWidth < 768) {
+        hideMobileModal();
+      } else {
+        const modal = document.getElementById("desktop-modal");
         modal.classList.remove("modal-enter");
         modal.classList.add("modal-exit");
-
+        
         setTimeout(() => {
-            modal.classList.add("hidden");
-            modal.classList.remove("modal-exit");
+          modal.classList.add("hidden");
+          modal.classList.remove("modal-exit");
         }, 300);
+      }
     }
-
+    
+    function showMobileModal() {
+      document.body.classList.add('body-scroll-lock');
+      const modal = document.getElementById("mobile-modal");
+      const title = document.getElementById("mobile-title");
+      const content = document.getElementById("mobile-content");
+      
+      const category = categories[selectedItem.category];
+      
+      modal.classList.remove("translate-y-full");
+      title.textContent = selectedItem.title;
+      content.innerHTML = `
+        <p class="mb-4"><strong>Year:</strong> ${selectedItem.year}</p>
+        <p class="mb-4"><strong>Category:</strong> ${category.name}</p>
+        <p class="mb-4"><strong>Authors:</strong> ${selectedItem.authors}</p>
+        <p class="mb-4">${selectedItem.description}</p>
+        ${selectedItem.details ? `<p class="mb-4"><strong>Details:</strong> ${selectedItem.details}</p>` : ''}
+        ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="text-primary underline">Visit Link</a>` : ''}
+        <button onclick="toggleDescription(this)" class="mt-4 text-sm text-primary">Show ${document.getElementById("mobile-content").classList.contains("line-clamp-6") ? "more" : "less"}</button>
+      `;
+      
+      lucide.createIcons();
+    }
+    
+    function hideMobileModal() {
+      document.body.classList.remove('body-scroll-lock');
+      document.getElementById("mobile-modal").classList.add("translate-y-full");
+    }
+    
+    function toggleDescription(button) {
+      const content = document.getElementById("mobile-content");
+      content.classList.toggle("line-clamp-6");
+      button.textContent = content.classList.contains("line-clamp-6") ? "Show more" : "Show less";
+    }
+    
     function setCategory(cat) {
       selectedCategory = cat;
       renderTimeline();
       if (isMobileMenuOpen) toggleMobileMenu();
+      if (isFilterSheetOpen) hideFilterSheet();
     }
-
+    
     function toggleMobileMenu() {
       isMobileMenuOpen = !isMobileMenuOpen;
       const menu = document.getElementById("mobile-menu");
       menu.style.display = isMobileMenuOpen ? "block" : "none";
     }
-
+    
+    function showFilterSheet() {
+      isFilterSheetOpen = true;
+      document.body.classList.add('body-scroll-lock');
+      const sheet = document.getElementById("filter-sheet");
+      sheet.classList.remove("translate-y-full");
+    }
+    
+    function hideFilterSheet() {
+      isFilterSheetOpen = false;
+      document.body.classList.remove('body-scroll-lock');
+      document.getElementById("filter-sheet").classList.add("translate-y-full");
+    }
+    
     function initApp() {
       const app = document.getElementById("app");
-
+      
       // Header
-    //   <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="px-3 py-1 rounded-md hover:bg-accent flex items-center">
-    //           </button> this button goes after <div class="hidden md:flex items-center gap-2">
       const header = document.createElement("header");
       header.className = "sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border";
       header.innerHTML = `
@@ -1035,39 +1042,31 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
                 <p class="text-sm text-muted-foreground">Interactive Journey Through My Own Works</p>
               </div>
             </div>
-              <button onclick="window.location.href='https://sarcdv.github.io/'" class="px-3 py-1 rounded-md hover:bg-accent">Home</button>
-            <div class="hidden md:flex items-center gap-2">
-              
-              <button onclick="setCategory('all')" class="px-3 py-1 rounded-md hover:bg-accent">All</button>
-              ${Object.entries(categories).map(([key, val]) => `
-                <button onclick="setCategory('${key}')" class="px-3 py-1 rounded-md hover:bg-accent">${val.name}</button>
-              `).join('')}
-            </div>
-            <button onclick="toggleMobileMenu()" class="md:hidden p-2">
-              <svg data-lucide="Menu" class="w-5 h-5"></svg>
-            </button>
-          </div>
-          <div id="mobile-menu" class="md:hidden mt-4 pt-4 border-t border-border hidden">
-            <div class="flex flex-wrap gap-2">
-              <button onclick="setCategory('all')" class="px-3 py-1 rounded-md hover:bg-accent">All</button>
-              ${Object.entries(categories).map(([key, val]) => `
-                <button onclick="setCategory('${key}')" class="px-3 py-1 rounded-md hover:bg-accent">${val.name}</button>
-              `).join('')}
+            <div class="flex items-center gap-2">
+              <button id="dark-mode-toggle" onclick="toggleDarkMode()" class="px-3 py-1 rounded-md hover:bg-accent flex items-center">
+                <svg data-lucide="Moon" class="w-4 h-4 mr-2"></svg>
+                Dark Mode
+              </button>
+              <button onclick="showFilterSheet()" class="md:hidden p-2">
+                <svg data-lucide="Filter" class="w-5 h-5"></svg>
+              </button>
+              <button onclick="window.location.href='https://sarcdv.github.io/ '" class="px-3 py-1 rounded-md hover:bg-accent hidden md:block">
+                Home
+              </button>
             </div>
           </div>
         </div>
       `;
       app.appendChild(header);
-      lucide.createIcons();
-
+      
       // Hero Section
       const hero = document.createElement("section");
-      hero.className = "py-20 px-4";
+      hero.className = "py-12 px-4";
       hero.innerHTML = `
         <div class="container mx-auto text-center">
-          <h2 class="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <h2 class="text-3xl md:text-4xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             Some of my contributions include
-          </h2>       
+          </h2>
           <div class="flex items-center justify-center gap-4 text-sm text-muted-foreground">
             <svg data-lucide="Calendar" class="w-4 h-4"></svg>
             <span>2008 - Present</span>
@@ -1077,44 +1076,104 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
         </div>
       `;
       app.appendChild(hero);
-      lucide.createIcons();
-
-      // Timeline Section
-      const timelineSection = document.createElement("section");
-      timelineSection.className = "py-12 px-4";
-      timelineSection.innerHTML = `<div class="container mx-auto max-w-6xl"><div id="timeline" class="relative"></div></div>`;
-      app.appendChild(timelineSection);
-
-      // Footer
-      const footer = document.createElement("footer");
-      footer.className = "py-12 px-4 border-t border-border text-center text-muted-foreground";
-      footer.textContent = "© 2025 Alessandro Sciarra. All rights reserved.";
-      app.appendChild(footer);
-
-      // Modal
-      const modal = document.createElement("div");
-      modal.id = "modal";
-      modal.className = "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden";
-      modal.onclick = () => hideModal();
-      modal.innerHTML = `
-        <div id="modal-content" class="bg-card border border-border rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
+      
+      // Filter Sheet (Mobile)
+      const filterSheet = document.createElement("div");
+      filterSheet.id = "filter-sheet";
+      filterSheet.className = "fixed bottom-0 left-0 right-0 bg-card border-t border-border transform translate-y-full transition-transform duration-300 z-40";
+      filterSheet.innerHTML = `
+        <div class="p-4 border-b border-border flex justify-between items-center">
+          <h3 class="font-medium">Filter by Category</h3>
+          <button onclick="hideFilterSheet()" class="p-2">
+            <svg data-lucide="X" class="w-5 h-5"></svg>
+          </button>
+        </div>
+        <div class="p-4">
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="setCategory('all')" class="px-3 py-2 rounded-md hover:bg-accent w-full">All</button>
+            ${Object.entries(categories).map(([key, val]) => `
+              <button onclick="setCategory('${key}')" class="px-3 py-2 rounded-md hover:bg-accent w-full text-left">${val.name}</button>
+            `).join('')}
+          </div>
         </div>
       `;
-      app.appendChild(modal);
-
+      app.appendChild(filterSheet);
+      
+      // Desktop Filters (Hidden on mobile)
+      const desktopFilters = document.createElement("div");
+      desktopFilters.className = "hidden md:flex justify-center pb-8";
+      desktopFilters.innerHTML = `
+        <div class="bg-card border border-border rounded-xl p-2 inline-flex items-center">
+          <button onclick="setCategory('all')" class="px-3 py-2 rounded-md hover:bg-accent">All</button>
+          ${Object.entries(categories).map(([key, val]) => `
+            <button onclick="setCategory('${key}')" class="px-3 py-2 rounded-md hover:bg-accent">${val.name}</button>
+          `).join('')}
+        </div>
+      `;
+      app.appendChild(desktopFilters);
+      
+      // Timeline Section
+      const timelineSection = document.createElement("section");
+      timelineSection.className = "pb-12 px-4";
+      timelineSection.innerHTML = `
+        <div class="container mx-auto max-w-3xl">
+          <div id="timeline" class="space-y-4"></div>
+        </div>
+      `;
+      app.appendChild(timelineSection);
+      
+      // Footer
+      const footer = document.createElement("footer");
+      footer.className = "py-8 px-4 border-t border-border text-center text-muted-foreground";
+      footer.textContent = "© 2025 Alessandro Sciarra. All rights reserved.";
+      app.appendChild(footer);
+      
+      // Modal (Desktop)
+      const desktopModal = document.createElement("div");
+      desktopModal.id = "desktop-modal";
+      desktopModal.className = "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden";
+      desktopModal.onclick = () => hideModal();
+      desktopModal.innerHTML = `
+        <div id="desktop-modal-content" class="bg-card border border-border rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl" onclick="event.stopPropagation()">
+        </div>
+      `;
+      app.appendChild(desktopModal);
+      
+      // Modal (Mobile)
+      const mobileModal = document.createElement("div");
+      mobileModal.id = "mobile-modal";
+      mobileModal.className = "fixed inset-0 bg-background z-50 transform translate-y-full transition-transform duration-300 ease-in-out flex-col";
+      mobileModal.innerHTML = `
+        <div class="flex justify-between items-center px-4 py-3 border-b border-border">
+          <h2 id="mobile-title" class="text-lg font-semibold"></h2>
+          <button onclick="hideMobileModal()" class="p-2">
+            <svg data-lucide="X" class="w-5 h-5 text-muted-foreground"></svg>
+          </button>
+        </div>
+        <div id="mobile-content" class="p-4 overflow-y-auto flex-grow text-foreground line-clamp-6"></div>
+      `;
+      app.appendChild(mobileModal);
+      
       // Render timeline
       renderTimeline();
-
+      
       // Init dark mode
       initDarkMode();
     }
-
+    
+    // Export functions to global scope
     window.setCategory = setCategory;
     window.handleItemClick = handleItemClick;
     window.hideModal = hideModal;
+    window.showModal = showModal;
+    window.showMobileModal = showMobileModal;
+    window.hideMobileModal = hideMobileModal;
+    window.toggleDescription = toggleDescription;
     window.toggleMobileMenu = toggleMobileMenu;
     window.toggleDarkMode = toggleDarkMode;
-
+    window.showFilterSheet = showFilterSheet;
+    window.hideFilterSheet = hideFilterSheet;
+    
     window.onload = () => {
       initApp();
     };
