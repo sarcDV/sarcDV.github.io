@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAIAT - Malware AI Analysis Tool</title>
+  <title>MAIAT: Malware Analysis and Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
   
@@ -11,43 +11,131 @@
 </head>
 <body>
   <!-- Contenitore delle Particelle -->
-  <div id="page-background"></div>
+  <!-- <div id="page-background"></div> -->
 
   <!-- Header -->
   <header class="p-4 gradient-bg text-white">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">MAIAT</h1>
+      <h1 class="text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
       <nav>
         <ul class="flex space-x-4">
           <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors">Home</a></li>
           <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
           <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
-          <!-- <li><a href="contatti.html" class="text-white hover:text-gray-300 transition-colors">Contatti</a></li> -->
+          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
+  <!-- Solution Section -->
+  <section class="py-16 bg-dark-700">
+  <div class="container mx-auto flex justify-center">
+    <div class="bg-gray-700 rounded-xl shadow-md p-8 max-w-3xl w-full card text-center">
+      <!-- <h2 class="text-2xl font-bold text-green-300 mb-6">How MAIAT works</h2> -->
+      <ul class="text-left text-gray-100 space-y-4 mb-4">
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">🤖</span>
+          <div>
+            <strong class="text-green-200">Fully Automated Analysis:</strong>
+            <span> MAIAT automates file ingestion, sandboxing, and behavioral analysis, reducing manual effort by up to 40%.</span>
+          </div>
+        </li>
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">⚡</span>
+          <div>
+            <strong class="text-green-200">Rapid &amp; Accurate Intelligence:</strong>
+            <span> Extracts Indicators of Compromise (IoCs), maps threats to MITRE ATT&amp;CK, and generates structured reports for your SIEM—improving detection accuracy by 25%.</span>
+          </div>
+        </li>
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">🔓</span>
+          <div>
+            <strong class="text-green-200">Democratized Expertise:</strong>
+            <span> Delivers enterprise-grade malware analysis at an accessible cost, making advanced cyber defense available to everyone.</span>
+          </div>
+        </li>
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">🚀</span>
+          <div>
+            <strong class="text-green-200">Accelerated Response:</strong>
+            <span> Reduces Mean Time to Detect and Respond (MTTD/MTTR) by providing immediate, explainable findings for faster containment.</span>
+          </div>
+        </li>
+      </ul>
+      <p class="text-lg text-gray-200">
+        MAIAT turns the endless stream of threats into a structured flow of intelligence, empowering your team to respond faster and smarter.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- How MAIAT Works - The Automated Analysis Engine -->
+<section class="py-16 bg-dark-700">
+  <div class="container mx-auto flex justify-center">
+    <div class="bg-gray-700 rounded-xl shadow-md p-8 max-w-3xl w-full card text-center">
+      <!-- <h2 class="text-2xl font-bold text-green-300 mb-6">How MAIAT Works - The Automated Analysis Engine</h2> -->
+      <ul class="text-left text-gray-100 space-y-4 mb-4">
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">📥</span>
+          <div>
+            <strong class="text-green-200">INGESTION &amp; TRIAGE:</strong>
+            <span> Samples can be uploaded directly or retrieved from a designated feed. The system automatically classifies and prioritizes samples for further analysis.</span>
+          </div>
+        </li>
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">🔍</span>
+          <div>
+            <strong class="text-green-200">STATIC &amp; DYNAMIC ANALYSIS:</strong>
+            <span> Static analysis involves disassembly, string extraction, and entropy analysis. Dynamic analysis detonates samples in a secure sandbox, logging all activities.</span>
+          </div>
+        </li>
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">🧠</span>
+          <div>
+            <strong class="text-green-200">BEHAVIORAL ANALYSIS &amp; INTELLIGENCE EXTRACTION:</strong>
+            <span> ML and NLP engines analyze sandbox logs to interpret malicious intent, extracting key IoCs and a detailed behavioral timeline.</span>
+          </div>
+        </li>
+        <li class="flex items-start">
+          <span class="text-2xl mr-3">📊</span>
+          <div>
+            <strong class="text-green-200">ATTRIBUTION &amp; REPORTING:</strong>
+            <span> Actions are mapped to the MITRE ATT&amp;CK framework, and structured reports are auto-generated in formats like STIX, JSON, or Markdown for SIEM/CTI platforms.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+
+
   <!-- Hero Section -->
   <section class="py-16 bg-dark-700"> 
     <div class="container mx-auto text-center">
-      <h2 class="text-2xl font-bold text-white mb-2">How it works</h2>
       <div class="svg-container">
         <object type="image/svg+xml" data="diagramma.svg">
           Your browser does not support SVG
         </object>
       </div>
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-      The goal is to classify the file (e.g., malware type), identify indicators of compromise (IOCs), and assess its risk.
-      </p> -->
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-        Un sistema avanzato di supporto investigativo che integra tecnologie di IA per raccogliere, analizzare e correlare informazioni provenienti da fonti aperte e chiuse.
-      </p>  -->
-      
     </div>
   </section>
 
-  
+  <!-- Hero Section -->
+  <section class="py-16 bg-dark-700"> 
+    <div class="container mx-auto text-center">
+      <div class="video-container">
+        <video controls>
+          <source src="movie.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </section>
+
 
   <!-- Footer -->
   <footer class="bg-black text-white py-8">

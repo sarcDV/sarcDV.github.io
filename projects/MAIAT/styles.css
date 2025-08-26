@@ -13,7 +13,7 @@
     }
   
     .gradient-bg {
-      background: linear-gradient(135deg, #000000 0%, #350463 100%);
+      background: linear-gradient(135deg, #000000 0%, #004738 100%);
     }
   
     .dark-section {
@@ -42,7 +42,7 @@
     }
   
     a {
-      color: #bb86fc; /* Viola chiaro per i link */
+      color: #00fd15; /* Viola chiaro per i link */
       text-decoration: none;
     }
   
