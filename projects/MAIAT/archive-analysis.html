@@ -3,106 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAIAT - Malware AI Analysis Tool</title>
+  <title>MAIAT: Malware Analysis and Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-  
   <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Contenitore delle Particelle -->
-  <div id="page-background"></div>
-
-  <!-- Header -->
-  <header class="p-4 gradient-bg text-white">
+  <!-- Header with improved mobile navigation -->
+  <header class="p-4 gradient-bg text-white relative">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">MAIAT</h1>
+      <h1 class="text-xl md:text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
+      
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn text-white p-2 md:hidden" aria-label="Toggle menu" id="mobileMenuButton">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      
       <nav>
-        <ul class="flex space-x-4">
-          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors">How it works</a></li>
-          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
-          <!-- <li><a href="contatti.html" class="text-white hover:text-gray-300 transition-colors">Contatti</a></li> -->
+        <ul class="md:flex space-x-4 hidden md:flex-row absolute top-full left-0 w-full bg-gray-800 md:relative md:bg-transparent flex-col z-50">
+          <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Home</a></li>
+          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">How it works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Advantages</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Implementation</a></li>
+          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
   </header>
-
+   
   <!-- Hero Section -->
-  <section class="py-16 bg-dark-700"> 
-    <div class="container mx-auto text-center">
-      <h2 class="text-2xl font-bold text-white mb-2">PE analysis</h2>
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-      The goal is to classify the file (e.g., malware type), identify indicators of compromise (IOCs), and assess its risk.
-      </p> -->
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-        Un sistema avanzato di supporto investigativo che integra tecnologie di IA per raccogliere, analizzare e correlare informazioni provenienti da fonti aperte e chiuse.
-      </p>  -->
-      
-    </div>
-  </section>
+<section class="py-16 bg-dark-700">
+  <div class="container mx-auto text-center">
+    <h2 class="text-2xl font-bold text-white mb-2">Archive Analysis</h2>
+    <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
+      Compressed archives (e.g., ZIP, RAR, 7z, TAR.GZ) are frequently used to deliver malware, bypass email filters, or hide malicious payloads. MAIAT automates the deep inspection of archives, recursively extracting and analyzing contents while detecting evasion tactics like password-protected entries, nested packing, and spoofed extensions.
+    </p>
+  </div>
+</section>
 
-  
+<!-- Analysis Phases -->
+<section class="py-16 bg-gray-800">
+  <div class="container mx-auto px-6">
+    <div class="grid md:grid-cols-1 gap-8">
+
+      <!-- 1 - Environment Preparation -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">1 - Environment Preparation</h3>
+        <p class="text-gray-300 mb-4">
+          MAIAT prepares a secure, isolated environment to safely unpack and inspect archives:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Virtual Machine / Container</strong>: Uses sandboxed VMs or Docker containers with archive tools preinstalled.</li>
+          <li><strong>Network Isolation</strong>: Prevents accidental C2 activation during extraction.</li>
+          <li><strong>Tool Deployment</strong>: Ensures availability of:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><strong>Extractors</strong>: 7-Zip, unzip, unrar, tar, binwalk.</li>
+              <li><strong>Scanners</strong>: ClamAV, YARA, VirusTotal API.</li>
+              <li><strong>MAIAT Agents</strong>: Auto-trigger file-type detection and recursive analysis agents.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 2 - Static Analysis -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">2 - Static Analysis</h3>
+        <p class="text-gray-300 mb-4">
+          MAIAT inspects the archive structure without full extraction:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Format Identification</strong>: Validates actual format vs. extension (e.g., a .zip with PE inside).</li>
+          <li><strong>File List Inspection</strong>: Reviews filenames for:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>Double extensions (e.g., <code>invoice.pdf.exe</code>)</li>
+              <li>Spoofed icons (e.g., .LNK files disguised as PDFs)</li>
+              <li>Hidden or system files (e.g., <code>..exe</code>)</li>
+            </ul>
+          </li>
+          <li><strong>Password Protection Detection</strong>: Flags encrypted entries (common in phishing campaigns).</li>
+          <li><strong>Nested Archive Detection</strong>: Identifies multi-layered packing (e.g., ZIP → RAR → EXE).</li>
+          <li><strong>Entropy Analysis</strong>: High entropy may indicate packed or encrypted malware.</li>
+          <li><strong>Hashing & IOC Matching</strong>: Computes hash of archive and individual files; checks against threat intel.</li>
+        </ul>
+      </div>
+
+      <!-- 3 - Dynamic Analysis -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">3 - Dynamic Analysis</h3>
+        <p class="text-gray-300 mb-4">
+          MAIAT extracts and monitors the behavior of archive contents:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Controlled Extraction</strong>: Unpacks files in a monitored directory; blocks execution of executables.</li>
+          <li><strong>Recursive Analysis</strong>: Automatically analyzes extracted files (e.g., a .doc inside a .zip inside a .7z).</li>
+          <li><strong>Behavior Monitoring</strong>: If executables are run:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>Tracks file drops, registry changes, process creation.</li>
+              <li>Captures network traffic for C2 detection.</li>
+            </ul>
+          </li>
+          <li><strong>Emulation of Shortcuts (.LNK)</strong>: Safely analyzes shortcut behavior without execution.</li>
+        </ul>
+      </div>
+
+      <!-- 4 - Advanced Analysis -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">4 - Advanced Analysis</h3>
+        <p class="text-gray-300 mb-4">
+          For evasive or multi-stage archives, MAIAT applies advanced techniques:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Brute-Force & Dictionary Support</strong>: Attempts common passwords (e.g., "password", "123456") on encrypted entries.</li>
+          <li><strong>Memory Dumps</strong>: If a payload executes, memory is dumped for shellcode extraction.</li>
+          <li><strong>YARA Rule Matching</strong>: Scans all extracted files against custom and public YARA rules.</li>
+          <li><strong>Hybrid Analysis</strong>: Combines static and dynamic results to reconstruct attack chain.</li>
+        </ul>
+      </div>
+
+      <!-- 5 - Classification and Risk Assessment -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">5 - Classification and Risk Assessment</h3>
+        <p class="text-gray-300 mb-4">
+          A MAIAT agent evaluates the archive and its contents:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Threat Type</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><strong>Packed Malware</strong>: Archive contains an executable (EXE, DLL, JS).</li>
+              <li><strong>Phishing Kit</strong>: Includes fake login pages, scripts, and images.</li>
+              <li><strong>Multi-Stage Dropper</strong>: Nested archives leading to final payload.</li>
+              <li><strong>Benign Archive</strong>: Legitimate data with no malicious content.</li>
+            </ul>
+          </li>
+          <li><strong>Risk Level</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><strong>Low</strong>: No malicious files detected.</li>
+              <li><strong>Medium</strong>: Suspicious filenames or obfuscation, but clean contents.</li>
+              <li><strong>High</strong>: Malicious payload identified (e.g., trojan, downloader).</li>
+              <li><strong>Critical</strong>: Known ransomware, spyware, or zero-day exploit delivery.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 6 - Reporting -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">6 - Reporting</h3>
+        <p class="text-gray-300 mb-4">
+          A MAIAT reporting agent generates a comprehensive summary:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Archive Overview</strong>: Format, size, number of files, password protection status.</li>
+          <li><strong>Extracted Files</strong>: List with types, hashes, and analysis results.</li>
+          <li><strong>Indicators of Compromise (IOCs)</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>Archive hash (SHA256)</li>
+              <li>Filenames, C2 IPs, URLs from extracted content</li>
+              <li>YARA rule matches</li>
+            </ul>
+          </li>
+          <li><strong>TTPs (MITRE ATT&CK)</strong>: T1204 (User Execution), T1190 (Exploit Public-Facing Application), T1036 (Masquerading).</li>
+          <li><strong>Mitigation Recommendations</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>Block email attachments with double extensions.</li>
+              <li>Scan all archives at network gateways.</li>
+              <li>Restrict execution from temp directories.</li>
+              <li>Use sandboxing for suspicious archives.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- AI Agent Coordination -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">AI Agent Coordination</h3>
+        <p class="text-gray-300">
+          MAIAT’s AI coordinator manages the entire archive analysis workflow — from initial inspection to recursive file analysis. It prioritizes resources based on risk, escalates suspicious files to dynamic analysis, and integrates findings into a unified threat report. With automated IOC extraction and SOAR integration, MAIAT enables rapid response to archive-based threats across enterprise environments.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
 
   <!-- Footer -->
   <footer class="bg-black text-white py-8">
     <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8">
+      <div class="grid md:grid-cols-4 gap-6 md:gap-8">
         <div>
-          <h3 class="text-xl font-bold mb-4">MAIAT</h3>
-          <p class="text-gray-400">An innovative AI assistant to support malware analysts.</p>
+          <h3 class="text-lg md:text-xl font-bold mb-4">MAIAT: Malware Analysis and Intelligence Tool</h3>
+          <p class="text-gray-400 text-sm md:text-base">An innovative AI assistant to support malware analysts.</p>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
-          <ul class="space-y-2">
-            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors">Home</a></li>
-            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors">How it works</a></li>
-            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors">Advantages</a></li>
-            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors">Implementation</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Link Utili</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">How it works</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Advantages</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Implementation</a></li>
+            <li><a href="malware-analysis.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Malware Analysis</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Info</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Terms</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Info</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Terms</a></li>
           </ul>
         </div>
-        <!-- <div>
-          <h4 class="text-lg font-semibold mb-4">Seguici</h4>
-          <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-youtube"></i></a>
-          </div>
-        </div> -->
       </div>
       <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-        <p class="text-gray-400">&copy; 2025 MAIAT. All rights reserved.</p>
+        <p class="text-gray-400 text-sm md:text-base">&copy; 2025 MAIAT. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
   <!-- Configurazione di Particles.js -->
-  <script src="script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
   <script>
-  VANTA.BIRDS({
-    el: "#page-background",
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.00,
-    scaleMobile: 1.00,
-    backgroundColor: 0x0,
-    color1: 0x3e2626,
-    color2: 0x841bc3
-  })
-  </script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.querySelector('nav ul');
+
+    if (menuButton && navMenu) {
+      menuButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        navMenu.classList.toggle('hidden');
+        navMenu.classList.toggle('flex');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (event) {
+        if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
+          if (!navMenu.classList.contains('hidden')) {
+            navMenu.classList.add('hidden');
+            navMenu.classList.remove('flex');
+          }
+        }
+      });
+
+      // Optional: Close menu when clicking a link (good UX)
+      navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navMenu.classList.add('hidden');
+          navMenu.classList.remove('flex');
+        });
+      });
+    }
+
+    // Prevent horizontal scroll lock (optional improvement)
+    document.addEventListener('touchstart', function () {}, { passive: true });
+  });
+</script>
 </body>
 </html>

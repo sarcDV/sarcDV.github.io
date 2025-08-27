@@ -3,106 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAIAT - Malware AI Analysis Tool</title>
+  <title>MAIAT: Malware Analysis and Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-  
   <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Contenitore delle Particelle -->
-  <div id="page-background"></div>
-
-  <!-- Header -->
-  <header class="p-4 gradient-bg text-white">
+  <!-- Header with improved mobile navigation -->
+  <header class="p-4 gradient-bg text-white relative">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">MAIAT</h1>
+      <h1 class="text-xl md:text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
+      
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn text-white p-2 md:hidden" aria-label="Toggle menu" id="mobileMenuButton">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      
       <nav>
-        <ul class="flex space-x-4">
-          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors">How it works</a></li>
-          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
-          <!-- <li><a href="contatti.html" class="text-white hover:text-gray-300 transition-colors">Contatti</a></li> -->
+        <ul class="md:flex space-x-4 hidden md:flex-row absolute top-full left-0 w-full bg-gray-800 md:relative md:bg-transparent flex-col z-50">
+          <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Home</a></li>
+          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">How it works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Advantages</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Implementation</a></li>
+          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="py-16 bg-dark-700"> 
-    <div class="container mx-auto text-center">
-      <h2 class="text-2xl font-bold text-white mb-2">MS Office analysis</h2>
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-      The goal is to classify the file (e.g., malware type), identify indicators of compromise (IOCs), and assess its risk.
-      </p> -->
-      <!-- <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-2">
-        Un sistema avanzato di supporto investigativo che integra tecnologie di IA per raccogliere, analizzare e correlare informazioni provenienti da fonti aperte e chiuse.
-      </p>  -->
-      
+<section class="py-16 bg-dark-700">
+  <div class="container mx-auto text-center">
+    <h2 class="text-2xl font-bold text-white mb-2">MS Office Document Analysis</h2>
+    <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
+      Analyzing MS Office documents is a critical practice in modern threat detection, as attackers frequently use weaponized files (e.g., .doc, .xlsx) to deliver malware via phishing and social engineering. These files often contain malicious macros, scripts, embedded objects, or exploit vulnerabilities. Below is a comprehensive, phase-based analysis methodology used by MAIAT to detect and classify threats in both legacy and modern Office formats.
+    </p>
+  </div>
+</section>
+
+<!-- Analysis Phases -->
+<section class="py-16 bg-gray-800">
+  <div class="container mx-auto px-6">
+    <div class="grid md:grid-cols-1 gap-8">
+
+      <!-- 1 - Environment Preparation -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">1 - Environment Preparation</h3>
+        <p class="text-gray-300 mb-4">
+          An AI agent configures a secure, isolated environment to safely analyze potentially malicious Office documents:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Virtual Machine Setup</strong>: Uses platforms like VirtualBox, VMware, or Hyper-V with network isolation (host-only or air-gapped) to prevent unintended C2 communication.</li>
+          <li><strong>Snapshot Management</strong>: Takes clean snapshots before analysis and restores them afterward to ensure environment integrity.</li>
+          <li><strong>Tool Deployment</strong>: Ensures availability of essential tools:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><strong>Static Analysis</strong>: OLETools (<code>olevba</code>, <code>oledump</code>), OffVis, Didier Stevens’ tools.</li>
+              <li><strong>Dynamic Analysis</strong>: Cuckoo Sandbox (with Office plugins), Any.Run, Hybrid Analysis.</li>
+              <li><strong>Monitoring</strong>: Process Monitor, Wireshark, Sysmon, ProcDOT.</li>
+              <li><strong>Decoders & Emulators</strong>: Base64/hex decoders, ViperMonkey (VBA emulator).</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 2 - Static Analysis -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">2 - Static Analysis</h3>
+        <p class="text-gray-300 mb-4">
+          An AI-driven agent inspects the document without execution, focusing on structural anomalies and embedded code.
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>File Type Verification</strong>: Confirms actual format using magic bytes; detects mismatches (e.g., a .docx that’s actually a ZIP or executable).</li>
+          <li><strong>Format Identification</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><strong>Legacy (.doc, .xls)</strong>: Binary OLE structure; analyzed via <code>olevba</code> or <code>oledump</code>.</li>
+              <li><strong>Modern (.docx, .xlsx)</strong>: ZIP-based Open XML; unpacked and scanned for malicious XML or embedded macros.</li>
+            </ul>
+          </li>
+          <li><strong>Macro & Script Detection</strong>: Scans for VBA macros using <code>olevba</code>; flags obfuscation and dangerous keywords:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><code>Shell</code>, <code>CreateObject("WScript.Shell")</code>, <code>Run</code>, <code>DownloadString</code></li>
+              <li>Auto-execution triggers: <code>AutoOpen</code>, <code>Document_Open</code>, <code>Workbook_Open</code></li>
+            </ul>
+          </li>
+          <li><strong>Embedded Object Analysis</strong>: Extracts and inspects OLE objects, ActiveX controls, or RTF payloads; checks for known exploit patterns (e.g., CVE-2017-11882).</li>
+          <li><strong>DDE & Exploit Detection</strong>: Identifies Dynamic Data Exchange (DDE) fields that execute commands outside VBA.</li>
+          <li><strong>Metadata Inspection</strong>: Reviews author, creation date, and tool artifacts (e.g., "Generated by Metasploit").</li>
+          <li><strong>Hashing & IOC Matching</strong>: Computes MD5/SHA256 and cross-references with VirusTotal, OTX, or MISP.</li>
+        </ul>
+      </div>
+
+      <!-- 3 - Dynamic Analysis -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">3 - Dynamic Analysis</h3>
+        <p class="text-gray-300 mb-4">
+          A dynamic analysis agent executes the document in a controlled sandbox to observe runtime behavior.
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Controlled Execution</strong>: Opens the file in a monitored Microsoft Office instance; enables macros only when necessary.</li>
+          <li><strong>Behavior Monitoring</strong>: Tracks:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>File system changes (e.g., dropped payloads in <code>%Temp%</code>)</li>
+              <li>Registry modifications (e.g., Run keys, COM hijacking)</li>
+              <li>Process creation (<code>cmd.exe</code>, <code>powershell.exe</code>, <code>mshta.exe</code>)</li>
+            </ul>
+          </li>
+          <li><strong>API Call Tracing</strong>: Logs system calls via API Monitor or ETW; detects:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li><code>CreateProcess</code>, <code>ShellExecute</code></li>
+              <li><code>URLDownloadToFile</code>, <code>InternetOpenUrl</code></li>
+              <li><code>RegSetValue</code>, <code>CreateService</code></li>
+            </ul>
+          </li>
+          <li><strong>Network Traffic Analysis</strong>: Captures traffic with Wireshark; detects C2 callbacks, beaconing, or data exfiltration.</li>
+          <li><strong>Memory Forensics</strong>: Dumps memory post-execution; searches for injected shellcode or decrypted payloads using Volatility.</li>
+        </ul>
+      </div>
+
+      <!-- 4 - Advanced Analysis -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">4 - Advanced Analysis</h3>
+        <p class="text-gray-300 mb-4">
+          For obfuscated or sophisticated documents, an advanced agent performs deep inspection.
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Macro Deobfuscation</strong>: Uses ViperMonkey or AI-powered emulators to resolve encoded strings, loops, and evasion logic.</li>
+          <li><strong>Exploit Detection</strong>: Identifies exploitation of parser vulnerabilities (e.g., Equation Editor, RTF exploits).</li>
+          <li><strong>PowerShell & Script Analysis</strong>: Extracts and decodes <code>-EncodedCommand</code> arguments; reconstructs obfuscated scripts.</li>
+          <li><strong>Packer & Obfuscator Detection</strong>: Detects use of tools like TheFatRat, Empire, or custom encryption; applies entropy analysis.</li>
+          <li><strong>Persistence Analysis</strong>: Checks for installation of Run keys, scheduled tasks, or WMI subscriptions.</li>
+        </ul>
+      </div>
+
+      <!-- 5 - Classification and Risk Assessment -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">5 - Classification and Risk Assessment</h3>
+        <p class="text-gray-300 mb-4">
+          An AI classification agent evaluates the document based on observed traits and behaviors.
+        </p>
+        <h4 class="text-lg font-semibold text-white mt-4">Threat Type Classification</h4>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside mt-2">
+          <li><strong>Malicious Macro</strong>: VBA code designed to download or execute payloads.</li>
+          <li><strong>DDE Attack</strong>: Uses Dynamic Data Exchange to run system commands.</li>
+          <li><strong>Exploit Document</strong>: Triggers memory corruption vulnerabilities.</li>
+          <li><strong>Downloader</strong>: Retrieves secondary malware (e.g., Qakbot, IcedID).</li>
+          <li><strong>Phishing Lure</strong>: Social engineering with no active payload.</li>
+          <li><strong>Information Stealer</strong>: Harvests credentials or clipboard data.</li>
+        </ul>
+
+        <h4 class="text-lg font-semibold text-white mt-6">Risk Level Assessment</h4>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside mt-2">
+          <li><strong>Low</strong>: No macros, clean metadata, benign content.</li>
+          <li><strong>Medium</strong>: Obfuscated macros or suspicious strings, no payload execution.</li>
+          <li><strong>High</strong>: Confirmed payload drop, C2 communication, system modification.</li>
+          <li><strong>Critical</strong>: Exploit used, privilege escalation, lateral movement attempts.</li>
+        </ul>
+      </div>
+
+      <!-- 6 - Reporting -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">6 - Reporting</h3>
+        <p class="text-gray-300 mb-4">
+          A reporting agent generates a structured, actionable report summarizing findings.
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside">
+          <li><strong>Document Overview</strong>: Filename, hash, format, size.</li>
+          <li><strong>Threat Summary</strong>: Malware family (e.g., Emotet), delivery method.</li>
+          <li><strong>Indicators of Compromise (IOCs)</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>File hashes (MD5, SHA1, SHA256)</li>
+              <li>URLs, domains, IP addresses</li>
+              <li>Registry keys, filenames, mutexes</li>
+            </ul>
+          </li>
+          <li><strong>TTPs (MITRE ATT&CK)</strong>: Mapped techniques (e.g., T1059 - Command and Scripting Interpreter, T1204.002 - User Execution).</li>
+          <li><strong>Mitigation Recommendations</strong>:
+            <ul class="list-disc list-inside ml-5 mt-2">
+              <li>Disable macros from untrusted sources</li>
+              <li>Enable Protected View and Application Guard</li>
+              <li>Deploy ASR rules (Attack Surface Reduction)</li>
+              <li>Block IOCs at firewall/proxy level</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- AI Agent Coordination -->
+      <div class="bg-gray-700 rounded-xl shadow-md p-6 card">
+        <h3 class="text-xl font-bold text-white mb-4">AI Agent Coordination</h3>
+        <p class="text-gray-300">
+          The entire workflow is orchestrated by a central AI coordinator in MAIAT:
+        </p>
+        <ul class="text-gray-300 space-y-2 list-disc list-inside mt-4">
+          <li><strong>Task Orchestration</strong>: Assigns subtasks to specialized agents (static, dynamic, deobfuscation, classification).</li>
+          <li><strong>Real-Time Decision Making</strong>: Adjusts analysis depth dynamically (e.g., escalate if macros are detected).</li>
+          <li><strong>Learning & Adaptation</strong>: Updates detection models using new samples and analyst feedback.</li>
+          <li><strong>Integration with SOAR/SIEM</strong>: Automatically feeds IOCs into security platforms for alerting and blocking.</li>
+        </ul>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
   
 
   <!-- Footer -->
   <footer class="bg-black text-white py-8">
     <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8">
+      <div class="grid md:grid-cols-4 gap-6 md:gap-8">
         <div>
-          <h3 class="text-xl font-bold mb-4">MAIAT</h3>
-          <p class="text-gray-400">An innovative AI assistant to support malware analysts.</p>
+          <h3 class="text-lg md:text-xl font-bold mb-4">MAIAT: Malware Analysis and Intelligence Tool</h3>
+          <p class="text-gray-400 text-sm md:text-base">An innovative AI assistant to support malware analysts.</p>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
-          <ul class="space-y-2">
-            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors">Home</a></li>
-            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors">How it works</a></li>
-            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors">Advantages</a></li>
-            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors">Implementation</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Link Utili</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">How it works</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Advantages</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Implementation</a></li>
+            <li><a href="malware-analysis.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Malware Analysis</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Info</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Terms</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Info</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Terms</a></li>
           </ul>
         </div>
-        <!-- <div>
-          <h4 class="text-lg font-semibold mb-4">Seguici</h4>
-          <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-youtube"></i></a>
-          </div>
-        </div> -->
       </div>
       <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-        <p class="text-gray-400">&copy; 2025 MAIAT. All rights reserved.</p>
+        <p class="text-gray-400 text-sm md:text-base">&copy; 2025 MAIAT. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
   <!-- Configurazione di Particles.js -->
-  <script src="script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
   <script>
-  VANTA.BIRDS({
-    el: "#page-background",
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.00,
-    scaleMobile: 1.00,
-    backgroundColor: 0x0,
-    color1: 0x3e2626,
-    color2: 0x841bc3
-  })
-  </script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.querySelector('nav ul');
+
+    if (menuButton && navMenu) {
+      menuButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        navMenu.classList.toggle('hidden');
+        navMenu.classList.toggle('flex');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (event) {
+        if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
+          if (!navMenu.classList.contains('hidden')) {
+            navMenu.classList.add('hidden');
+            navMenu.classList.remove('flex');
+          }
+        }
+      });
+
+      // Optional: Close menu when clicking a link (good UX)
+      navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navMenu.classList.add('hidden');
+          navMenu.classList.remove('flex');
+        });
+      });
+    }
+
+    // Prevent horizontal scroll lock (optional improvement)
+    document.addEventListener('touchstart', function () {}, { passive: true });
+  });
+</script>
 </body>
 </html>
