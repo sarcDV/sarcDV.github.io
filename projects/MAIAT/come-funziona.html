@@ -6,27 +6,30 @@
   <title>MAIAT: Malware Analysis and Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-  
   <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Contenitore delle Particelle -->
-  <!-- <div id="page-background"></div> -->
-
-  <!-- Header -->
-  <header class="p-4 gradient-bg text-white">
+  <!-- Header with improved mobile navigation -->
+  <header class="p-4 gradient-bg text-white relative">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
+      <h1 class="text-xl md:text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
+      
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn text-white p-2 md:hidden" aria-label="Toggle menu" id="mobileMenuButton">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      
       <nav>
-        <ul class="flex space-x-4">
-          <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors">Home</a></li>
-          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
-          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors">Malware Analysis</a></li>
+        <ul class="md:flex space-x-4 hidden md:flex-row absolute top-full left-0 w-full bg-gray-800 md:relative md:bg-transparent flex-col z-50">
+          <li><a href="index.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Home</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Advantages</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Implementation</a></li>
+          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
   </header>
+
 
   <!-- Solution Section -->
   <section class="py-16 bg-dark-700">
@@ -138,64 +141,72 @@
 
 
   <!-- Footer -->
+  <!-- Footer -->
   <footer class="bg-black text-white py-8">
     <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8">
+      <div class="grid md:grid-cols-4 gap-6 md:gap-8">
         <div>
-          <h3 class="text-xl font-bold mb-4">MAIAT</h3>
-          <p class="text-gray-400">An innovative AI assistant to support malware analysts.</p>
+          <h3 class="text-lg md:text-xl font-bold mb-4">MAIAT: Malware Analysis and Intelligence Tool</h3>
+          <p class="text-gray-400 text-sm md:text-base">An innovative AI assistant to support malware analysts.</p>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
-          <ul class="space-y-2">
-            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors">Home</a></li>
-            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors">How it works</a></li>
-            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors">Advantages</a></li>
-            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors">Implementation</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Link Utili</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">How it works</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Advantages</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Implementation</a></li>
+            <li><a href="malware-analysis.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Malware Analysis</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Info</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Terms</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Info</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Terms</a></li>
           </ul>
         </div>
-        <!-- <div>
-          <h4 class="text-lg font-semibold mb-4">Seguici</h4>
-          <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-youtube"></i></a>
-          </div>
-        </div> -->
       </div>
       <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-        <p class="text-gray-400">&copy; 2025 MAIAT. All rights reserved.</p>
+        <p class="text-gray-400 text-sm md:text-base">&copy; 2025 MAIAT. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Configurazione di Particles.js -->
-  <script src="script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
   <script>
-  VANTA.BIRDS({
-    el: "#page-background",
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.00,
-    scaleMobile: 1.00,
-    backgroundColor: 0x0,
-    color1: 0x3e2626,
-    color2: 0x841bc3
-  })
-  </script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.querySelector('nav ul');
+
+    if (menuButton && navMenu) {
+      menuButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        navMenu.classList.toggle('hidden');
+        navMenu.classList.toggle('flex');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (event) {
+        if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
+          if (!navMenu.classList.contains('hidden')) {
+            navMenu.classList.add('hidden');
+            navMenu.classList.remove('flex');
+          }
+        }
+      });
+
+      // Optional: Close menu when clicking a link (good UX)
+      navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navMenu.classList.add('hidden');
+          navMenu.classList.remove('flex');
+        });
+      });
+    }
+
+    // Prevent horizontal scroll lock (optional improvement)
+    document.addEventListener('touchstart', function () {}, { passive: true });
+  });
+</script>
 </body>
 </html>
