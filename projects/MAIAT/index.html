@@ -6,176 +6,188 @@
   <title>MAIAT: Malware Analysis and Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-  
   <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Contenitore delle Particelle -->
-  <!-- <div id="page-background"></div> -->
-
-  <!-- Header -->
-  <header class="p-4 gradient-bg text-white">
+  <!-- Header with improved mobile navigation -->
+  <header class="p-4 gradient-bg text-white relative">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
+      <h1 class="text-xl md:text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
+      
+      <!-- Mobile menu button -->
+      <button class="mobile-menu-btn text-white p-2" aria-label="Toggle menu">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+      
       <nav>
-        <ul class="flex space-x-4">
-          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors">How it works</a></li>
-          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors">Implementation</a></li>
-          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors">Malware Analysis</a></li>
-          <!-- <li><a href="contatti.html" class="text-white hover:text-gray-300 transition-colors">Contatti</a></li> -->
+        <ul class="md:flex space-x-4 hidden md:visible">
+          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">How it works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">Advantages</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">Implementation</a></li>
+          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-
   <!-- Hero Section -->
-  <section class="py-16 bg-dark-700">
-    <div class="container mx-auto flex justify-center">
-      <div class="bg-gray-700 rounded-xl shadow-md p-8 max-w-3xl w-full card text-center">
-        <h2 class="text-2xl font-bold text-green-300 mb-2">The Overwhelmed Cybersecurity Team</h2>
-        <p class="text-lg text-gray-200 mb-6">
+  <section class="py-8 md:py-16 bg-dark-700">
+    <div class="container mx-auto px-2 md:px-0 flex justify-center">
+      <div class="bg-gray-700 rounded-xl shadow-md p-4 md:p-8 max-w-3xl w-full card text-center">
+        <h2 class="text-xl md:text-2xl font-bold text-green-300 mb-2">The Overwhelmed Cybersecurity Team</h2>
+        <p class="text-base md:text-lg text-gray-200 mb-4 md:mb-6">
           Malware analysis is slow, complex, and requires rare, expensive experts.
         </p>
-        <ul class="text-left text-gray-100 space-y-2 mb-2">
-          <li>
-        <span class="mr-2" role="img" aria-label="Magnifying glass">🔍</span>
-        <strong class="text-green-200">Manual Triage Overload:</strong> Analysts waste time on mundane sample sorting and initial analysis.
+        <ul class="text-left text-gray-100 space-y-2 mb-4 text-sm md:text-base">
+          <li class="flex items-start">
+            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Magnifying glass">🔍</span>
+            <div><strong class="text-green-200">Manual Triage Overload:</strong> Analysts waste time on mundane sample sorting and initial analysis.</div>
           </li>
-          <li>
-        <span class="mr-2" role="img" aria-label="Hourglass">⏳</span>
-        <strong class="text-green-200">Slow Response Times:</strong> Lengthy manual investigation increases Mean Time to Detect/Respond (MTTD/MTTR).
+          <li class="flex items-start">
+            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Hourglass">⏳</span>
+            <div><strong class="text-green-200">Slow Response Times:</strong> Lengthy manual investigation increases Mean Time to Detect/Respond (MTTD/MTTR).</div>
           </li>
-          <li>
-        <span class="mr-2" role="img" aria-label="Brain">🧠</span>
-        <strong class="text-green-200">Expertise Shortage:</strong> Advanced malware analysis skills are scarce and costly, putting SMBs at a severe disadvantage.
+          <li class="flex items-start">
+            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Brain">🧠</span>
+            <div><strong class="text-green-200">Expertise Shortage:</strong> Advanced malware analysis skills are scarce and costly, putting SMBs at a severe disadvantage.</div>
           </li>
-          <li>
-        <span class="mr-2" role="img" aria-label="Bar chart">📊</span>
-        <strong class="text-green-200">Operational Inefficiency:</strong> Critical threat intelligence remains siloed or in unstructured reports, unable to integrate quickly with security systems (SIEM/CTI).
+          <li class="flex items-start">
+            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Bar chart">📊</span>
+            <div><strong class="text-green-200">Operational Inefficiency:</strong> Critical threat intelligence remains siloed or in unstructured reports, unable to integrate quickly with security systems (SIEM/CTI).</div>
           </li>
         </ul>
-        <p class="text-lg text-gray-200 mb-6">
-        This creates a critical gap: sophisticated threats are evolving faster than most organizations can analyze and defend against them.
+        <p class="text-base md:text-lg text-gray-200 mb-4 md:mb-6">
+          This creates a critical gap: sophisticated threats are evolving faster than most organizations can analyze and defend against them.
           <br>
-        <span class="text-green-300 font-semibold">MAIAT bridges this gap by automating advanced malware analysis, making enterprise-grade threat intelligence fast, accessible, and affordable for every organization.</span>
+          <span class="text-green-300 font-semibold">MAIAT bridges this gap by automating advanced malware analysis, making enterprise-grade threat intelligence fast, accessible, and affordable for every organization.</span>
         </p>
       </div>
     </div>
   </section>
 
-
   <!-- Future Vision -->
-<section class="py-16 bg-dark-700">
-  <div class="container mx-auto flex justify-center">
-    <div class="bg-gray-700 rounded-xl shadow-md p-8 max-w-3xl w-full card text-center">
-      <h2 class="text-2xl font-bold text-green-300 mb-6">Our Vision</h2>
-      <ul class="text-left text-gray-100 space-y-4 mb-4">
-        <li class="flex items-start">
-          <span class="text-2xl mr-3">🔮</span>
-          <div>
-            <strong class="text-green-200">Adaptive Learning:</strong>
-            <span> Integration of Reinforcement Learning (RL) to better adapt to novel attack techniques.</span>
-          </div>
-        </li>
-        <li class="flex items-start">
-          <span class="text-2xl mr-3">🤝</span>
-          <div>
-            <strong class="text-green-200">Collaborative Defense:</strong>
-            <span> Built-in, privacy-conscious threat sharing with industry groups (ISACs).</span>
-          </div>
-        </li>
-        <li class="flex items-start">
-          <span class="text-2xl mr-3">🛰️</span>
-          <div>
-            <strong class="text-green-200">Multi-Agent Orchestration:</strong>
-            <span> Evolving into an intelligent "sentinella" that coordinates response across security tools.</span>
-          </div>
-        </li>
-      </ul>
+  <section class="py-8 md:py-16 bg-dark-700">
+    <div class="container mx-auto px-2 md:px-0 flex justify-center">
+      <div class="bg-gray-700 rounded-xl shadow-md p-4 md:p-8 max-w-3xl w-full card text-center">
+        <h2 class="text-xl md:text-2xl font-bold text-green-300 mb-4 md:mb-6">Our Vision</h2>
+        <ul class="text-left text-gray-100 space-y-4 mb-4 text-sm md:text-base">
+          <li class="flex items-start">
+            <span class="text-xl mr-3 mt-1 flex-shrink-0">🔮</span>
+            <div>
+              <strong class="text-green-200">Adaptive Learning:</strong>
+              <span> Integration of Reinforcement Learning (RL) to better adapt to novel attack techniques.</span>
+            </div>
+          </li>
+          <li class="flex items-start">
+            <span class="text-xl mr-3 mt-1 flex-shrink-0">🤝</span>
+            <div>
+              <strong class="text-green-200">Collaborative Defense:</strong>
+              <span> Built-in, privacy-conscious threat sharing with industry groups (ISACs).</span>
+            </div>
+          </li>
+          <li class="flex items-start">
+            <span class="text-xl mr-3 mt-1 flex-shrink-0">🛰️</span>
+            <div>
+              <strong class="text-green-200">Multi-Agent Orchestration:</strong>
+              <span> Evolving into an intelligent "sentinella" that coordinates response across security tools.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Conclusion -->
-<section class="py-16 bg-dark-700">
-  <div class="container mx-auto flex justify-center">
-    <div class="bg-gray-700 rounded-xl shadow-md p-8 max-w-3xl w-full card text-center">
-      <h2 class="text-2xl font-bold text-green-300 mb-6">The Future of Malware Analysis is Automated</h2>
-      <ul class="text-left text-gray-100 space-y-4 mb-4">
-        <li>MAIAT represents a paradigm shift—from slow, manual analysis to rapid, automated intelligence.</li>
-        <li><strong>Solves the critical problem</strong> of limited time, resources, and expertise.</li>
-        <li><strong>Empowers security teams</strong> of all sizes to operate at a higher level.</li>
-        <li><strong>Turns data overload into a strategic advantage</strong> with structured, actionable intelligence.</li>
-      </ul>
-      <p class="text-lg text-gray-200">
-        <strong>MAIAT: Your force multiplier in the fight against cyber threats.</strong>
-      </p>
+  <!-- Conclusion -->
+  <section class="py-8 md:py-16 bg-dark-700">
+    <div class="container mx-auto px-2 md:px-0 flex justify-center">
+      <div class="bg-gray-700 rounded-xl shadow-md p-4 md:p-8 max-w-3xl w-full card text-center">
+        <h2 class="text-xl md:text-2xl font-bold text-green-300 mb-4 md:mb-6">The Future of Malware Analysis is Automated</h2>
+        <ul class="text-left text-gray-100 space-y-3 mb-4 text-sm md:text-base">
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <div>MAIAT represents a paradigm shift—from slow, manual analysis to rapid, automated intelligence.</div>
+          </li>
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <div><strong>Solves the critical problem</strong> of limited time, resources, and expertise.</div>
+          </li>
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <div><strong>Empowers security teams</strong> of all sizes to operate at a higher level.</div>
+          </li>
+          <li class="flex items-start">
+            <span class="mr-2">•</span>
+            <div><strong>Turns data overload into a strategic advantage</strong> with structured, actionable intelligence.</div>
+          </li>
+        </ul>
+        <p class="text-base md:text-lg text-gray-200">
+          <strong>MAIAT: Your force multiplier in the fight against cyber threats.</strong>
+        </p>
+      </div>
     </div>
-  </div>
-</section>
-
+  </section>
 
   <!-- Footer -->
   <footer class="bg-black text-white py-8">
     <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8">
+      <div class="grid md:grid-cols-4 gap-6 md:gap-8">
         <div>
-          <h3 class="text-xl font-bold mb-4">MAIAT: Malware Analysis and Intelligence Tool</h3>
-          <p class="text-gray-400">An innovative AI assistant to support malware analysts.</p>
+          <h3 class="text-lg md:text-xl font-bold mb-4">MAIAT: Malware Analysis and Intelligence Tool</h3>
+          <p class="text-gray-400 text-sm md:text-base">An innovative AI assistant to support malware analysts.</p>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
-          <ul class="space-y-2">
-            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors">Home</a></li>
-            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors">How it works</a></li>
-            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors">Advantages</a></li>
-            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors">Implementation</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Link Utili</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Home</a></li>
+            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">How it works</a></li>
+            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Advantages</a></li>
+            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Implementation</a></li>
+            <li><a href="malware-analysis.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Malware Analysis</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-lg font-semibold mb-4">Info</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Terms</a></li>
+          <h4 class="text-base md:text-lg font-semibold mb-3">Info</h4>
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Terms</a></li>
           </ul>
         </div>
-        <!-- <div>
-          <h4 class="text-lg font-semibold mb-4">Seguici</h4>
-          <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors"><i class="fab fa-youtube"></i></a>
-          </div>
-        </div> -->
       </div>
       <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-        <p class="text-gray-400">&copy; 2025 MAIAT. All rights reserved.</p>
+        <p class="text-gray-400 text-sm md:text-base">&copy; 2025 MAIAT. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Configurazione di Particles.js -->
-  <script src="script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+  <!-- JavaScript for mobile menu -->
   <script>
-  VANTA.BIRDS({
-    el: "#page-background",
-    mouseControls: true,
-    touchControls: true,
-    gyroControls: false,
-    minHeight: 200.00,
-    minWidth: 200.00,
-    scale: 1.00,
-    scaleMobile: 1.00,
-    backgroundColor: 0x0,
-    color1: 0x3e2626,
-    color2: 0x841bc3
-  })
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuButton = document.querySelector('.mobile-menu-btn');
+      const navMenu = document.querySelector('nav ul');
+      
+      if (menuButton && navMenu) {
+        menuButton.addEventListener('click', function() {
+          navMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
+            navMenu.classList.remove('active');
+          }
+        });
+      }
+      
+      // Prevent horizontal scrolling on mobile
+      document.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 1) {
+          const touch = e.touches[0];
+          if (touch.clientX <= 10 || touch.clientX >= window.innerWidth - 10) {
+            e.preventDefault();
+          }
+        }
+      }, { passive: false });
+    });
   </script>
 </body>
 </html>
