@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
   
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #121212; /* Dark background */
       color: #e0e0e0; /* Light text for contrast */
+      line-height: 1.6;
     }
   
     h1, h2, h3, h4, h5, h6 {
@@ -76,4 +77,80 @@
         border: 2px solid rgba(255, 111, 97, 0.8); /* Optional: Add a semi-transparent border to the SVG */
     }
   
-  
+    /* Mobile-first responsive styles */
+    .mobile-menu-btn {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      nav ul {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: rgba(31, 41, 55, 0.98);
+        flex-direction: column;
+        padding: 1rem;
+        z-index: 1000;
+      }
+      
+      nav ul.active {
+        display: flex;
+      }
+      
+      nav ul li {
+        margin: 0.5rem 0;
+      }
+      
+      /* Adjust text sizes for mobile */
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+      }
+      
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      /* Improve card padding for mobile */
+      .card {
+        padding: 1.5rem;
+        opacity: 0.8; /* Increase opacity on mobile for better readability */
+      }
+      
+      /* Adjust footer layout */
+      footer .grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      /* Adjust SVG container for mobile */
+      .svg-container {
+        margin: 10px 0;
+        padding: 10px;
+      }
+    }
+    
+    /* Touch-friendly button sizes */
+    a, button {
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Prevent horizontal scrolling */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
