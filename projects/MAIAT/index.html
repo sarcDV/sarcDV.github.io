@@ -20,11 +20,11 @@
       </button>
       
       <nav>
-        <ul class="md:flex space-x-4 hidden md:visible">
-          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">How it works</a></li>
-          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">Implementation</a></li>
-          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-3 block">Malware Analysis</a></li>
+        <ul class="md:flex space-x-4 hidden md:flex-row absolute top-full left-0 w-full bg-gray-800 md:relative md:bg-transparent flex-col z-50">
+          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">How it works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Advantages</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Implementation</a></li>
+          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
@@ -161,33 +161,39 @@
 
   <!-- JavaScript for mobile menu -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const menuButton = document.querySelector('.mobile-menu-btn');
-      const navMenu = document.querySelector('nav ul');
-      
-      if (menuButton && navMenu) {
-        menuButton.addEventListener('click', function() {
-          navMenu.classList.toggle('active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-          if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
-            navMenu.classList.remove('active');
-          }
-        });
-      }
-      
-      // Prevent horizontal scrolling on mobile
-      document.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 1) {
-          const touch = e.touches[0];
-          if (touch.clientX <= 10 || touch.clientX >= window.innerWidth - 10) {
-            e.preventDefault();
+  document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.querySelector('.mobile-menu-btn');
+    const navMenu = document.querySelector('nav ul');
+
+    if (menuButton && navMenu) {
+      menuButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        navMenu.classList.toggle('hidden');
+        navMenu.classList.toggle('flex');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function (event) {
+        if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
+          if (!navMenu.classList.contains('hidden')) {
+            navMenu.classList.add('hidden');
+            navMenu.classList.remove('flex');
           }
         }
-      }, { passive: false });
-    });
-  </script>
+      });
+
+      // Optional: Close menu when clicking a link (good UX)
+      navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navMenu.classList.add('hidden');
+          navMenu.classList.remove('flex');
+        });
+      });
+    }
+
+    // Prevent horizontal scroll lock (optional improvement)
+    document.addEventListener('touchstart', function () {}, { passive: true });
+  });
+</script>
 </body>
 </html>
