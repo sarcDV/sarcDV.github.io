@@ -1017,11 +1017,11 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
         <p class="mb-4"><strong>Authors:</strong> ${selectedItem.authors}</p>
         <p class="mb-4">${selectedItem.description}</p>
         ${selectedItem.details ? `<p class="mb-4"><strong>Details:</strong> ${selectedItem.details}</p>` : ''}
-        ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="text-primary underline">Visit Link</a>` : ''}
-        <button onclick="toggleDescription(this)" class="mt-4 text-sm text-primary">Show less</button>
+        ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="text-primary underline">Visit Link</a>` : ''}        
       `;
       lucide.createIcons();
     }
+    //<button onclick="toggleDescription(this)" class="mt-4 text-sm text-primary">Show less</button>
     
     function hideMobileModal() {
       document.body.classList.remove('body-scroll-lock');
