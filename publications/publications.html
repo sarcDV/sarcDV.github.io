@@ -1026,6 +1026,12 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
     function hideMobileModal() {
       document.body.classList.remove('body-scroll-lock');
       document.getElementById("mobile-modal").classList.add("translate-y-full");
+      
+      // Remove the overlay
+      const overlay = document.getElementById('mobile-modal-overlay');
+      if (overlay) {
+        overlay.remove();
+      }
     }
     
     function toggleDescription(button) {
