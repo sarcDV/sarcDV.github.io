@@ -75,18 +75,16 @@
       display: block;
       cursor: pointer;
     }
-
-    /* Mobile Nav */
-    #mobileNav {
-      display: none;
-    }
-
+    
     /* Ensure mobile nav covers entire screen */
     #mobileNav {
+      position: absolute;
       top: 100%;
       left: 0;
       width: 100%;
       z-index: 50;
+      background: #111827; /* Optional: match card bg */
+      border-top: 1px solid #374151; /* Optional: subtle top border */
     }
 
     /* Optional: Smooth slide-down animation */
@@ -308,13 +306,14 @@
     });
 
     document.addEventListener('click', function (event) {
-      if (!event.target.closest('nav') && !event.target.closest('#mobileMenuButton')) {
-        if (!mobileNav.classList.contains('hidden')) {
-          mobileNav.classList.add('hidden');
-        }
+      const isClickInsideNav = mobileNav.contains(event.target);
+      const isClickOnButton = menuButton.contains(event.target);
+    
+      if (!isClickInsideNav && !isClickOnButton) {
+        mobileNav.classList.add('hidden');
       }
     });
-
+    
     mobileNav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', function () {
         mobileNav.classList.add('hidden');
