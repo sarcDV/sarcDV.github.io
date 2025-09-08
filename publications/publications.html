@@ -1018,7 +1018,7 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
         <p class="mb-4">${selectedItem.description}</p>
         ${selectedItem.details ? `<p class="mb-4"><strong>Details:</strong> ${selectedItem.details}</p>` : ''}
         ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="text-primary underline">Visit Link</a>` : ''}
-        <button onclick="toggleDescription(this)" class="mt-4 text-sm text-primary">Show more</button>
+        <button onclick="toggleDescription(this)" class="mt-4 text-sm text-primary">Show less</button>
       `;
       lucide.createIcons();
     }
@@ -1192,7 +1192,7 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
             <svg data-lucide="X" class="w-5 h-5 text-muted-foreground"></svg>
           </button>
         </div>
-        <div id="mobile-content" class="p-4 overflow-y-auto flex-grow text-foreground line-clamp-6"></div>
+        <div id="mobile-content" class="p-4 overflow-y-auto flex-grow text-foreground"></div>
       `;
       app.appendChild(mobileModal);
       
