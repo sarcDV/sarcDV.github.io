@@ -3,87 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAIAT - Malware Analysis & Intelligence Tool</title>
+  <title>How MAIAT Works | Malware Analysis & Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet" />
   <style>
-    /* Custom gradient background */
+    /* Gradient Background */
     .gradient-bg {
       background: linear-gradient(135deg, #0f172a, #1e293b);
     }
-    
-    /* Glowing effect for MAIAT logo */
-    .glow-logo {
-      filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.7));
-      animation: pulse 3s infinite alternate;
-    }
-    
-    @keyframes pulse {
-      from {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-      }
-      to {
-        box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.3);
-      }
-    }
 
-    /* Smooth transitions */
-    .transition-all {
-      transition: all 0.3s ease;
-    }
-
-    /* Hover effects */
-    .hover-effect {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .hover-effect:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-    }
-
-    /* Mobile menu toggle */
-    .mobile-menu-btn {
-      display: block;
-      cursor: pointer;
-    }
-
-    .hidden-menu {
-      display: none;
-    }
-
-    /* Card hover effect */
-    .card {
-      border-radius: 16px;
-      overflow: hidden;
-      background: #111827;
-      border: 1px solid #1e293b;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .card:hover {
-      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
-    }
-
-    /* Text glow */
-    .text-glow {
+    /* Glowing Logo Effect */
+    .glow-text {
       text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
     }
 
-    /* Animated section fade-in */
+    /* Card Styling */
+    .card {
+      background: #111827;
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Section Animation */
     .fade-in {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
       transition: opacity 0.8s ease, transform 0.8s ease;
     }
     .fade-in.visible {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Icon Styling */
+    .feature-icon {
+      font-size: 2rem;
+      min-width: 3rem;
+      text-align: center;
+      color: #3b82f6;
+      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+    }
+
+    /* Video & Diagram Container */
+    .media-container {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .media-container video,
+    .media-container object {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Mobile Nav */
+    #mobileNav {
+      display: none;
+    }
+
+    /* Ensure mobile nav covers entire screen */
+    #mobileNav {
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+    }
+
+    /* Optional: Smooth slide-down animation */
+    #mobileNav:not(.hidden) {
+      animation: slideDown 0.25s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 </head>
-<body class="font-sans bg-black text-white">
-
-
+<body class="bg-black text-white font-sans">
   <!-- Header -->
   <header class="p-4 gradient-bg text-white relative shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
@@ -274,9 +291,9 @@
     </div>
   </footer>
 
-    <!-- JavaScript for mobile menu -->
   <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // ========== Mobile Menu ==========
     const menuButton = document.getElementById('mobileMenuButton');
     const mobileNav = document.getElementById('mobileNav');
 
@@ -285,13 +302,11 @@
       return;
     }
 
-    // Toggle menu on button click
     menuButton.addEventListener('click', function (e) {
-      e.stopPropagation(); // Prevent event from bubbling
+      e.stopPropagation();
       mobileNav.classList.toggle('hidden');
     });
 
-    // Close menu when clicking outside
     document.addEventListener('click', function (event) {
       if (!event.target.closest('nav') && !event.target.closest('#mobileMenuButton')) {
         if (!mobileNav.classList.contains('hidden')) {
@@ -300,18 +315,28 @@
       }
     });
 
-    // Close menu when clicking a nav link (UX best practice)
     mobileNav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', function () {
         mobileNav.classList.add('hidden');
       });
     });
 
-    // Optional: Prevent body scroll when menu is open (mobile UX enhancement)
-    mobileNav.addEventListener('click', function (e) {
-      e.stopPropagation();
+    // ========== Scroll Animation ==========
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
     });
   });
-  </script>
+</script>
 </body>
 </html>
