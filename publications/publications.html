@@ -996,13 +996,19 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
     }
     
     function showMobileModal() {
+      // Create and show overlay
+      const overlay = document.createElement('div');
+      overlay.id = 'mobile-modal-overlay';
+      overlay.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-49';
+      overlay.onclick = hideMobileModal; // Close modal if overlay is clicked
+      document.body.appendChild(overlay);
+    
+      // Lock scroll and show modal
       document.body.classList.add('body-scroll-lock');
       const modal = document.getElementById("mobile-modal");
       const title = document.getElementById("mobile-title");
       const content = document.getElementById("mobile-content");
-      
       const category = categories[selectedItem.category];
-      
       modal.classList.remove("translate-y-full");
       title.textContent = selectedItem.title;
       content.innerHTML = `
@@ -1014,7 +1020,6 @@ The comparative analysis of behavioural, tyrosine hydroxylase immunoreactivity a
         ${selectedItem.link ? `<a href="${selectedItem.link}" target="_blank" rel="noopener noreferrer" class="text-primary underline">Visit Link</a>` : ''}
         <button onclick="toggleDescription(this)" class="mt-4 text-sm text-primary">Show more</button>
       `;
-      
       lucide.createIcons();
     }
     
