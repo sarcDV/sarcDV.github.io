@@ -291,9 +291,9 @@
     </div>
   </footer>
 
+    <!-- JavaScript for mobile menu -->
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // ========== Mobile Menu ==========
     const menuButton = document.getElementById('mobileMenuButton');
     const mobileNav = document.getElementById('mobileNav');
 
@@ -302,11 +302,13 @@
       return;
     }
 
+    // Toggle menu on button click
     menuButton.addEventListener('click', function (e) {
-      e.stopPropagation();
+      e.stopPropagation(); // Prevent event from bubbling
       mobileNav.classList.toggle('hidden');
     });
 
+    // Close menu when clicking outside
     document.addEventListener('click', function (event) {
       if (!event.target.closest('nav') && !event.target.closest('#mobileMenuButton')) {
         if (!mobileNav.classList.contains('hidden')) {
@@ -315,28 +317,18 @@
       }
     });
 
+    // Close menu when clicking a nav link (UX best practice)
     mobileNav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', function () {
         mobileNav.classList.add('hidden');
       });
     });
 
-    // ========== Scroll Animation ==========
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    });
-
-    document.querySelectorAll('.fade-in').forEach(el => {
-      observer.observe(el);
+    // Optional: Prevent body scroll when menu is open (mobile UX enhancement)
+    mobileNav.addEventListener('click', function (e) {
+      e.stopPropagation();
     });
   });
-</script>
+  </script>
 </body>
 </html>
