@@ -83,6 +83,7 @@
 </head>
 <body class="font-sans bg-black text-white">
 
+
   <!-- Header -->
   <header class="p-4 gradient-bg text-white relative shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
@@ -100,19 +101,21 @@
 
       <!-- Desktop Navigation -->
       <nav class="hidden md:flex space-x-6">
-        <a href="index.html" class="text-blue-300 hover:text-blue-100 transition-colors">Home</a>
+        <a href="index.html" class="text-gray-300 hover:text-blue-300 transition-colors">Home</a>
         <a href="how-it-works.html" class="text-gray-300 hover:text-blue-300 transition-colors">How It Works</a>
+        <a href="potenzialita.html" class="text-gray-300 hover:text-blue-300 transition-colors">Advantages</a>
         <a href="realizzazione.html" class="text-gray-300 hover:text-blue-300 transition-colors">Implementation</a>
-        <!-- <a href="contact.html" class="text-gray-300 hover:text-blue-300 transition-colors">Contact</a> -->
+        <a href="malware-analysis.html" class="text-gray-300 hover:text-blue-300 transition-colors">Malware Analysis</a>
       </nav>
 
-      <!-- Mobile Navigation -->
-      <nav class="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-700 hidden z-50" id="mobileNav">
+      <!-- Mobile Navigation (Consistent ID and Classes) -->
+      <nav id="mobileNav" class="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-700 hidden z-50">
         <ul class="flex flex-col p-4 space-y-3">
           <li><a href="index.html" class="text-white hover:text-blue-300 transition-colors block py-2">Home</a></li>
           <li><a href="how-it-works.html" class="text-white hover:text-blue-300 transition-colors block py-2">How It Works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-blue-300 transition-colors block py-2">Advantages</a></li>
           <li><a href="realizzazione.html" class="text-white hover:text-blue-300 transition-colors block py-2">Implementation</a></li>
-          <!-- <li><a href="contact.html" class="text-white hover:text-blue-300 transition-colors block py-2">Contact</a></li> -->
+          <li><a href="malware-analysis.html" class="text-white hover:text-blue-300 transition-colors block py-2">Malware Analysis</a></li>
         </ul>
       </nav>
     </div>
@@ -237,39 +240,42 @@
 
   <!-- JavaScript for mobile menu -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const menuButton = document.getElementById('mobileMenuButton');
-      const mobileNav = document.getElementById('mobileNav');
+  document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.getElementById('mobileMenuButton');
+    const mobileNav = document.getElementById('mobileNav');
 
-      if (menuButton && mobileNav) {
-        menuButton.addEventListener('click', function (e) {
-          e.preventDefault();
-          mobileNav.classList.toggle('hidden');
-        });
+    if (!menuButton || !mobileNav) {
+      console.warn('Mobile menu elements not found. Check IDs: #mobileMenuButton, #mobileNav');
+      return;
+    }
 
-        // Close menu when clicking outside
-        document.addEventListener('click', function (event) {
-          if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
-            if (!mobileNav.classList.contains('hidden')) {
-              mobileNav.classList.add('hidden');
-            }
-          }
-        });
+    // Toggle menu on button click
+    menuButton.addEventListener('click', function (e) {
+      e.stopPropagation(); // Prevent event from bubbling
+      mobileNav.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('nav') && !event.target.closest('#mobileMenuButton')) {
+        if (!mobileNav.classList.contains('hidden')) {
+          mobileNav.classList.add('hidden');
+        }
       }
+    });
 
-      // Animate sections on scroll
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.fade-in').forEach(el => {
-        observer.observe(el);
+    // Close menu when clicking a nav link (UX best practice)
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function () {
+        mobileNav.classList.add('hidden');
       });
     });
+
+    // Optional: Prevent body scroll when menu is open (mobile UX enhancement)
+    mobileNav.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+  });
   </script>
 </body>
 </html>

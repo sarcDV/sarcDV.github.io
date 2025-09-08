@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advantages | MAIAT: Malware Analysis & Intelligence Tool</title>
+  <title>How MAIAT Works | Malware Analysis & Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet" />
   <style>
@@ -12,7 +12,7 @@
       background: linear-gradient(135deg, #0f172a, #1e293b);
     }
 
-    /* Glowing Text */
+    /* Glowing Logo Effect */
     .glow-text {
       text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
     }
@@ -42,7 +42,7 @@
       transform: translateY(0);
     }
 
-    /* Feature Icon */
+    /* Icon Styling */
     .feature-icon {
       font-size: 2rem;
       min-width: 3rem;
@@ -51,10 +51,23 @@
       filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
     }
 
-    /* Highlight Stats */
-    .stat-highlight {
-      @apply text-blue-300 font-bold;
-      text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    /* Video & Diagram Container */
+    .media-container {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .media-container video,
+    .media-container object {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
     }
 
     /* Mobile Menu */
@@ -68,17 +81,26 @@
       display: none;
     }
 
-    /* Sub-list Styling */
-    .sub-list li {
-      @apply mt-2 text-gray-300;
+    /* Ensure mobile nav covers entire screen */
+    #mobileNav {
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 50;
     }
-    .sub-list li strong {
-      @apply text-green-300;
+
+    /* Optional: Smooth slide-down animation */
+    #mobileNav:not(.hidden) {
+      animation: slideDown 0.25s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
   </style>
 </head>
 <body class="bg-black text-white font-sans">
-
   <!-- Header -->
   <header class="p-4 gradient-bg text-white relative shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
@@ -98,15 +120,17 @@
       <nav class="hidden md:flex space-x-6">
         <a href="index.html" class="text-gray-300 hover:text-blue-300 transition-colors">Home</a>
         <a href="how-it-works.html" class="text-gray-300 hover:text-blue-300 transition-colors">How It Works</a>
+        <a href="potenzialita.html" class="text-gray-300 hover:text-blue-300 transition-colors">Advantages</a>
         <a href="realizzazione.html" class="text-gray-300 hover:text-blue-300 transition-colors">Implementation</a>
         <a href="malware-analysis.html" class="text-gray-300 hover:text-blue-300 transition-colors">Malware Analysis</a>
       </nav>
 
-      <!-- Mobile Navigation -->
-      <nav class="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-700 hidden z-50" id="mobileNav">
+      <!-- Mobile Navigation (Consistent ID and Classes) -->
+      <nav id="mobileNav" class="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-700 hidden z-50">
         <ul class="flex flex-col p-4 space-y-3">
           <li><a href="index.html" class="text-white hover:text-blue-300 transition-colors block py-2">Home</a></li>
           <li><a href="how-it-works.html" class="text-white hover:text-blue-300 transition-colors block py-2">How It Works</a></li>
+          <li><a href="potenzialita.html" class="text-white hover:text-blue-300 transition-colors block py-2">Advantages</a></li>
           <li><a href="realizzazione.html" class="text-white hover:text-blue-300 transition-colors block py-2">Implementation</a></li>
           <li><a href="malware-analysis.html" class="text-white hover:text-blue-300 transition-colors block py-2">Malware Analysis</a></li>
         </ul>
@@ -240,41 +264,52 @@
     </div>
   </footer>
 
-  <!-- JavaScript -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Mobile Menu Toggle
-      const menuButton = document.getElementById('mobileMenuButton');
-      const mobileNav = document.getElementById('mobileNav');
+  document.addEventListener('DOMContentLoaded', function () {
+    // ========== Mobile Menu ==========
+    const menuButton = document.getElementById('mobileMenuButton');
+    const mobileNav = document.getElementById('mobileNav');
 
-      if (menuButton && mobileNav) {
-        menuButton.addEventListener('click', function (e) {
-          e.preventDefault();
-          mobileNav.classList.toggle('hidden');
-        });
+    if (!menuButton || !mobileNav) {
+      console.warn('Mobile menu elements not found. Check IDs: #mobileMenuButton, #mobileNav');
+      return;
+    }
 
-        document.addEventListener('click', function (event) {
-          if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
-            if (!mobileNav.classList.contains('hidden')) {
-              mobileNav.classList.add('hidden');
-            }
-          }
-        });
+    menuButton.addEventListener('click', function (e) {
+      e.stopPropagation();
+      mobileNav.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('nav') && !event.target.closest('#mobileMenuButton')) {
+        if (!mobileNav.classList.contains('hidden')) {
+          mobileNav.classList.add('hidden');
+        }
       }
+    });
 
-      // Scroll Animation
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.fade-in').forEach(el => {
-        observer.observe(el);
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function () {
+        mobileNav.classList.add('hidden');
       });
     });
-  </script>
+
+    // ========== Scroll Animation ==========
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
 </body>
 </html>
