@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Implementation | MAIAT: Malware Analysis & Intelligence Tool</title>
+  <title>How MAIAT Works | Malware Analysis & Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet" />
   <style>
@@ -12,7 +12,7 @@
       background: linear-gradient(135deg, #0f172a, #1e293b);
     }
 
-    /* Glowing Text */
+    /* Glowing Logo Effect */
     .glow-text {
       text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
     }
@@ -42,7 +42,7 @@
       transform: translateY(0);
     }
 
-    /* Feature Icon */
+    /* Icon Styling */
     .feature-icon {
       font-size: 2rem;
       min-width: 3rem;
@@ -51,12 +51,23 @@
       filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
     }
 
-    /* Sub-list Styling */
-    .sub-list li {
-      @apply mt-2 text-gray-300;
+    /* Video & Diagram Container */
+    .media-container {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-    .sub-list li strong {
-      @apply text-blue-300;
+    .media-container video,
+    .media-container object {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
     }
 
     /* Mobile Menu */
@@ -90,10 +101,9 @@
 
       <!-- Desktop Navigation -->
       <nav class="hidden md:flex space-x-6">
-        <a href="index.html" class="text-gray-300 hover:text-blue-300 transition-colors">Home</a>
-        <a href="how-it-works.html" class="text-gray-300 hover:text-blue-300 transition-colors">How It Works</a>
+        <a href="index.html" class="text-blue-300 hover:text-blue-100 transition-colors">Home</a>
         <a href="potenzialita.html" class="text-gray-300 hover:text-blue-300 transition-colors">Advantages</a>
-        <a href="realizzazione.html" class="text-white font-medium">Implementation</a>
+        <a href="realizzazione.html" class="text-gray-300 hover:text-blue-300 transition-colors">Implementation</a>
         <a href="malware-analysis.html" class="text-gray-300 hover:text-blue-300 transition-colors">Malware Analysis</a>
       </nav>
 
@@ -101,9 +111,8 @@
       <nav class="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-700 hidden z-50" id="mobileNav">
         <ul class="flex flex-col p-4 space-y-3">
           <li><a href="index.html" class="text-white hover:text-blue-300 transition-colors block py-2">Home</a></li>
-          <li><a href="how-it-works.html" class="text-white hover:text-blue-300 transition-colors block py-2">How It Works</a></li>
           <li><a href="potenzialita.html" class="text-white hover:text-blue-300 transition-colors block py-2">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white font-medium block py-2">Implementation</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-blue-300 transition-colors block py-2">Implementation</a></li>
           <li><a href="malware-analysis.html" class="text-white hover:text-blue-300 transition-colors block py-2">Malware Analysis</a></li>
         </ul>
       </nav>
@@ -115,44 +124,89 @@
     <div class="absolute inset-0 bg-gradient-to-br from-blue-900/10 to-indigo-900/10 z-0"></div>
     <div class="container mx-auto relative z-10">
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 glow-text">
-        Seamless Deployment
+        How MAIAT Works
       </h1>
       <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-        Whether on-premise or cloud-native, MAIAT integrates effortlessly into your existing security stack.
+        Automating the complex world of malware analysis — so you can focus on what matters.
       </p>
     </div>
   </section>
 
-  <!-- Implementation Section -->
+  <!-- Solution Highlights -->
   <section class="py-16 bg-gray-900 fade-in">
     <div class="container mx-auto px-4 max-w-4xl">
       <div class="card">
+        <ul class="space-y-6 text-left">
+          <li class="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <span class="feature-icon">🤖</span>
+            <div>
+              <strong class="text-xl text-blue-300">Fully Automated Analysis</strong>
+              <p class="text-gray-300 mt-2">MAIAT automates file ingestion, sandboxing, and behavioral analysis, reducing manual effort by up to 40%.</p>
+            </div>
+          </li>
+          <li class="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <span class="feature-icon">⚡</span>
+            <div>
+              <strong class="text-xl text-blue-300">Rapid & Accurate Intelligence</strong>
+              <p class="text-gray-300 mt-2">Extracts Indicators of Compromise (IoCs), maps threats to MITRE ATT&CK, and generates structured reports for your SIEM — improving detection accuracy by 25%.</p>
+            </div>
+          </li>
+          <li class="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <span class="feature-icon">🔓</span>
+            <div>
+              <strong class="text-xl text-blue-300">Democratized Expertise</strong>
+              <p class="text-gray-300 mt-2">Delivers enterprise-grade malware analysis at an accessible cost, making advanced cyber defense available to everyone.</p>
+            </div>
+          </li>
+          <li class="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <span class="feature-icon">🚀</span>
+            <div>
+              <strong class="text-xl text-blue-300">Accelerated Response</strong>
+              <p class="text-gray-300 mt-2">Reduces Mean Time to Detect and Respond (MTTD/MTTR) by providing immediate, explainable findings for faster containment.</p>
+            </div>
+          </li>
+        </ul>
+        <div class="mt-8 pt-6 border-t border-gray-700 text-center">
+          <p class="text-gray-300 text-lg">
+            MAIAT turns the endless stream of threats into a structured flow of intelligence, empowering your team to respond faster and smarter.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Automated Analysis Engine -->
+  <section class="py-16 bg-gray-900 fade-in">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <h2 class="text-3xl font-bold text-center mb-10 text-blue-400">The Automated Analysis Engine</h2>
+      <div class="card">
         <ul class="space-y-8 text-left">
-          <li class="flex flex-col md:flex-row items-start gap-4">
-            <span class="feature-icon text-3xl">⚙️</span>
+          <li class="flex flex-col md:flex-row items-start md:items-start gap-4">
+            <span class="feature-icon text-3xl">📥</span>
             <div>
-              <strong class="text-xl text-blue-300">Deployment Options</strong>
-              <ul class="sub-list mt-3 space-y-2">
-                <li><strong>On-Premise:</strong> For air-gapped networks or full data control — deploy within your secure infrastructure.</li>
-                <li><strong>Cloud-Native (Roadmap):</strong> For elastic scalability and managed service — coming soon to reduce operational overhead.</li>
-              </ul>
+              <strong class="text-xl text-blue-300">INGESTION & TRIAGE</strong>
+              <p class="text-gray-300 mt-2">Samples can be uploaded directly or retrieved from a designated feed. The system automatically classifies and prioritizes samples for further analysis.</p>
             </div>
           </li>
-          <li class="flex flex-col md:flex-row items-start gap-4">
-            <span class="feature-icon text-3xl">🔗</span>
+          <li class="flex flex-col md:flex-row items-start md:items-start gap-4">
+            <span class="feature-icon text-3xl">🔍</span>
             <div>
-              <strong class="text-xl text-blue-300">Easy Integration</strong>
-              <ul class="sub-list mt-3 space-y-2">
-                <li><strong>API-First Design:</strong> Seamlessly connects with ticketing systems (Jira, ServiceNow), SIEMs (Splunk, Elastic), and threat intel platforms.</li>
-                <li><strong>Standard Outputs:</strong> Structured reports in STIX/TAXII, JSON, and CSV — ready for automated ingestion and correlation.</li>
-              </ul>
+              <strong class="text-xl text-blue-300">STATIC & DYNAMIC ANALYSIS</strong>
+              <p class="text-gray-300 mt-2">Static analysis involves disassembly, string extraction, and entropy analysis. Dynamic analysis detonates samples in a secure sandbox, logging all activities.</p>
             </div>
           </li>
-          <li class="flex flex-col md:flex-row items-start gap-4">
-            <span class="feature-icon text-3xl">🖥️</span>
+          <li class="flex flex-col md:flex-row items-start md:items-start gap-4">
+            <span class="feature-icon text-3xl">🧠</span>
             <div>
-              <strong class="text-xl text-blue-300">Centralized Management</strong>
-              <p class="text-gray-300 mt-2">Web-based dashboard for sample submission, report review, workflow automation, and system configuration — all from one intuitive interface.</p>
+              <strong class="text-xl text-blue-300">BEHAVIORAL ANALYSIS & INTELLIGENCE EXTRACTION</strong>
+              <p class="text-gray-300 mt-2">ML and NLP engines analyze sandbox logs to interpret malicious intent, extracting key IoCs and a detailed behavioral timeline.</p>
+            </div>
+          </li>
+          <li class="flex flex-col md:flex-row items-start md:items-start gap-4">
+            <span class="feature-icon text-3xl">📊</span>
+            <div>
+              <strong class="text-xl text-blue-300">ATTRIBUTION & REPORTING</strong>
+              <p class="text-gray-300 mt-2">Actions are mapped to the MITRE ATT&CK framework, and structured reports are auto-generated in formats like STIX, JSON, or Markdown for SIEM/CTI platforms.</p>
             </div>
           </li>
         </ul>
@@ -160,16 +214,29 @@
     </div>
   </section>
 
-  <!-- Call to Action / Next Steps -->
-  <section class="py-16 bg-gradient-to-br from-gray-800 to-black text-center fade-in">
-    <div class="container mx-auto px-4 max-w-3xl">
-      <h2 class="text-3xl font-bold text-blue-400 mb-6">Ready to Deploy MAIAT?</h2>
-      <p class="text-gray-300 mb-8 text-lg">
-        Contact our team for a customized deployment plan, integration support, or live demo.
-      </p>
-      <a href="mailto:support@maiat.ai" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-all">
-        Get in Touch
-      </a>
+  <!-- Diagram Section -->
+  <section class="py-16 bg-gray-900 fade-in">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-blue-400">Architecture Overview</h2>
+      <div class="media-container">
+        <object type="image/svg+xml" data="diagramma.svg" class="w-full max-w-4xl mx-auto" aria-label="MAIAT Architecture Diagram">
+          Your browser does not support SVG
+        </object>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Demo Section -->
+  <section class="py-16 bg-gray-900 fade-in">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-blue-400">See It In Action</h2>
+      <div class="media-container">
+        <video controls class="w-full max-w-4xl mx-auto rounded-lg" poster="https://via.placeholder.com/1280x720/111827/3b82f6?text=MAIAT+Demo">
+          <source src="movie.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="text-gray-400 text-center mt-4 text-sm">*Simulated environment. Real-time threat detection powered by deep learning.</p>
+      </div>
     </div>
   </section>
 
@@ -185,7 +252,6 @@
           <h4 class="text-lg font-semibold mb-4">Links</h4>
           <ul class="space-y-2 text-sm">
             <li><a href="index.html" class="hover:text-blue-400 transition-colors">Home</a></li>
-            <li><a href="how-it-works.html" class="hover:text-blue-400 transition-colors">How It Works</a></li>
             <li><a href="potenzialita.html" class="hover:text-blue-400 transition-colors">Advantages</a></li>
             <li><a href="realizzazione.html" class="hover:text-blue-400 transition-colors">Implementation</a></li>
             <li><a href="malware-analysis.html" class="hover:text-blue-400 transition-colors">Malware Analysis</a></li>

@@ -1,199 +1,275 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAIAT: Malware Analysis and Intelligence Tool</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="styles.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAIAT - Malware Analysis & Intelligence Tool</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* Custom gradient background */
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+    }
+    
+    /* Glowing effect for MAIAT logo */
+    .glow-logo {
+      filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.7));
+      animation: pulse 3s infinite alternate;
+    }
+    
+    @keyframes pulse {
+      from {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      }
+      to {
+        box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.3);
+      }
+    }
+
+    /* Smooth transitions */
+    .transition-all {
+      transition: all 0.3s ease;
+    }
+
+    /* Hover effects */
+    .hover-effect {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-effect:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Mobile menu toggle */
+    .mobile-menu-btn {
+      display: block;
+      cursor: pointer;
+    }
+
+    .hidden-menu {
+      display: none;
+    }
+
+    /* Card hover effect */
+    .card {
+      border-radius: 16px;
+      overflow: hidden;
+      background: #111827;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Text glow */
+    .text-glow {
+      text-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+    }
+
+    /* Animated section fade-in */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
-<body>
-  <!-- Header with improved mobile navigation -->
-  <header class="p-4 gradient-bg text-white relative">
+<body class="font-sans bg-black text-white">
+
+  <!-- Header -->
+  <header class="p-4 gradient-bg text-white relative shadow-lg">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-xl md:text-3xl font-bold">MAIAT: Malware Analysis and Intelligence Tool</h1>
-      
-      <!-- Mobile menu button -->
-      <button class="mobile-menu-btn text-white p-2 md:hidden" aria-label="Toggle menu" id="mobileMenuButton">
+      <div class="flex items-center space-x-2">
+        <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
+          <i class="fas fa-shield-alt text-white text-xl"></i>
+        </div>
+        <h1 class="text-xl md:text-2xl font-bold">MAIAT</h1>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuButton" class="mobile-menu-btn text-white p-2 md:hidden">
         <i class="fas fa-bars text-2xl"></i>
       </button>
-      
-      <nav>
-        <ul class="md:flex space-x-4 hidden md:flex-row absolute top-full left-0 w-full bg-gray-800 md:relative md:bg-transparent flex-col z-50">
-          <li><a href="come-funziona.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">How it works</a></li>
-          <li><a href="potenzialita.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Advantages</a></li>
-          <li><a href="realizzazione.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Implementation</a></li>
-          <li><a href="malware-analysis.html" class="text-white hover:text-gray-300 transition-colors py-2 px-4 block border-b border-gray-700 md:border-0">Malware Analysis</a></li>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-6">
+        <a href="index.html" class="text-blue-300 hover:text-blue-100 transition-colors">Home</a>
+        <a href="how-it-works.html" class="text-gray-300 hover:text-blue-300 transition-colors">How It Works</a>
+        <a href="realizzazione.html" class="text-gray-300 hover:text-blue-300 transition-colors">Implementation</a>
+        <!-- <a href="contact.html" class="text-gray-300 hover:text-blue-300 transition-colors">Contact</a> -->
+      </nav>
+
+      <!-- Mobile Navigation -->
+      <nav class="md:hidden absolute top-full left-0 w-full bg-gray-900 border-t border-gray-700 hidden z-50" id="mobileNav">
+        <ul class="flex flex-col p-4 space-y-3">
+          <li><a href="index.html" class="text-white hover:text-blue-300 transition-colors block py-2">Home</a></li>
+          <li><a href="how-it-works.html" class="text-white hover:text-blue-300 transition-colors block py-2">How It Works</a></li>
+          <li><a href="realizzazione.html" class="text-white hover:text-blue-300 transition-colors block py-2">Implementation</a></li>
+          <!-- <li><a href="contact.html" class="text-white hover:text-blue-300 transition-colors block py-2">Contact</a></li> -->
         </ul>
       </nav>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="py-8 md:py-16 bg-dark-700">
-    <div class="container mx-auto px-2 md:px-0 flex justify-center">
-      <div class="bg-gray-700 rounded-xl shadow-md p-4 md:p-8 max-w-3xl w-full card text-center">
-        <h2 class="text-xl md:text-2xl font-bold text-green-300 mb-2">The Overwhelmed Cybersecurity Team</h2>
-        <p class="text-base md:text-lg text-gray-200 mb-4 md:mb-6">
-          Malware analysis is slow, complex, and requires rare, expensive experts.
+  <section class="py-16 md:py-24 px-4 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-indigo-900/20 z-0"></div>
+    <div class="container mx-auto relative z-10 flex flex-col items-center text-center">
+      <!-- Logo Container -->
+      <div class="mb-12 flex flex-col items-center">
+        <img src="MAIAT.jpeg" alt="MAIAT Logo" class="w-32 h-32 md:w-48 md:h-48 mb-6 glow-logo" />
+
+        <!-- <div class="w-24 h-24 md:w-32 md:h-32 mb-6 flex items-center justify-center">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-transparent fill-current" style="fill: url(#gradient); filter: drop-shadow(0 0 15px rgba(59,130,246,0.7))">
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0ea5e9"/>
+                <stop offset="100%" stop-color="#1d4ed8"/>
+              </linearGradient>
+            </defs>
+            
+            <path d="M30 20 L50 40 L70 20 L70 60 L50 80 L30 60 Z" stroke="none" />
+            <path d="M40 30 L50 40 L60 30 L60 50 L50 60 L40 50 Z" stroke="none" />
+            <path d="M45 45 L50 50 L55 45 L55 65 L50 70 L45 65 Z" stroke="none" />
+          </svg>
+        </div> -->
+        <!-- <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-4 glow-logo">MAIAT</h1> -->
+        <p class="text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed">
+          The next-generation AI-powered malware analysis platform.
         </p>
-        <ul class="text-left text-gray-100 space-y-2 mb-4 text-sm md:text-base">
-          <li class="flex items-start">
-            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Magnifying glass">🔍</span>
-            <div><strong class="text-green-200">Manual Triage Overload:</strong> Analysts waste time on mundane sample sorting and initial analysis.</div>
-          </li>
-          <li class="flex items-start">
-            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Hourglass">⏳</span>
-            <div><strong class="text-green-200">Slow Response Times:</strong> Lengthy manual investigation increases Mean Time to Detect/Respond (MTTD/MTTR).</div>
-          </li>
-          <li class="flex items-start">
-            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Brain">🧠</span>
-            <div><strong class="text-green-200">Expertise Shortage:</strong> Advanced malware analysis skills are scarce and costly, putting SMBs at a severe disadvantage.</div>
-          </li>
-          <li class="flex items-start">
-            <span class="mr-2 mt-1 flex-shrink-0" role="img" aria-label="Bar chart">📊</span>
-            <div><strong class="text-green-200">Operational Inefficiency:</strong> Critical threat intelligence remains siloed or in unstructured reports, unable to integrate quickly with security systems (SIEM/CTI).</div>
-          </li>
-        </ul>
-        <p class="text-base md:text-lg text-gray-200 mb-4 md:mb-6">
-          This creates a critical gap: sophisticated threats are evolving faster than most organizations can analyze and defend against them.
-          <br>
-          <span class="text-green-300 font-semibold">MAIAT bridges this gap by automating advanced malware analysis, making enterprise-grade threat intelligence fast, accessible, and affordable for every organization.</span>
-        </p>
+      </div>
+
+      <!-- CTA Button -->
+      <a href="#demo" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover-effect transition-all mt-6">
+        Try MAIAT Now
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-16 bg-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-400">Why MAIAT?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="card transition-all hover-effect p-6">
+          <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center mb-4">
+            <i class="fas fa-bolt text-white text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-white">Lightning Fast Analysis</h3>
+          <p class="text-gray-400">Automated triage and behavioral analysis reduce time-to-insight from hours to seconds.</p>
+        </div>
+        <div class="card transition-all hover-effect p-6">
+          <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center mb-4">
+            <i class="fas fa-robot text-white text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-white">AI-Powered Intelligence</h3>
+          <p class="text-gray-400">Advanced ML models detect zero-day threats and classify malware with high accuracy.</p>
+        </div>
+        <div class="card transition-all hover-effect p-6">
+          <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center mb-4">
+            <i class="fas fa-shield-alt text-white text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-white">Secure & Private</h3>
+          <p class="text-gray-400">On-premises deployment options ensure full data control and compliance.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Future Vision -->
-  <section class="py-8 md:py-16 bg-dark-700">
-    <div class="container mx-auto px-2 md:px-0 flex justify-center">
-      <div class="bg-gray-700 rounded-xl shadow-md p-4 md:p-8 max-w-3xl w-full card text-center">
-        <h2 class="text-xl md:text-2xl font-bold text-green-300 mb-4 md:mb-6">Our Vision</h2>
-        <ul class="text-left text-gray-100 space-y-4 mb-4 text-sm md:text-base">
-          <li class="flex items-start">
-            <span class="text-xl mr-3 mt-1 flex-shrink-0">🔮</span>
-            <div>
-              <strong class="text-green-200">Adaptive Learning:</strong>
-              <span> Integration of Reinforcement Learning (RL) to better adapt to novel attack techniques.</span>
-            </div>
-          </li>
-          <li class="flex items-start">
-            <span class="text-xl mr-3 mt-1 flex-shrink-0">🤝</span>
-            <div>
-              <strong class="text-green-200">Collaborative Defense:</strong>
-              <span> Built-in, privacy-conscious threat sharing with industry groups (ISACs).</span>
-            </div>
-          </li>
-          <li class="flex items-start">
-            <span class="text-xl mr-3 mt-1 flex-shrink-0">🛰️</span>
-            <div>
-              <strong class="text-green-200">Multi-Agent Orchestration:</strong>
-              <span> Evolving into an intelligent "sentinella" that coordinates response across security tools.</span>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Conclusion -->
-  <section class="py-8 md:py-16 bg-dark-700">
-    <div class="container mx-auto px-2 md:px-0 flex justify-center">
-      <div class="bg-gray-700 rounded-xl shadow-md p-4 md:p-8 max-w-3xl w-full card text-center">
-        <h2 class="text-xl md:text-2xl font-bold text-green-300 mb-4 md:mb-6">The Future of Malware Analysis is Automated</h2>
-        <ul class="text-left text-gray-100 space-y-3 mb-4 text-sm md:text-base">
-          <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <div>MAIAT represents a paradigm shift—from slow, manual analysis to rapid, automated intelligence.</div>
-          </li>
-          <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <div><strong>Solves the critical problem</strong> of limited time, resources, and expertise.</div>
-          </li>
-          <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <div><strong>Empowers security teams</strong> of all sizes to operate at a higher level.</div>
-          </li>
-          <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <div><strong>Turns data overload into a strategic advantage</strong> with structured, actionable intelligence.</div>
-          </li>
-        </ul>
-        <p class="text-base md:text-lg text-gray-200">
-          <strong>MAIAT: Your force multiplier in the fight against cyber threats.</strong>
-        </p>
+  <!-- Demo Section -->
+  <section id="demo" class="py-16 bg-gradient-to-br from-gray-800 to-black">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-blue-400">See MAIAT in Action</h2>
+        <p class="text-gray-300 mb-8 text-lg">Watch how our AI analyzes a suspicious file in real-time.</p>
+        <div class="aspect-video bg-gray-700 rounded-xl overflow-hidden shadow-2xl">
+          <!-- Placeholder for video -->
+           <video controls class="w-full max-w-4xl mx-auto rounded-lg" poster="https://via.placeholder.com/1280x720/111827/3b82f6?text=MAIAT+Demo">
+          <source src="movie.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+          <!-- <img src="https://via.placeholder.com/1280x720?text=MAIAT+Demo+Video" alt="MAIAT Demo" class="w-full h-full object-cover" /> -->
+        </div>
+        
+        <p class="mt-6 text-gray-400">*Simulated environment. Real-time threat detection powered by deep learning.</p>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-black text-white py-8">
+  <footer class="bg-black text-gray-400 py-10">
     <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-6 md:gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h3 class="text-lg md:text-xl font-bold mb-4">MAIAT: Malware Analysis and Intelligence Tool</h3>
-          <p class="text-gray-400 text-sm md:text-base">An innovative AI assistant to support malware analysts.</p>
+          <h3 class="text-xl font-bold text-blue-400 mb-4">MAIAT</h3>
+          <p class="text-sm">Revolutionizing malware analysis with AI-driven intelligence.</p>
         </div>
         <div>
-          <h4 class="text-base md:text-lg font-semibold mb-3">Link Utili</h4>
-          <ul class="space-y-2 text-sm md:text-base">
-            <li><a href="index.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Home</a></li>
-            <li><a href="come-funziona.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">How it works</a></li>
-            <li><a href="potenzialita.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Advantages</a></li>
-            <li><a href="realizzazione.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Implementation</a></li>
-            <li><a href="malware-analysis.html" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Malware Analysis</a></li>
+          <h4 class="text-lg font-semibold mb-4">Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-blue-400 transition-colors">Home</a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors">Features</a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors">Documentation</a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors">Blog</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-base md:text-lg font-semibold mb-3">Info</h4>
-          <ul class="space-y-2 text-sm md:text-base">
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Privacy Policy</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-gray-300 transition-colors block py-1">Terms</a></li>
+          <h4 class="text-lg font-semibold mb-4">Contact</h4>
+          <ul class="space-y-2 text-sm">
+            <li>support@maiat.ai</li>
+            <li>+1 (555) 123-4567</li>
+            <li>@MAIAT_AI</li>
           </ul>
         </div>
       </div>
-      <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-        <p class="text-gray-400 text-sm md:text-base">&copy; 2025 MAIAT. All rights reserved.</p>
+      <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm">
+        <p>&copy; 2025 MAIAT. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
   <!-- JavaScript for mobile menu -->
   <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const menuButton = document.querySelector('.mobile-menu-btn');
-    const navMenu = document.querySelector('nav ul');
+    document.addEventListener('DOMContentLoaded', function () {
+      const menuButton = document.getElementById('mobileMenuButton');
+      const mobileNav = document.getElementById('mobileNav');
 
-    if (menuButton && navMenu) {
-      menuButton.addEventListener('click', function (e) {
-        e.preventDefault();
-        navMenu.classList.toggle('hidden');
-        navMenu.classList.toggle('flex');
-      });
-
-      // Close menu when clicking outside
-      document.addEventListener('click', function (event) {
-        if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
-          if (!navMenu.classList.contains('hidden')) {
-            navMenu.classList.add('hidden');
-            navMenu.classList.remove('flex');
-          }
-        }
-      });
-
-      // Optional: Close menu when clicking a link (good UX)
-      navMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navMenu.classList.add('hidden');
-          navMenu.classList.remove('flex');
+      if (menuButton && mobileNav) {
+        menuButton.addEventListener('click', function (e) {
+          e.preventDefault();
+          mobileNav.classList.toggle('hidden');
         });
-      });
-    }
 
-    // Prevent horizontal scroll lock (optional improvement)
-    document.addEventListener('touchstart', function () {}, { passive: true });
-  });
-</script>
+        // Close menu when clicking outside
+        document.addEventListener('click', function (event) {
+          if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
+            if (!mobileNav.classList.contains('hidden')) {
+              mobileNav.classList.add('hidden');
+            }
+          }
+        });
+      }
+
+      // Animate sections on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
 </body>
 </html>
