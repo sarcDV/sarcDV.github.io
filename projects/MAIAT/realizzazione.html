@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How MAIAT Works | Malware Analysis & Intelligence Tool</title>
+  <title>Implementation | Malware Analysis & Intelligence Tool</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet" />
+
   <style>
     /* Gradient Background */
     .gradient-bg {
@@ -75,18 +76,16 @@
       display: block;
       cursor: pointer;
     }
-
-    /* Mobile Nav */
-    #mobileNav {
-      display: none;
-    }
-
+    
     /* Ensure mobile nav covers entire screen */
     #mobileNav {
+      position: absolute;
       top: 100%;
       left: 0;
       width: 100%;
       z-index: 50;
+      background: #111827; /* Optional: match card bg */
+      border-top: 1px solid #374151; /* Optional: subtle top border */
     }
 
     /* Optional: Smooth slide-down animation */
@@ -232,8 +231,7 @@
     </div>
   </footer>
 
-  <!-- JavaScript -->
-   <script>
+<script>
   document.addEventListener('DOMContentLoaded', function () {
     // ========== Mobile Menu ==========
     const menuButton = document.getElementById('mobileMenuButton');
@@ -250,13 +248,14 @@
     });
 
     document.addEventListener('click', function (event) {
-      if (!event.target.closest('nav') && !event.target.closest('#mobileMenuButton')) {
-        if (!mobileNav.classList.contains('hidden')) {
-          mobileNav.classList.add('hidden');
-        }
+      const isClickInsideNav = mobileNav.contains(event.target);
+      const isClickOnButton = menuButton.contains(event.target);
+    
+      if (!isClickInsideNav && !isClickOnButton) {
+        mobileNav.classList.add('hidden');
       }
     });
-
+    
     mobileNav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', function () {
         mobileNav.classList.add('hidden');

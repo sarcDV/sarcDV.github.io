@@ -67,10 +67,26 @@
       display: block;
       cursor: pointer;
     }
-
-    /* Mobile Nav */
+    
+    /* Ensure mobile nav covers entire screen */
     #mobileNav {
-      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 50;
+      background: #111827; /* Optional: match card bg */
+      border-top: 1px solid #374151; /* Optional: subtle top border */
+    }
+
+    /* Optional: Smooth slide-down animation */
+    #mobileNav:not(.hidden) {
+      animation: slideDown 0.25s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     /* Phase Number Badge */
@@ -357,39 +373,52 @@
 
   <!-- JavaScript -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Mobile Menu Toggle
-      const menuButton = document.getElementById('mobileMenuButton');
-      const mobileNav = document.getElementById('mobileNav');
+  document.addEventListener('DOMContentLoaded', function () {
+    // ========== Mobile Menu ==========
+    const menuButton = document.getElementById('mobileMenuButton');
+    const mobileNav = document.getElementById('mobileNav');
 
-      if (menuButton && mobileNav) {
-        menuButton.addEventListener('click', function (e) {
-          e.preventDefault();
-          mobileNav.classList.toggle('hidden');
-        });
+    if (!menuButton || !mobileNav) {
+      console.warn('Mobile menu elements not found. Check IDs: #mobileMenuButton, #mobileNav');
+      return;
+    }
 
-        document.addEventListener('click', function (event) {
-          if (!event.target.closest('nav') && !event.target.closest('.mobile-menu-btn')) {
-            if (!mobileNav.classList.contains('hidden')) {
-              mobileNav.classList.add('hidden');
-            }
-          }
-        });
+    menuButton.addEventListener('click', function (e) {
+      e.stopPropagation();
+      mobileNav.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+      const isClickInsideNav = mobileNav.contains(event.target);
+      const isClickOnButton = menuButton.contains(event.target);
+    
+      if (!isClickInsideNav && !isClickOnButton) {
+        mobileNav.classList.add('hidden');
       }
-
-      // Scroll Animation
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.fade-in').forEach(el => {
-        observer.observe(el);
+    });
+    
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function () {
+        mobileNav.classList.add('hidden');
       });
     });
-  </script>
+
+    // ========== Scroll Animation ==========
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
 </body>
 </html>
