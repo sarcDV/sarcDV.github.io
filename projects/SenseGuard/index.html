@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>SenseGuard — On‑device anomaly detection with real sensors + simulation</title>
+  <meta name="description" content="Acquire motion and health signals from mobile & wearables, train a simple anomaly model in-browser, detect falls/crashes, and auto-notify contacts." />
+
+  <!-- Modern, accessible, responsive, offline-friendly. No external JS libs. -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --bg-soft: #0f152b;
+      --card: #121b36cc;
+      --accent: #6ee7ff;
+      --accent-2:#a78bfa;
+      --accent-3:#34d399;
+      --text: #e7ecff;
+      --muted:#a6b1d6;
+      --danger:#ff6584;
+      --warn:#fbbf24;
+      --ok:#22c55e;
+
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --glass: blur(10px) saturate(120%);
+      --radius-lg: 16px;
+      --radius: 12px;
+      --radius-sm: 10px;
+
+      --grid-gap: 18px;
+      --card-pad: 18px;
+    }
+    * { box-sizing: border-box }
+    html,body { height: 100% }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 5% 10%, #1a2560 0%, transparent 50%),
+        radial-gradient(900px 600px at 95% 0%, #173a79 0%, transparent 50%),
+        radial-gradient(1200px 800px at 50% 100%, #102642 0%, transparent 50%),
+        var(--bg);
+      background-attachment: fixed;
+    }
+    a { color: var(--accent); text-decoration: none }
+    header{
+      position: sticky; top:0; z-index:4;
+      backdrop-filter: var(--glass);
+      background: linear-gradient(180deg, rgba(12,18,36,0.8), rgba(12,18,36,0.2));
+      border-bottom: 1px solid #243058;
+    }
+    .wrap { max-width: 1220px; margin: 0 auto; padding: 18px 18px }
+    .hero{
+      display:flex; gap:18px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; gap:14px; align-items:center
+    }
+    .logo{
+      width:44px;height:44px; border-radius:12px;
+      background: conic-gradient(from 180deg at 50% 50%, #6ee7ff, #a78bfa, #34d399, #6ee7ff);
+      box-shadow: inset 0 0 40px rgba(255,255,255,0.15), 0 12px 30px rgba(0,0,0,0.3);
+      position:relative;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:6px;
+      border-radius:10px;
+      background: radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0.28), transparent 50%),
+                  linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+    }
+    h1{ margin:0; font-size: clamp(20px, 3vw, 28px); letter-spacing: 0.2px }
+    .tag{
+      font-weight:600; color:var(--muted);
+    }
+    .cta{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .btn{
+      appearance: none; border:0; border-radius: 12px;
+      font-weight:700; color:#0a0f1f; background: white; padding: 10px 14px; cursor: pointer;
+      transition: transform .06s ease, filter .2s ease, box-shadow .2s ease; box-shadow: var(--shadow);
+    }
+    .btn:hover{ transform: translateY(-1px) }
+    .btn:active{ transform: translateY(0) scale(0.99) }
+    .btn.primary{
+      color:#06101d; background: linear-gradient(135deg, #6ee7ff, #a78bfa 70%);
+    }
+    .btn.ghost{
+      color: var(--text); background: #ffffff08; border: 1px solid #2a3866;
+    }
+    .btn.warn{ background: linear-gradient(135deg, #fbbf24, #fb7185); color:#1a1020 }
+    .btn.ok{ background: linear-gradient(135deg, #34d399, #22c55e); color:#041612 }
+    .btn.icon{ display:inline-flex; gap:8px; align-items:center }
+
+    main{ padding: 20px 0 60px }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--grid-gap);
+    }
+    .card{
+      grid-column: span 6;
+      background: linear-gradient(180deg, rgba(18,27,54,0.75), rgba(18,27,54,0.55));
+      border: 1px solid rgba(104,129,209,0.18);
+      border-radius: var(--radius-lg);
+      padding: var(--card-pad);
+      box-shadow: var(--shadow);
+      position:relative; overflow:hidden;
+    }
+    .card.full{ grid-column: 1 / -1 }
+    .card.third{ grid-column: span 4 }
+    .card.quarter{ grid-column: span 3 }
+    .card .title{
+      margin-top:0; margin-bottom:12px; font-size: 18px; letter-spacing:.2px
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px; background:#ffffff12; border:1px solid #2a3866;
+      color: var(--muted); font-weight:600; font-size: 12px;
+    }
+    .kv{
+      display:grid; grid-template-columns: 1fr auto; gap:10px; line-height:1.4; margin-top:6px;
+    }
+    .kv .k{ color: var(--muted) }
+    .kv .v{ font-weight:700 }
+
+    .switch{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 6px 8px; border-radius: 12px; background:#0a1128; border:1px solid #28365f;
+    }
+    .switch input{ display:none }
+    .switch .dot{
+      width:22px;height:22px; border-radius:999px; background:#101a3a; border:1px solid #2b3a6a;
+      display:inline-flex; align-items:center; justify-content:center;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
+    }
+    .switch .dot.on{ background: linear-gradient(135deg, #34d399, #22c55e); border-color: transparent }
+    .section-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 12px }
+    .muted{ color: var(--muted) }
+    .small{ font-size: 12px }
+    .sep{ height:1px; background: #253263; margin: 12px 0 }
+
+    .row{ display:flex; gap:12px; flex-wrap:wrap }
+    .row > *{ flex:1 1 220px }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius: 10px;
+      background: #ffffff0c; border:1px dashed #415088; color: var(--muted); font-weight:600; font-size: 12px;
+    }
+
+    .input, select, textarea{
+      width:100%; padding:10px 12px; border-radius: 10px;
+      border:1px solid #2b3a6b; background: #0c1534; color: var(--text);
+      outline: none; font: inherit;
+    }
+    textarea{ min-height: 80px; resize: vertical }
+
+    .badge{ font-size:11px; font-weight:800; padding:4px 8px; border-radius:8px; background:#ffffff12; border:1px solid #2a3866; color: var(--muted) }
+    .badge.ok{ color:#0f261c; background:#22c55e; border-color: transparent }
+    .badge.warn{ color:#271405; background:#fbbf24; border-color: transparent }
+    .badge.err{ color:#2a0b13; background:#ff6584; border-color: transparent }
+
+    .gauge{
+      --value: 0;
+      position:relative; width: 100%; height: 12px; background:#0a1128; border-radius: 999px; border:1px solid #2a3866; overflow: hidden;
+    }
+    .gauge .fill{
+      position:absolute; left:0; top:0; bottom:0; width: calc(var(--value) * 1%);
+      background: linear-gradient(90deg, #34d399, #fbbf24, #ff6584);
+      box-shadow: 0 0 20px rgba(255,255,255,0.1) inset;
+    }
+
+    .chart{
+      width:100%; height: 180px; border-radius: 12px; background: #0a1128; border:1px solid #2a3866
+    }
+
+    .toast{
+      position: fixed; right: 16px; bottom: 16px; z-index: 9999;
+      padding: 12px 14px; border-radius: 12px; background: #101a3a; border:1px solid #2b3a6b;
+      box-shadow: var(--shadow); max-width: 340px; display:none;
+    }
+    .toast.show{ display:block; animation: pop .15s ease-out }
+    @keyframes pop{ from{ transform: translateY(5px); opacity: 0 } to{ transform: translateY(0); opacity: 1 } }
+
+    .log{
+      display:grid; gap:8px; max-height: 200px; overflow:auto; padding-right:4px
+    }
+    .log .item{
+      display:grid; grid-template-columns: 100px 1fr auto; gap:8px; align-items:center;
+      padding:8px 10px; border-radius:10px; background:#0b1432; border:1px solid #253263;
+      font-size: 12px;
+    }
+    .log .item .label{ color: var(--muted); font-weight:600 }
+    .log .item .value{ font-weight:700 }
+    .log .item .time{ color: var(--muted) }
+
+    footer{
+      margin-top: 40px;
+      color: var(--muted); font-size:12px; text-align:center
+    }
+
+    /* Responsive */
+    @media (max-width: 1040px){
+      .card.third, .card.quarter{ grid-column: span 6 }
+    }
+    @media (max-width: 720px){
+      .card, .card.third, .card.quarter{ grid-column: 1 / -1 }
+      .hero{ gap:12px }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>SenseGuard</h1>
+          <div class="tag">Phone & wearable sensing • On‑device anomaly detection • Fall/crash alerts</div>
+        </div>
+      </div>
+      <div class="cta">
+        <button id="btn-permissions" class="btn primary icon" title="Request sensor permissions">
+          <span>Grant permissions</span>
+        </button>
+        <button id="btn-start" class="btn icon ok" title="Start sensing & detection" disabled>
+          <span>Start detection</span>
+        </button>
+        <button id="btn-stop" class="btn icon ghost" title="Stop sensing & detection" disabled>
+          <span>Stop</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="grid">
+      <!-- Sensors -->
+      <div class="card third" id="card-sensors">
+        <h3 class="title">Sensors</h3>
+        <div class="row">
+          <div>
+            <div class="kv">
+              <div class="k">Motion sensors:</div>
+              <div class="v"><span id="status-motion" class="badge">unknown</span></div>
+            </div>
+            <div class="kv">
+              <div class="k">Orientation:</div>
+              <div class="v"><span id="status-orientation" class="badge">unknown</span></div>
+            </div>
+            <div class="kv">
+              <div class="k">Geolocation:</div>
+              <div class="v"><span id="status-geo" class="badge">unknown</span></div>
+            </div>
+            <div class="kv">
+              <div class="k">Battery level:</div>
+              <div class="v"><span id="status-battery" class="badge">n/a</span></div>
+            </div>
+            <div class="kv">
+              <div class="k">Watch via Bluetooth:</div>
+              <div class="v"><span id="status-ble" class="badge">not connected</span></div>
+            </div>
+          </div>
+          <div>
+            <label class="switch">
+              <input id="toggle-sim" type="checkbox" />
+              <span id="dot-sim" class="dot" aria-hidden="true"></span>
+              <span>Use simulator</span>
+            </label>
+            <div class="small muted" style="margin-top:6px">
+              Real sensors: DeviceMotion/Orientation, Geolocation. Simulator fills in if unavailable or for demos.
+            </div>
+            <div class="sep"></div>
+            <div class="row">
+              <button id="btn-ble" class="btn ghost" title="Connect a BLE wearable (demo)">Connect wearable</button>
+              <button id="btn-clear" class="btn ghost" title="Clear buffers & charts">Clear data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live stream -->
+      <div class="card full" id="card-stream">
+        <h3 class="title">Live stream</h3>
+        <div class="row">
+          <div>
+            <div class="kv">
+              <div class="k">Accel magnitude:</div>
+              <div class="v"><span id="val-acc-mag">0</span> m/s²</div>
+            </div>
+            <div class="kv">
+              <div class="k">Gyro magnitude:</div>
+              <div class="v"><span id="val-gyr-mag">0</span> °/s</div>
+            </div>
+            <div class="kv">
+              <div class="k">Jerk (acc change):</div>
+              <div class="v"><span id="val-jerk">0</span> m/s³</div>
+            </div>
+            <div class="kv">
+              <div class="k">Speed estimate:</div>
+              <div class="v"><span id="val-speed">0</span> m/s</div>
+            </div>
+            <div class="kv">
+              <div class="k">Position:</div>
+              <div class="v"><span id="val-pos">n/a</span></div>
+            </div>
+          </div>
+          <div>
+            <canvas id="chart" class="chart" aria-label="Live acceleration magnitude chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training -->
+      <div class="card third" id="card-train">
+        <h3 class="title">Model training</h3>
+        <div class="small muted" style="margin-bottom:10px">
+          Record a short window (30–60 s) of normal activity. We’ll compute a feature set and learn a distance-based profile. Threshold is chosen from the 99th percentile on normal data.
+        </div>
+
+        <div class="row">
+          <div>
+            <div class="kv">
+              <div class="k">Samples recorded:</div>
+              <div class="v"><span id="val-samples">0</span></div>
+            </div>
+            <div class="kv">
+              <div class="k">Windows:</div>
+              <div class="v"><span id="val-windows">0</span></div>
+            </div>
+            <div class="kv">
+              <div class="k">Status:</div>
+              <div class="v"><span id="val-train-status" class="badge">idle</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="section-actions">
+              <button id="btn-record" class="btn">Record normal (30 s)</button>
+              <button id="btn-train" class="btn primary" disabled>Train model</button>
+              <button id="btn-export" class="btn ghost" disabled>Export model</button>
+              <input id="file-import" type="file" accept="application/json" hidden />
+              <button id="btn-import" class="btn ghost">Import model</button>
+            </div>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div class="row">
+          <div class="chip">Window: 1.0 s, hop 0.25 s</div>
+          <div class="chip">Features: mean, std, max, SMA, jerk, gyro, posture</div>
+          <div class="chip">Detector: kNN distance (k=5)</div>
+        </div>
+      </div>
+
+      <!-- Detection -->
+      <div class="card third" id="card-detect">
+        <h3 class="title">Anomaly detection</h3>
+        <div class="kv">
+          <div class="k">Anomaly score:</div>
+          <div class="v"><span id="val-score">0.00</span></div>
+        </div>
+        <div class="gauge" style="margin-top:8px" aria-label="Anomaly score gauge"><div id="g-fill" class="fill" style="--value:0"></div></div>
+        <div class="kv" style="margin-top:10px">
+          <div class="k">Threshold (99th pct):</div>
+          <div class="v"><span id="val-thresh">n/a</span></div>
+        </div>
+        <div class="kv">
+          <div class="k">State:</div>
+          <div class="v"><span id="val-state" class="badge">not running</span></div>
+        </div>
+        <div class="small muted" style="margin-top:10px">
+          Debounce: 1.2 s above threshold to trigger. Cooldown: 15 s. Fall pattern check: high impact + posture change + inactivity.
+        </div>
+      </div>
+
+      <!-- Simulation -->
+      <div class="card third" id="card-sim">
+        <h3 class="title">Simulation playground</h3>
+        <div class="row">
+          <div>
+            <label class="small muted">Scenario</label>
+            <select id="sim-scenario" class="input">
+              <option value="idle">Idle walk</option>
+              <option value="fall">Fall of elderly</option>
+              <option value="bike-crash">Bike crash</option>
+              <option value="car-brake">Hard car brake</option>
+              <option value="stairs">Walking stairs</option>
+            </select>
+          </div>
+          <div>
+            <label class="small muted">Intensity</label>
+            <input id="sim-intensity" class="input" type="range" min="0.5" max="2.0" step="0.1" value="1.0" />
+          </div>
+        </div>
+        <div class="section-actions">
+          <button id="sim-start" class="btn">Start simulation</button>
+          <button id="sim-once" class="btn ghost">Inject event once</button>
+          <button id="sim-stop" class="btn ghost">Stop</button>
+        </div>
+        <div class="small muted" style="margin-top:8px">
+          Simulated signals mirror realistic amplitudes: impact spike in acceleration, abrupt orientation change, then stillness.
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card full" id="card-alerts">
+        <h3 class="title">Alerts and automations</h3>
+        <div class="row">
+          <div>
+            <label class="small muted">Primary contact name</label>
+            <input id="contact-name" class="input" placeholder="e.g., Anna Rossi" />
+          </div>
+          <div>
+            <label class="small muted">SMS number</label>
+            <input id="contact-sms" class="input" placeholder="+39 345 123 4567" />
+          </div>
+          <div>
+            <label class="small muted">WhatsApp number</label>
+            <input id="contact-wa" class="input" placeholder="+39 345 123 4567" />
+          </div>
+          <div>
+            <label class="small muted">Email</label>
+            <input id="contact-mail" class="input" placeholder="name@example.com" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label class="small muted">Emergency numbers (comma separated)</label>
+            <input id="contact-emergency" class="input" placeholder="112, 118" />
+          </div>
+          <div>
+            <label class="small muted">Webhook URL (optional)</label>
+            <input id="webhook-url" class="input" placeholder="https://your-server.example.com/alert" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label class="small muted">Message template</label>
+            <textarea id="msg-template" class="input" placeholder="Hi {name}, possible {event} detected at {time}. Location: {maps}. Battery: {battery}."></textarea>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button id="btn-test-msg" class="btn">Test compose</button>
+          <button id="btn-send-msg" class="btn primary">Trigger automated alerts</button>
+        </div>
+        <div class="small muted" style="margin-top:10px">
+          This demo composes messages with deep-links (SMS, WhatsApp, email) and can call a webhook. Actual auto-sending depends on platform capabilities and user interaction.
+        </div>
+      </div>
+
+      <!-- Use cases & logs -->
+      <div class="card third">
+        <h3 class="title">Use cases</h3>
+        <ul>
+          <li><strong>Elderly fall:</strong> High-g impact (≥ 2.5g), device orientation change (portrait → flat), then inactivity ≥ 10 s.</li>
+          <li><strong>Bicycle crash:</strong> High jerk, erratic gyro oscillations, speed drop, optional GPS off-route.</li>
+          <li><strong>Hard brake:</strong> Forward decel spike, transient orientation pitch, quick recovery.</li>
+        </ul>
+        <div class="small muted">
+          The model scores anomalies; pattern rules refine to specific events and reduce false positives.
+        </div>
+      </div>
+      <div class="card third">
+        <h3 class="title">Privacy & on-device</h3>
+        <p class="small muted">
+          Data stays in your browser. No cloud training by default. Use the optional webhook to integrate with your system. Revoke permissions anytime in your browser settings.
+        </p>
+      </div>
+      <div class="card third">
+        <h3 class="title">Event log</h3>
+        <div id="log" class="log" aria-live="polite" aria-relevant="additions"></div>
+      </div>
+    </section>
+    <footer>
+      Built for demos and prototyping. Not a medical device. Validate thoroughly before real-world use.
+    </footer>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // ========= Utilities =========
+    const $ = (sel) => document.querySelector(sel);
+    const nowISO = () => new Date().toISOString();
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const mean = (arr) => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+    const std = (arr, m = mean(arr)) => {
+      if (arr.length < 2) return 0;
+      const v = arr.reduce((s,x)=>s+(x-m)*(x-m),0)/(arr.length-1);
+      return Math.sqrt(v);
+    };
+    const dist = (a,b) => Math.hypot(...a.map((v,i)=>v-b[i]));
+    const percentile = (arr, p) => {
+      if (!arr.length) return 0;
+      const sorted=[...arr].sort((a,b)=>a-b);
+      const idx = clamp(Math.ceil((p/100)*sorted.length)-1, 0, sorted.length-1);
+      return sorted[idx];
+    };
+    const lerp = (a,b,t)=>a+(b-a)*t;
+
+    function toast(msg, type='info', timeout=2800){
+      const t = $('#toast');
+      t.textContent = msg;
+      t.className = 'toast show';
+      t.style.borderColor = type==='error' ? '#ff6584' : type==='warn' ? '#fbbf24' : '#2b3a6b';
+      setTimeout(()=> t.className = 'toast', timeout);
+    }
+
+    function log(label, value){
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `<div class="label">${label}</div><div class="value">${value}</div><div class="time">${new Date().toLocaleTimeString()}</div>`;
+      $('#log').prepend(el);
+      // Trim
+      const items = $('#log').querySelectorAll('.item');
+      if (items.length > 100) items[items.length-1].remove();
+    }
+
+    // ========= Sensor Manager =========
+    class SensorManager {
+      constructor(){
+        this.useSim = false;
+        this.handlers = new Set();
+        this.geoWatch = null;
+        this.last = { ax:0, ay:0, az:0, gx:0, gy:0, gz:0, alpha:0, beta:0, gamma:0, lat:null, lon:null, speed:null, ts: performance.now() };
+        this.jerk = 0;
+        this.accMag = 0;
+        this.gyrMag = 0;
+        this.speedEst = 0;
+        this._sim = null;
+      }
+      on(cb){ this.handlers.add(cb); return ()=>this.handlers.delete(cb); }
+      emit(sample){
+        this.handlers.forEach(cb=>cb(sample));
+      }
+      async requestPermissions(){
+        // Best-effort permissions on iOS for DeviceMotion
+        try{
+          if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
+            const resp = await DeviceMotionEvent.requestPermission();
+            if (resp !== 'granted') throw new Error('Motion permission denied');
+          }
+          $('#status-motion').className = 'badge ok';
+          $('#status-motion').textContent = 'ready';
+        }catch(e){
+          $('#status-motion').className = 'badge warn';
+          $('#status-motion').textContent = 'limited';
+        }
+
+        try{
+          if (navigator.permissions && navigator.permissions.query){
+            const p = await navigator.permissions.query({name: 'geolocation'});
+            $('#status-geo').className = (p.state==='granted') ? 'badge ok' : (p.state==='prompt') ? 'badge' : 'badge warn';
+            $('#status-geo').textContent = p.state;
+          } else {
+            $('#status-geo').textContent = 'unknown';
+          }
+        }catch(e){
+          $('#status-geo').className = 'badge';
+          $('#status-geo').textContent = 'unknown';
+        }
+
+        // Orientation capability check
+        if (typeof DeviceOrientationEvent !== 'undefined'){
+          $('#status-orientation').className = 'badge ok';
+          $('#status-orientation').textContent = 'ready';
+        } else {
+          $('#status-orientation').className = 'badge warn';
+          $('#status-orientation').textContent = 'unavailable';
+        }
+
+        // Battery (optional)
+        try{
+          if (navigator.getBattery){
+            const batt = await navigator.getBattery();
+            const pct = Math.round(batt.level*100);
+            $('#status-battery').textContent = pct + '%';
+            batt.addEventListener('levelchange', ()=>{
+              $('#status-battery').textContent = Math.round(batt.level*100) + '%';
+            });
+          }
+        }catch(e){
+          $('#status-battery').textContent = 'n/a';
+        }
+
+        $('#btn-start').disabled = false;
+        toast('Permissions processed. You can start detection.', 'info');
+      }
+
+      startReal(){
+        this.stop();
+        this.useSim = false;
+        $('#dot-sim').classList.remove('on');
+        // DeviceMotion (accelerationIncludingGravity for magnitude; we also compute jerk)
+        const motionHandler = (ev)=>{
+          const ts = performance.now();
+          const dt = Math.max(1e-3, (ts - this.last.ts)/1000);
+          const a = ev.accelerationIncludingGravity || ev.acceleration || {};
+          const g = ev.rotationRate || {};
+          const ax = a.x ?? 0, ay = a.y ?? 0, az = a.z ?? 0;
+          const gx = g.alpha ? (g.alpha) : (g.gamma ?? 0); // rotationRate has alpha,beta,gamma (deg/s)
+          const gy = g.beta ?? 0;
+          const gz = g.gamma ?? 0;
+
+          const accMag = Math.hypot(ax, ay, az);
+          const gyrMag = Math.hypot(gx, gy, gz);
+          const jerk = (accMag - this.accMag) / dt;
+          // naive speed estimate from vertical/horizontal magnitude (demo only)
+          this.speedEst = clamp(this.speedEst + (accMag - 9.81)*dt, 0, 30);
+
+          this.accMag = accMag;
+          this.gyrMag = gyrMag;
+          this.jerk = jerk;
+          this.last = { ...this.last, ax, ay, az, gx, gy, gz, ts };
+
+          const sample = { ts, ax, ay, az, gx, gy, gz, accMag, gyrMag, jerk, alpha: this.last.alpha, beta: this.last.beta, gamma: this.last.gamma, lat: this.last.lat, lon: this.last.lon, speed: this.speedEst };
+          this.emit(sample);
+        };
+        const orientHandler = (ev)=>{
+          this.last.alpha = ev.alpha ?? 0; // yaw
+          this.last.beta  = ev.beta ?? 0;  // pitch
+          this.last.gamma = ev.gamma ?? 0; // roll
+          $('#status-orientation').className = 'badge ok';
+          $('#status-orientation').textContent = 'active';
+        };
+        window.addEventListener('devicemotion', motionHandler);
+        window.addEventListener('deviceorientation', orientHandler);
+
+        // Geolocation
+        if (navigator.geolocation){
+          this.geoWatch = navigator.geolocation.watchPosition((pos)=>{
+            const { latitude, longitude, speed } = pos.coords;
+            this.last.lat = latitude; this.last.lon = longitude; this.last.speed = speed;
+            $('#status-geo').className = 'badge ok';
+            $('#status-geo').textContent = 'active';
+          }, (err)=>{
+            $('#status-geo').className = 'badge warn';
+            $('#status-geo').textContent = 'error';
+          }, { enableHighAccuracy: true, maximumAge: 2000, timeout: 8000 });
+        }
+
+        this._cleanup = ()=> {
+          window.removeEventListener('devicemotion', motionHandler);
+          window.removeEventListener('deviceorientation', orientHandler);
+          if (this.geoWatch!=null) { navigator.geolocation.clearWatch(this.geoWatch); this.geoWatch=null; }
+        };
+      }
+
+      startSim(scenario='idle', intensity=1.0){
+        this.stop();
+        this.useSim = true;
+        $('#dot-sim').classList.add('on');
+        this._sim = new Simulator((s)=>this.emit(s));
+        this._sim.start(scenario, intensity);
+        this._cleanup = ()=> this._sim && this._sim.stop();
+      }
+
+      injectOnce(scenario='fall', intensity=1.0){
+        if (!this._sim) this._sim = new Simulator((s)=>this.emit(s));
+        this._sim.injectOnce(scenario, intensity);
+      }
+
+      stop(){
+        if (this._cleanup) { this._cleanup(); this._cleanup = null; }
+      }
+    }
+
+    // ========= Simulator =========
+    class Simulator {
+      constructor(cb){
+        this.cb = cb;
+        this.timer = null;
+        this.state = 'idle';
+        this.t = 0;
+        this.lat = 42.573; // near Umbria
+        this.lon = 12.785;
+        this.speed = 0;
+        this.orientation = { alpha: 0, beta: 0, gamma: 0 };
+        this.intensity = 1.0;
+      }
+      start(scenario, intensity=1.0){
+        this.stop();
+        this.intensity = intensity;
+        this.state = scenario;
+        this.t = 0;
+        const dt = 1/50; // 50Hz
+        this.timer = setInterval(()=> {
+          this.t += dt;
+          const ts = performance.now();
+          let ax=0, ay=0, az=9.81;
+          let gx=0, gy=0, gz=0;
+          let { alpha, beta, gamma } = this.orientation;
+
+          const I = this.intensity;
+          // Base motion (idle walk)
+          if (this.state === 'idle' || this.state === 'stairs' || this.state==='car-brake' || this.state==='bike-crash' || this.state==='fall'){
+            // walking oscillation around gravity
+            ax = 0.8*Math.sin(2*Math.PI*1.6*this.t) * I;
+            ay = 0.6*Math.sin(2*Math.PI*1.2*this.t + 1.2) * I;
+            az = 9.81 + 0.9*Math.sin(2*Math.PI*1.6*this.t + 0.6) * I;
+            gx = 12*Math.sin(2*Math.PI*1.4*this.t) * I;
+            gy = 15*Math.sin(2*Math.PI*1.6*this.t + 0.5) * I;
+            gz = 10*Math.sin(2*Math.PI*1.2*this.t + 0.9) * I;
+            this.speed = clamp(1.2 + 0.4*Math.sin(2*Math.PI*0.4*this.t), 0, 2.5);
+          }
+          if (this.state === 'stairs'){
+            az += 1.2*Math.sin(2*Math.PI*2.2*this.t) * I;
+            this.speed = 0.8;
+          }
+          if (this.state === 'car-brake' && Math.floor(this.t)%6===0 && (this.t%6)<0.4){
+            // brief forward deceleration spike
+            ax -= 8*I * Math.exp(-12*(this.t%6));
+            this.speed = Math.max(0, this.speed - 10*dt);
+            beta = clamp(beta + 18*dt, -30, 30);
+          } else if (this.state === 'car-brake') {
+            this.speed = lerp(this.speed, 5, 0.02);
+            beta = lerp(beta, 0, 0.1);
+          }
+          if (this.state === 'bike-crash' && Math.floor(this.t)%7===3 && (this.t%7)<0.3){
+            // erratic oscillations then impact
+            const phase = (this.t%7);
+            gx += (80 + 200*phase) * (Math.random()*2-1) * I;
+            gy += (100 + 180*phase) * (Math.random()*2-1) * I;
+            gz += (60 + 200*phase) * (Math.random()*2-1) * I;
+            ax += 20*I*Math.exp(-20*phase);
+            ay += 16*I*Math.exp(-16*phase);
+            az = 9.81 + 24*I*Math.exp(-22*phase);
+            this.speed = Math.max(0, this.speed - 15*dt);
+            // orientation flips
+            beta = clamp(beta + 220*dt, -180, 180);
+            gamma = clamp(gamma + 280*dt, -180, 180);
+          }
+          if (this.state === 'fall' && Math.floor(this.t)%9===5 && (this.t%9)<0.22){
+            const phase = (this.t%9);
+            // Impact spike then stillness
+            ax += 12*I*Math.exp(-22*phase);
+            ay += 10*I*Math.exp(-18*phase);
+            az = 9.81 + 28*I*Math.exp(-24*phase);
+            // device lands flat
+            beta = lerp(beta, 90, 0.35);
+            gamma = lerp(gamma, 0, 0.35);
+            this.speed = lerp(this.speed, 0, 0.6);
+          }
+
+          // Drift position slightly (demo)
+          const metersPerDegLat = 111_320;
+          const metersPerDegLon = 111_320 * Math.cos(this.lat*Math.PI/180);
+          const heading = (alpha % 360) * Math.PI/180;
+          const vx = this.speed * Math.cos(heading);
+          const vy = this.speed * Math.sin(heading);
+          this.lat += (vy*dt) / metersPerDegLat;
+          this.lon += (vx*dt) / metersPerDegLon;
+
+          this.orientation = { alpha: (alpha+0.5)%360, beta, gamma };
+
+          this.cb({
+            ts, ax, ay, az, gx, gy, gz,
+            accMag: Math.hypot(ax, ay, az),
+            gyrMag: Math.hypot(gx, gy, gz),
+            jerk: 0, // will be computed by downstream if needed
+            alpha: this.orientation.alpha,
+            beta: this.orientation.beta,
+            gamma: this.orientation.gamma,
+            lat: this.lat, lon: this.lon, speed: this.speed
+          });
+        }, 20);
+      }
+      injectOnce(scenario='fall', intensity=1.0){
+        const t0 = performance.now();
+        const dt = 1/100, dur = 1.2;
+        for (let k=0; k<dur/dt; k++){
+          const t = k*dt;
+          let ax=0, ay=0, az=9.81, gx=0, gy=0, gz=0;
+          let beta=this.orientation.beta, gamma=this.orientation.gamma, alpha=this.orientation.alpha;
+          if (scenario==='fall'){
+            const phase = t;
+            ax += 12*intensity*Math.exp(-22*phase);
+            ay += 10*intensity*Math.exp(-18*phase);
+            az = 9.81 + 28*intensity*Math.exp(-24*phase);
+            beta = lerp(beta, 90, 0.4);
+          }else if (scenario==='bike-crash'){
+            const phase = t;
+            gx += (200*phase) * (Math.random()*2-1) * intensity;
+            gy += (180*phase) * (Math.random()*2-1) * intensity;
+            gz += (200*phase) * (Math.random()*2-1) * intensity;
+            ax += 24*intensity*Math.exp(-24*phase);
+            az = 9.81 + 24*intensity*Math.exp(-26*phase);
+            beta += 280*dt; gamma += 320*dt;
+          }else if (scenario==='car-brake'){
+            ax -= 10*intensity*Math.exp(-14*t);
+          }
+          this.cb({ ts: t0 + k*10, ax, ay, az, gx, gy, gz, accMag: Math.hypot(ax, ay, az), gyrMag: Math.hypot(gx, gy, gz), jerk: 0, alpha, beta, gamma, lat: this.lat, lon: this.lon, speed: this.speed});
+        }
+      }
+      stop(){ if (this.timer) clearInterval(this.timer); this.timer = null; }
+    }
+
+    // ========= Feature Extractor =========
+    class FeatureExtractor {
+      constructor(winSec=1.0, hopSec=0.25, fs=50){
+        this.fs = fs;
+        this.win = Math.round(winSec * fs);
+        this.hop = Math.round(hopSec * fs);
+        this.buf = [];
+        this.lastWinStart = 0;
+      }
+      push(sample){
+        this.buf.push(sample);
+        if (this.buf.length > 5*this.fs) this.buf.shift();
+        const ready = this.buf.length - this.lastWinStart >= this.hop;
+        if (!ready || this.buf.length < this.win) return null;
+        const start = this.buf.length - this.win;
+        this.lastWinStart = this.buf.length;
+        const slice = this.buf.slice(start);
+        return this.compute(slice);
+      }
+      compute(win){
+        const acc = win.map(s=>s.accMag);
+        const gyr = win.map(s=>s.gyrMag);
+        const jerk = [0];
+        for (let i=1;i<acc.length;i++){ jerk.push((acc[i]-acc[i-1])*50); }
+        const meanAcc = mean(acc), stdAcc = std(acc), maxAcc = Math.max(...acc);
+        const meanGyr = mean(gyr), stdGyr = std(gyr), maxGyr = Math.max(...gyr);
+        const meanJerk = mean(jerk.map(Math.abs));
+        const sma = acc.reduce((a,b)=>a+Math.abs(b),0)/acc.length;
+
+        const end = win[win.length-1];
+        // Posture: absolute tilt from vertical
+        const tilt = Math.min(180, Math.abs(end.beta ?? 0));
+
+        return {
+          vector: [meanAcc, stdAcc, maxAcc, meanGyr, stdGyr, maxGyr, meanJerk, sma, tilt],
+          meta: { end }
+        };
+      }
+    }
+
+    // ========= Simple kNN distance model =========
+    class KNNProfile {
+      constructor(k=5){ this.k = k; this.X = []; this.thresh = null; }
+      fit(vectors){
+        this.X = vectors;
+        // compute distances to k nearest for each point (leave-one-out)
+        const scores = vectors.map((v,i)=>{
+          const dists = vectors.map((u,j)=> i===j ? Infinity : dist(v,u)).sort((a,b)=>a-b);
+          const kdist = mean(dists.slice(0,this.k));
+          return kdist;
+        });
+        this.thresh = percentile(scores, 99);
+        return { thresh: this.thresh, scoresSummary: { mean: mean(scores), p95: percentile(scores,95), p99: this.thresh, max: Math.max(...scores) } };
+      }
+      score(v){
+        if (!this.X.length) return 0;
+        const dists = this.X.map(u=>dist(v,u)).sort((a,b)=>a-b);
+        return mean(dists.slice(0, this.k));
+      }
+      export(){ return JSON.stringify({ k:this.k, X:this.X, thresh:this.thresh }); }
+      static import(json){
+        const obj = JSON.parse(json);
+        const m = new KNNProfile(obj.k || 5);
+        m.X = obj.X || [];
+        m.thresh = obj.thresh ?? null;
+        return m;
+      }
+    }
+
+    // ========= Detection Orchestrator =========
+    class Detector {
+      constructor(){
+        this.model = new KNNProfile(5);
+        this.fx = new FeatureExtractor(1.0, 0.25, 50);
+        this.samples = 0;
+        this.windows = 0;
+        this.collect = []; // feature vectors for training
+        this.running = false;
+        this.cooldownUntil = 0;
+        this.aboveSince = null;
+        this.alerting = false;
+      }
+      attach(sensor){
+        this.off = sensor.on((s)=> this.handleSample(s));
+      }
+      detach(){ if (this.off) this.off(); }
+      start(){ this.running = true; $('#val-state').className='badge ok'; $('#val-state').textContent='running'; }
+      stop(){ this.running = false; $('#val-state').className='badge'; $('#val-state').textContent='stopped'; }
+      clear(){ this.fx = new FeatureExtractor(1.0, 0.25, 50); this.samples=0; this.windows=0; this.collect=[]; updateTrainUI(this); }
+
+      handleSample(s){
+        this.samples++;
+        // Live UI
+        $('#val-acc-mag').textContent = (s.accMag||0).toFixed(2);
+        $('#val-gyr-mag').textContent = (s.gyrMag||0).toFixed(2);
+        $('#val-jerk').textContent   = (s.jerk||0).toFixed(2);
+        $('#val-speed').textContent  = (s.speed??0).toFixed(2);
+        if (s.lat!=null) $('#val-pos').textContent = `${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}`;
+
+        pushChart(s.accMag || 0);
+
+        const feat = this.fx.push(s);
+        if (!feat) return;
+        this.windows++;
+        updateTrainUI(this);
+
+        if (!this.running || !this.model.X.length) return;
+        const score = this.model.score(feat.vector);
+        $('#val-score').textContent = score.toFixed(3);
+        const pct = this.model.thresh ? clamp(100*score/this.model.thresh, 0, 200) : 0;
+        $('#g-fill').style.setProperty('--value', pct);
+
+        const now = performance.now();
+        const over = this.model.thresh && score > this.model.thresh;
+        // Hysteresis: require 1.2s continuous over-threshold
+        if (over){
+          if (!this.aboveSince) this.aboveSince = now;
+          if (now - this.aboveSince > 1200 && now > this.cooldownUntil){
+            // Pattern refinement
+            const evt = this.classifyEvent(feat);
+            this.triggerAlert(evt, score, feat.meta.end);
+            this.cooldownUntil = now + 15000; // 15s cooldown
+            this.aboveSince = null;
+          }
+        } else {
+          this.aboveSince = null;
+        }
+      }
+
+      recordNormal(sec=30){
+        this.collect = [];
+        this.samples = 0; this.windows = 0;
+        $('#val-train-status').className = 'badge warn';
+        $('#val-train-status').textContent = 'recording...';
+        const tmpFx = new FeatureExtractor(1.0, 0.25, 50);
+        const unsub = app.sensor.on((s)=> {
+          const f = tmpFx.push(s);
+          if (f) this.collect.push(f.vector);
+        });
+        return new Promise((resolve)=>{
+          setTimeout(()=>{
+            unsub();
+            $('#val-samples').textContent = this.samples;
+            $('#val-windows').textContent = this.collect.length;
+            $('#val-train-status').className = 'badge';
+            $('#val-train-status').textContent = 'recorded';
+            $('#btn-train').disabled = this.collect.length < 10;
+            resolve(this.collect.length);
+          }, sec*1000);
+        });
+      }
+
+      train(){
+        if (this.collect.length < 10){ toast('Not enough data. Record at least ~10 windows.', 'warn'); return; }
+        $('#val-train-status').className = 'badge warn';
+        $('#val-train-status').textContent = 'training...';
+        const out = this.model.fit(this.collect);
+        $('#val-train-status').className = 'badge ok';
+        $('#val-train-status').textContent = 'trained';
+        $('#val-thresh').textContent = out.thresh.toFixed(3);
+        $('#btn-export').disabled = false;
+        toast(`Model trained. 99th pct threshold: ${out.thresh.toFixed(3)}`, 'info');
+        log('Model', `trained (p99=${out.thresh.toFixed(3)})`);
+      }
+
+      classifyEvent(feat){
+        const { end } = feat.meta;
+        const a = end.accMag ?? Math.hypot(end.ax||0, end.ay||0, end.az||0);
+        const g = end.gyrMag ?? Math.hypot(end.gx||0, end.gy||0, end.gz||0);
+        const tilt = Math.abs(end.beta ?? 0);
+        const speed = end.speed ?? 0;
+
+        // Heuristics tuned to our simulation scales (approximate)
+        if (a > 20 && tilt > 60){ return 'fall'; }
+        if (g > 120 && a > 14 && speed < 1){ return 'bike-crash'; }
+        if (a < 6 && end.ax < -6){ return 'hard-brake'; }
+        return 'anomaly';
+      }
+
+      async triggerAlert(eventType, score, endSample){
+        if (this.alerting) return;
+        this.alerting = true;
+        $('#val-state').className='badge warn';
+        $('#val-state').textContent=`alert: ${eventType}`;
+
+        const ctx = await buildMessageContext(eventType, score, endSample);
+        const msg = fillTemplate($('#msg-template').value, ctx);
+        showComposeOptions(msg, ctx);
+
+        log('Alert', `${eventType} (score=${score.toFixed(3)})`);
+        toast(`Alert: ${eventType} — messages ready`, 'warn');
+        // Auto webhook (if configured)
+        const url = $('#webhook-url').value.trim();
+        if (url){
+          try{
+            await fetch(url, {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ type:eventType, score, context: ctx })
+            });
+            log('Webhook', 'delivered to ' + url);
+          }catch(e){
+            log('Webhook', 'failed: ' + e.message);
+          }
+        }
+        setTimeout(()=>{
+          this.alerting = false;
+          $('#val-state').className='badge ok';
+          $('#val-state').textContent='running';
+        }, 4000);
+      }
+    }
+
+    // ========= Messaging helpers =========
+    function fillTemplate(tpl, ctx){
+      const def = "Hi {name}, possible {event} detected at {time}. Location: {maps}. Battery: {battery}.";
+      const s = (tpl && tpl.trim().length>0 ? tpl : def);
+      return s
+        .replaceAll('{name}', ctx.name || 'friend')
+        .replaceAll('{event}', ctx.event)
+        .replaceAll('{time}', ctx.time)
+        .replaceAll('{lat}', String(ctx.lat ?? ''))
+        .replaceAll('{lon}', String(ctx.lon ?? ''))
+        .replaceAll('{battery}', ctx.battery)
+        .replaceAll('{link}', ctx.link)
+        .replaceAll('{maps}', ctx.maps);
+    }
+
+    async function buildMessageContext(event, score, end){
+      const name = ($('#contact-name').value || 'friend').trim();
+      const battery = $('#status-battery').textContent || 'n/a';
+      let lat = end?.lat ?? null, lon = end?.lon ?? null;
+      if ((lat==null || lon==null) && navigator.geolocation){
+        try {
+          const pos = await new Promise((res, rej)=> navigator.geolocation.getCurrentPosition(res, rej, {timeout:3000}));
+          lat = pos.coords.latitude; lon = pos.coords.longitude;
+        } catch {}
+      }
+      const maps = (lat!=null && lon!=null) ? `https://maps.google.com/?q=${lat},${lon}` : 'n/a';
+      const link = location.href;
+      const time = new Date().toLocaleString();
+      return { name, event, score: Number(score).toFixed(3), time, lat, lon, maps, link, battery };
+    }
+
+    function showComposeOptions(message, ctx){
+      const sms = ($('#contact-sms').value || '').replace(/\s+/g,'');
+      const wa  = ($('#contact-wa').value || '').replace(/\s+/g,'');
+      const mail= ($('#contact-mail').value || '').trim();
+      const emergencies = ($('#contact-emergency').value || '').split(',').map(s=>s.trim()).filter(Boolean);
+
+      const parts = [];
+      if (sms) parts.push(`<a class="btn ghost" href="sms:${encodeURIComponent(sms)}?&body=${encodeURIComponent(message)}">Open SMS</a>`);
+      if (wa)  parts.push(`<a class="btn ghost" href="https://wa.me/${encodeURIComponent(wa.replace('+',''))}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener">WhatsApp</a>`);
+      if (mail) parts.push(`<a class="btn ghost" href="mailto:${encodeURIComponent(mail)}?subject=${encodeURIComponent('SenseGuard Alert: '+ctx.event)}&body=${encodeURIComponent(message)}">Email</a>`);
+      emergencies.forEach(num=>{
+        parts.push(`<a class="btn warn" href="tel:${encodeURIComponent(num)}">Call ${num}</a>`);
+      });
+      // Web Share API (if available)
+      if (navigator.share){
+        parts.push(`<button id="btn-webshare" class="btn primary">Share (system)</button>`);
+      }
+
+      const container = document.createElement('div');
+      container.style.marginTop='10px';
+      container.innerHTML = `
+        <div class="sep"></div>
+        <div class="small muted">Preview</div>
+        <div class="chip" style="white-space: pre-wrap; color:#dbe7ff">${message}</div>
+        <div class="section-actions">${parts.join(' ')}</div>
+      `;
+      // Remove old compose preview
+      const existing = document.getElementById('compose-preview');
+      if (existing) existing.remove();
+      container.id = 'compose-preview';
+      $('#card-alerts').appendChild(container);
+
+      const btn = container.querySelector('#btn-webshare');
+      if (btn){
+        btn.addEventListener('click', async ()=>{
+          try{
+            await navigator.share({ title: `SenseGuard Alert: ${ctx.event}`, text: message, url: ctx.maps !== 'n/a' ? ctx.maps : undefined });
+          }catch(e){}
+        });
+      }
+    }
+
+    // ========= BLE (placeholder demo) =========
+    async function connectWearable(){
+      // This is a UX placeholder to show how you'd pair with a BLE wearable that streams IMU or heart-rate.
+      // Actual implementation requires a specific GATT service UUID from the device manufacturer.
+      try{
+        if (!navigator.bluetooth) throw new Error('Web Bluetooth not supported');
+        $('#status-ble').className = 'badge warn';
+        $('#status-ble').textContent = 'pairing...';
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: ['heart_rate'] // example; may not be available
+        });
+        $('#status-ble').className = 'badge ok';
+        $('#status-ble').textContent = 'paired: ' + (device.name || 'device');
+        device.addEventListener('gattserverdisconnected', ()=>{
+          $('#status-ble').className = 'badge';
+          $('#status-ble').textContent = 'disconnected';
+        });
+        toast('Paired with wearable (demo). You can extend to read characteristics.', 'info');
+        log('BLE', 'paired: ' + (device.name || device.id));
+      }catch(e){
+        $('#status-ble').className = 'badge';
+        $('#status-ble').textContent = 'not connected';
+        toast('BLE connect: ' + e.message, 'warn');
+      }
+    }
+
+    // ========= Chart =========
+    const chart = (function(){
+      const canvas = document.getElementById('chart');
+      const ctx = canvas.getContext('2d');
+      const buffer = new Array(400).fill(9.81);
+      function resize(){
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+      function push(v){
+        buffer.push(v);
+        if (buffer.length>400) buffer.shift();
+        draw();
+      }
+      function draw(){
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        ctx.clearRect(0,0,w,h);
+        // grid
+        ctx.strokeStyle = '#1a2550'; ctx.lineWidth = 1;
+        for (let i=0;i<5;i++){ const y = (i/4)*h; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+        // line
+        const min = 0, max = 30;
+        ctx.strokeStyle = '#6ee7ff'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        buffer.forEach((v,i)=>{
+          const x = (i/(buffer.length-1))*w;
+          const y = h - (clamp(v, min, max)-min)/(max-min)*h;
+          if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.stroke();
+        // threshold (if set)
+        const thr = app.detector?.model?.thresh;
+        if (thr){
+          const y = h - (clamp(thr, min, max)-min)/(max-min)*h;
+          ctx.strokeStyle = '#fbbf24'; ctx.setLineDash([6,4]);
+          ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); ctx.setLineDash([]);
+        }
+      }
+      return { push };
+    })();
+    function pushChart(v){ chart.push(v); }
+
+    // ========= App wiring =========
+    const app = {
+      sensor: new SensorManager(),
+      detector: new Detector()
+    };
+    app.detector.attach(app.sensor);
+
+    // Buttons
+    $('#btn-permissions').addEventListener('click', ()=> app.sensor.requestPermissions());
+    $('#btn-start').addEventListener('click', ()=>{
+      if ($('#toggle-sim').checked){
+        app.sensor.startSim($('#sim-scenario').value, Number($('#sim-intensity').value));
+      } else {
+        app.sensor.startReal();
+      }
+      app.detector.start();
+      $('#btn-start').disabled = true; $('#btn-stop').disabled = false;
+      log('System', 'started');
+    });
+    $('#btn-stop').addEventListener('click', ()=>{
+      app.sensor.stop(); app.detector.stop();
+      $('#btn-start').disabled = false; $('#btn-stop').disabled = true;
+      log('System', 'stopped');
+    });
+    $('#toggle-sim').addEventListener('change', (e)=>{
+      if (e.target.checked){ $('#dot-sim').classList.add('on'); toast('Simulator enabled. Start to stream synthetic data.', 'info'); }
+      else { $('#dot-sim').classList.remove('on'); toast('Simulator disabled. Real sensors will be used.', 'info'); }
+    });
+    $('#btn-ble').addEventListener('click', connectWearable);
+    $('#btn-clear').addEventListener('click', ()=>{
+      app.detector.clear();
+      toast('Cleared buffers and counters.', 'info');
+      $('#val-score').textContent = '0.00';
+      $('#g-fill').style.setProperty('--value', 0);
+    });
+
+    $('#btn-record').addEventListener('click', async ()=>{
+      const sec = 30;
+      toast(`Recording ${sec}s of normal activity...`, 'info', 1800);
+      const n = await app.detector.recordNormal(sec);
+      toast(`Recorded ${n} windows. Train when ready.`, 'info');
+    });
+    $('#btn-train').addEventListener('click', ()=> app.detector.train());
+    $('#btn-export').addEventListener('click', ()=>{
+      const data = app.detector.model.export();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([data], {type:'application/json'}));
+      a.download = `senseguard-model-${Date.now()}.json`;
+      a.click();
+    });
+    $('#btn-import').addEventListener('click', ()=> $('#file-import').click());
+    $('#file-import').addEventListener('change', async (e)=>{
+      const file = e.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      try{
+        app.detector.model = KNNProfile.import(text);
+        $('#val-thresh').textContent = app.detector.model.thresh?.toFixed(3) ?? 'n/a';
+        $('#btn-export').disabled = false;
+        toast('Model imported.', 'info');
+      }catch(err){
+        toast('Import failed: '+err.message, 'error');
+      }
+    });
+
+    // Simulation controls
+    $('#sim-start').addEventListener('click', ()=>{
+      $('#toggle-sim').checked = true; $('#dot-sim').classList.add('on');
+      app.sensor.startSim($('#sim-scenario').value, Number($('#sim-intensity').value));
+      app.detector.start();
+      $('#btn-start').disabled = true; $('#btn-stop').disabled = false;
+      log('Sim', 'started: '+$('#sim-scenario').value);
+    });
+    $('#sim-once').addEventListener('click', ()=>{
+      $('#toggle-sim').checked = true; $('#dot-sim').classList.add('on');
+      app.sensor.startSim('idle', Number($('#sim-intensity').value));
+      app.detector.start();
+      app.sensor.injectOnce($('#sim-scenario').value, Number($('#sim-intensity').value));
+      $('#btn-start').disabled = true; $('#btn-stop').disabled = false;
+      log('Sim', 'injected: '+$('#sim-scenario').value);
+    });
+    $('#sim-stop').addEventListener('click', ()=> { app.sensor.stop(); log('Sim', 'stopped'); });
+
+    // Messaging
+    $('#btn-test-msg').addEventListener('click', async ()=>{
+      const ctx = await buildMessageContext('test', 0, {});
+      const msg = fillTemplate($('#msg-template').value, ctx);
+      showComposeOptions(msg, ctx);
+      toast('Compose ready below.', 'info');
+    });
+    $('#btn-send-msg').addEventListener('click', async ()=>{
+      const ctx = await buildMessageContext('manual-alert', 0, {});
+      const msg = fillTemplate($('#msg-template').value, ctx);
+      showComposeOptions(msg, ctx);
+      toast('Manual alert composed.', 'info');
+      log('Alert', 'manual compose');
+    });
+
+    // Init defaults
+    (function init(){
+      $('#msg-template').value = "Hi {name}, possible {event} detected at {time}.\nLocation: {maps}\nBattery: {battery}\nIf you can't reach me, please call emergency.";
+      $('#contact-emergency').value = "112, 118";
+      // Soft hint for iOS: user gesture needed for permissions
+      log('Hint', 'Tap "Grant permissions" then "Start detection". Use simulator if sensors are restricted.');
+    })();
+
+    function updateTrainUI(det){
+      $('#val-samples').textContent = det.samples;
+      $('#val-windows').textContent = det.windows;
+    }
+  </script>
+</body>
+</html>
