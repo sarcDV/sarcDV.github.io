@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Physics-Informed Neural Networks (PINNs): Interactive Demo, Theory, and Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel:#0f141b;
+    --panel-2:#121a22;
+    --text:#d8e1ea;
+    --muted:#9fb2c5;
+    --brand:#7dd3fc;
+    --brand-2:#22d3ee;
+    --accent:#a78bfa;
+    --good:#34d399;
+    --warn:#f59e0b;
+    --bad:#f87171;
+    --grid:#18222c;
+    --glass: rgba(255,255,255,0.06);
+    --shadow: 0 10px 40px rgba(0,0,0,0.4);
+    --radius: 16px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    background: radial-gradient(1200px 800px at 70% -10%, #0e1720 0%, var(--bg) 55%) fixed,
+                radial-gradient(800px 600px at -10% 40%, #0a1016 0%, transparent 60%) fixed,
+                var(--bg);
+    color:var(--text);
+    line-height:1.5;
+  }
+  header{
+    position:relative;
+    padding:64px 24px 32px;
+    overflow:hidden;
+  }
+  .hero{
+    max-width:1200px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap:32px;
+    align-items:center;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:linear-gradient( to right, rgba(125,211,252,0.15), rgba(34,211,238,0.15) );
+    color:var(--brand);
+    border:1px solid rgba(125,211,252,0.3);
+    font-weight:600;
+    letter-spacing:0.2px;
+  }
+  h1{
+    margin:12px 0 12px;
+    font-size:44px;
+    line-height:1.1;
+    letter-spacing:-0.5px;
+  }
+  .lead{
+    color:var(--muted);
+    font-size:18px;
+    max-width:62ch;
+  }
+  .cta-row{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:12px 16px;
+    border-radius:12px;
+    border:1px solid transparent;
+    background: linear-gradient(180deg, rgba(125,211,252,0.25), rgba(34,211,238,0.2));
+    color:#06202e;
+    font-weight:700;
+    letter-spacing:0.2px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 24px rgba(34,211,238,0.2);
+    cursor:pointer;
+    transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+    border-color: rgba(125,211,252,0.5);
+  }
+  .btn:hover{ transform: translateY(-1px); filter:saturate(1.2); }
+  .btn.alt{
+    background:linear-gradient(180deg, rgba(167,139,250,0.2), rgba(124,58,237,0.18));
+    color:#140b2b;
+    border-color:rgba(167,139,250,0.45);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 8px 24px rgba(124,58,237,0.18);
+  }
+  .hero-canvas{
+    position:relative;
+    background: radial-gradient(800px 600px at 40% 30%, rgba(125,211,252,0.12), transparent 60%),
+                linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)),
+                var(--panel);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:var(--radius);
+    min-height:320px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .grid{
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px;
+    opacity:0.5;
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+
+  main{
+    max-width:1200px;
+    margin:0 auto;
+    padding: 8px 24px 64px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:24px;
+  }
+
+  section{
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow: var(--shadow);
+  }
+  section h2{
+    font-size:24px;
+    margin:6px 0 8px;
+    letter-spacing:-0.2px;
+  }
+  section p{ color:var(--text); }
+  .muted{ color:var(--muted); }
+
+  .two-col{
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap:16px;
+  }
+  .kpi{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:10px;
+  }
+  .kpi .card{
+    background:var(--glass);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:12px;
+    padding:12px;
+  }
+  .card .label{ color:var(--muted); font-size:12px; }
+  .card .value{ font-weight:800; font-size:20px; margin-top:2px; }
+
+  .controls{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap:10px;
+  }
+  .control{
+    background: var(--panel-2);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:12px;
+    padding:10px;
+  }
+  .control label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .control input[type="range"]{ width:100%; }
+  .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+  canvas{ image-rendering: pixelated; }
+  .vis-split{ display:grid; grid-template-columns: 1.2fr 1fr; gap:12px; }
+  .vis-card{
+    background:var(--panel);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:12px;
+    padding:12px;
+    position:relative;
+  }
+  .legend{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .dot{ width:10px; height:10px; border-radius:999px; display:inline-block; }
+  .note{ font-size:12px; color:var(--muted); }
+
+  .pill{
+    display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+    background:rgba(125,211,252,0.1); border:1px solid rgba(125,211,252,0.3); color:var(--brand);
+    font-weight:600; font-size:12px;
+  }
+
+  footer{
+    max-width:1200px; margin:0 auto; padding: 8px 24px 64px; color:var(--muted);
+  }
+
+  @media (max-width: 980px){
+    .hero{ grid-template-columns: 1fr; }
+    .two-col{ grid-template-columns:1fr; }
+    .vis-split{ grid-template-columns:1fr; }
+    .kpi{ grid-template-columns:repeat(2,1fr) }
+    .controls{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 580px){
+    .controls{ grid-template-columns: 1fr; }
+  }
+</style>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+</head>
+<body>
+<header>
+  <div class="hero">
+    <div>
+      <div class="badge">PINNs • Physics + Deep Learning</div>
+      <h1>Physics‑Informed Neural Networks: learn PDEs by obeying the laws</h1>
+      <p class="lead">
+        Explore how neural networks solve differential equations by minimizing the physics residual instead of memorizing data.
+        This page blends intuition, math, and a live in‑browser demo of a PINN learning the 1D heat equation.
+      </p>
+      <div class="cta-row">
+        <button id="startBtn" class="btn">Start training</button>
+        <button id="pauseBtn" class="btn alt">Pause</button>
+        <button id="resetBtn" class="btn alt">Reset</button>
+      </div>
+      <p class="note" style="margin-top:8px">The demo uses numerical derivatives for clarity and speed in the browser while keeping the physics-informed idea intact.</p>
+    </div>
+    <div class="hero-canvas">
+      <canvas id="heroCanvas" width="640" height="360"></canvas>
+      <div class="grid"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <h2>What PINNs are</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          Physics‑Informed Neural Networks (PINNs) are neural networks trained to satisfy governing equations (ordinary or partial
+          differential equations), boundary conditions, and initial conditions. Instead of relying solely on labeled data,
+          they minimize a composite loss in which the main component is the residual of the differential equation at sampled
+          collocation points in the domain.
+        </p>
+        <p>
+          In essence, a PINN predicts a function \(u(\mathbf{x}, t; \theta)\). During training, automatic or numerical differentiation
+          is used to compute derivatives of \(u\), and the PDE residual \(R[u]\) is forced toward zero while also enforcing boundary/initial conditions.
+          This often leads to data‑efficient learning and solutions that generalize across the domain.
+        </p>
+      </div>
+      <div class="vis-card">
+        <div class="pill">PINN loss (schematic)</div>
+        <ul>
+          <li><b>Physics term:</b> Mean squared PDE residual \( \mathbb{E}[R[u]^2] \)</li>
+          <li><b>Boundary term:</b> Errors on boundaries \( \mathbb{E}[(u - u_{\partial\Omega})^2] \)</li>
+          <li><b>Initial term:</b> Errors at \(t=0\) or given initial state</li>
+          <li><b>Optional data:</b> Observations if you have them</li>
+        </ul>
+        <p class="note">By tuning the weights of these terms, you balance strict physics adherence with condition satisfaction and data fit.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How they work</h2>
+    <div class="two-col">
+      <div>
+        <ul>
+          <li><b>Neural ansatz:</b> Choose a differentiable network \(u_\theta(x,t)\) (e.g., MLP with \(\tanh\)).</li>
+          <li><b>Collocation:</b> Sample points in the space‑time domain to evaluate the physics residual.</li>
+          <li><b>Differentiation:</b> Compute derivatives of \(u_\theta\) to build the PDE residual \( R[u_\theta] \).</li>
+          <li><b>Composite loss:</b> Sum physics, boundary, and initial losses (plus optional data loss).</li>
+          <li><b>Optimization:</b> Update \(\theta\) via gradient descent (SGD/Adam) until residuals are small.</li>
+        </ul>
+        <p class="note">Many PINN implementations rely on automatic differentiation. In this demo, we compute PDE derivatives w.r.t. inputs using accurate central differences to keep the browser implementation minimal and transparent.</p>
+      </div>
+      <div>
+        <div class="kpi">
+          <div class="card">
+            <div class="label">Training steps</div>
+            <div class="value mono" id="kSteps">0</div>
+          </div>
+          <div class="card">
+            <div class="label">Physics loss</div>
+            <div class="value mono" id="kPhys">–</div>
+          </div>
+          <div class="card">
+            <div class="label">BC/IC loss</div>
+            <div class="value mono" id="kBCIC">–</div>
+          </div>
+          <div class="card">
+            <div class="label">Total loss</div>
+            <div class="value mono" id="kTotal">–</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Live demo: 1D heat equation PINN</h2>
+    <p class="muted">
+      We solve \( u_t = \alpha\,u_{xx} \) on \(x \in [0,1]\), \(t \in [0,T]\) with Dirichlet boundaries \(u(0,t)=u(1,t)=0\) and initial condition \(u(x,0)=\sin(\pi x)\).
+      The exact solution is \( u(x,t) = e^{-\alpha\pi^2 t}\sin(\pi x) \). The network learns to satisfy the PDE residual and conditions without seeing the exact solution.
+    </p>
+
+    <div class="controls" style="margin-bottom:10px">
+      <div class="control">
+        <label>Learning rate <span class="mono" id="lrVal"></span></label>
+        <input id="lr" type="range" min="1" max="100" value="25">
+      </div>
+      <div class="control">
+        <label>Physics weight <span class="mono" id="wPhysVal"></span></label>
+        <input id="wPhys" type="range" min="1" max="200" value="100">
+      </div>
+      <div class="control">
+        <label>BC/IC weight <span class="mono" id="wBCICVal"></span></label>
+        <input id="wBCIC" type="range" min="1" max="200" value="60">
+      </div>
+      <div class="control">
+        <label>Diffusivity α <span class="mono" id="alphaVal"></span></label>
+        <input id="alpha" type="range" min="5" max="150" value="50">
+      </div>
+      <div class="control">
+        <label>Time horizon T <span class="mono" id="TVal"></span></label>
+        <input id="T" type="range" min="10" max="120" value="60">
+      </div>
+      <div class="control">
+        <label>Collocation size <span class="mono" id="NcVal"></span></label>
+        <input id="Nc" type="range" min="32" max="512" value="160">
+      </div>
+    </div>
+
+    <div class="vis-split">
+      <div class="vis-card">
+        <div class="row" style="justify-content:space-between; align-items:center">
+          <div class="pill">u(x, t) heatmap</div>
+          <div class="legend">
+            <span class="dot" style="background:linear-gradient(45deg, #60a5fa, #22d3ee)"></span>
+            <span class="note">Predicted</span>
+            <span class="dot" style="background:#34d399"></span>
+            <span class="note">Exact (overlay)</span>
+          </div>
+        </div>
+        <canvas id="heatmap" width="640" height="360" style="width:100%; height:auto; margin-top:8px"></canvas>
+        <p class="note">Domain: x horizontal, t vertical. Exact solution is sampled overlay for reference only; it is NOT used for training.</p>
+      </div>
+      <div class="vis-card">
+        <div class="pill">Slices and losses</div>
+        <canvas id="slicePlot" width="640" height="180" style="width:100%; height:auto; margin-top:8px"></canvas>
+        <canvas id="lossPlot" width="640" height="140" style="width:100%; height:auto; margin-top:8px"></canvas>
+        <div class="row" style="justify-content:space-between; margin-top:8px">
+          <div class="row">
+            <label class="note">Slice time τ:</label>
+            <input id="sliceT" type="range" min="0" max="100" value="20" />
+            <span class="mono note" id="sliceTVal"></span>
+          </div>
+          <div class="row">
+            <button class="btn" id="downloadBtn">Download predictions (CSV)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Tip: start training, then adjust weights and learning rate slowly. If training becomes unstable, pause and lower the rate.</p>
+  </section>
+
+  <section>
+    <h2>Strengths and limits</h2>
+    <div class="two-col">
+      <div>
+        <ul>
+          <li><b>Pros:</b> Data‑efficient, embeds physics priors, works with sparse/partial observations, continuous solutions.</li>
+          <li><b>Cons:</b> Optimization can be stiff, loss balancing is delicate, high‑dimensional or chaotic systems are challenging.</li>
+          <li><b>Practical tips:</b> Normalize inputs/outputs, use smooth activations (\(\tanh\), SiLU), schedule loss weights, add curriculum on residual sampling.</li>
+        </ul>
+      </div>
+      <div class="vis-card">
+        <div class="pill">When to use PINNs</div>
+        <ul>
+          <li><b>Scarce data:</b> When measurements are minimal but equations are known.</li>
+          <li><b>Inverse problems:</b> Estimate hidden parameters by embedding them as trainable variables.</li>
+          <li><b>Surrogates:</b> Learn fast approximations to expensive solvers for design loops.</li>
+        </ul>
+        <p class="note">Classical solvers remain gold standards for accuracy and stability; PINNs complement them when data or differentiability matters.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Made for exploration and learning. The in‑browser PINN uses numerical input‑space derivatives for the PDE residual to keep the implementation compact and interactive.</p>
+</footer>
+
+<script>
+/*
+  PINN demo for 1D heat equation using a compact MLP.
+  - PDE: u_t = alpha * u_xx, x in [0,1], t in [0,T]
+  - BC:  u(0,t) = u(1,t) = 0
+  - IC:  u(x,0) = sin(pi x)
+  - Residual computed via central differences in input space (x,t) for clarity.
+  - Optimizer: Adam
+*/
+
+// --------------------- Utilities ---------------------
+const randn = (() => {
+  // Box-Muller
+  let spare = null;
+  return () => {
+    if (spare !== null){ const v=spare; spare=null; return v; }
+    let u=0, v=0, s=0;
+    while(s===0 || s>=1){ u=Math.random()*2-1; v=Math.random()*2-1; s=u*u+v*v; }
+    const mul = Math.sqrt(-2 * Math.log(s) / s);
+    spare = v*mul;
+    return u*mul;
+  };
+})();
+
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+
+// Exact solution for visualization (not used in training)
+function exactU(x,t,alpha){ return Math.exp(-alpha*Math.PI*Math.PI*t) * Math.sin(Math.PI*x); }
+
+// --------------------- Network ---------------------
+// Simple MLP: [2, H, H, 1] with tanh activations
+function makeMLP(input=2, hidden=32, output=1){
+  function initW(m,n){ // He/Xavier style small init for tanh
+    const W = new Float64Array(m*n);
+    const scale = Math.sqrt(1/(m+n));
+    for(let i=0;i<W.length;i++) W[i] = randn()*scale*1.5;
+    return W;
+  }
+  function initB(n){ const b=new Float64Array(n); return b; }
+
+  const L1 = {W:initW(hidden,input), b:initB(hidden), mW:new Float64Array(hidden*input), vW:new Float64Array(hidden*input), mb:new Float64Array(hidden), vb:new Float64Array(hidden)};
+  const L2 = {W:initW(hidden,hidden), b:initB(hidden), mW:new Float64Array(hidden*hidden), vW:new Float64Array(hidden*hidden), mb:new Float64Array(hidden), vb:new Float64Array(hidden)};
+  const L3 = {W:initW(output,hidden), b:initB(output), mW:new Float64Array(output*hidden), vW:new Float64Array(output*hidden), mb:new Float64Array(output), vb:new Float64Array(output)};
+
+  const net = {L1,L2,L3, hidden};
+
+  function forward(x, t){
+    // layer 1
+    const z1 = new Float64Array(net.hidden);
+    const a1 = new Float64Array(net.hidden);
+    for(let i=0;i<net.hidden;i++){
+      const w0 = net.L1.W[i*2+0], w1 = net.L1.W[i*2+1];
+      const s = w0*x + w1*t + net.L1.b[i];
+      z1[i]=s; a1[i]=Math.tanh(s);
+    }
+    // layer 2
+    const z2 = new Float64Array(net.hidden);
+    const a2 = new Float64Array(net.hidden);
+    for(let i=0;i<net.hidden;i++){
+      let s = net.L2.b[i];
+      for(let j=0;j<net.hidden;j++){
+        s += net.L2.W[i*net.hidden+j]*a1[j];
+      }
+      z2[i]=s; a2[i]=Math.tanh(s);
+    }
+    // layer 3
+    let out = net.L3.b[0];
+    for(let j=0;j<net.hidden;j++) out += net.L3.W[j]*a2[j];
+    return {x,t,z1,a1,z2,a2,out};
+  }
+
+  // Backprop a single sample given dL/dout
+  function backward(cache, dOut){
+    // grad for L3
+    const gL3W = new Float64Array(net.hidden);
+    let gL3b = dOut;
+    for(let j=0;j<net.hidden;j++){
+      gL3W[j] = dOut * cache.a2[j];
+    }
+    // grad propagate to a2
+    const gA2 = new Float64Array(net.hidden);
+    for(let j=0;j<net.hidden;j++){
+      gA2[j] = dOut * net.L3.W[j];
+    }
+    // through tanh: da = (1 - tanh^2) * dz
+    const gZ2 = new Float64Array(net.hidden);
+    for(let i=0;i<net.hidden;i++){
+      gZ2[i] = gA2[i] * (1 - cache.a2[i]*cache.a2[i]);
+    }
+    // grads L2
+    const gL2W = new Float64Array(net.hidden*net.hidden);
+    const gL2b = new Float64Array(net.hidden);
+    const gA1 = new Float64Array(net.hidden);
+    for(let i=0;i<net.hidden;i++){
+      gL2b[i] = gZ2[i];
+      for(let j=0;j<net.hidden;j++){
+        gL2W[i*net.hidden+j] = gZ2[i] * cache.a1[j];
+        gA1[j] += gZ2[i] * net.L2.W[i*net.hidden+j];
+      }
+    }
+    // through tanh to z1
+    const gZ1 = new Float64Array(net.hidden);
+    for(let i=0;i<net.hidden;i++){
+      gZ1[i] = gA1[i] * (1 - cache.a1[i]*cache.a1[i]);
+    }
+    // grads L1
+    const gL1W = new Float64Array(net.hidden*2);
+    const gL1b = new Float64Array(net.hidden);
+    for(let i=0;i<net.hidden;i++){
+      gL1b[i] = gZ1[i];
+      gL1W[i*2+0] = gZ1[i] * cache.x;
+      gL1W[i*2+1] = gZ1[i] * cache.t;
+    }
+    return {gL1W,gL1b,gL2W,gL2b,gL3W,gL3b};
+  }
+
+  function zeroGrads(G){
+    G.gL1W.fill(0); G.gL1b.fill(0);
+    G.gL2W.fill(0); G.gL2b.fill(0);
+    G.gL3W.fill(0); G.gL3b = 0;
+  }
+
+  function addGrads(G, g){
+    for(let i=0;i<G.gL1W.length;i++) G.gL1W[i]+=g.gL1W[i];
+    for(let i=0;i<G.gL1b.length;i++) G.gL1b[i]+=g.gL1b[i];
+    for(let i=0;i<G.gL2W.length;i++) G.gL2W[i]+=g.gL2W[i];
+    for(let i=0;i<G.gL2b.length;i++) G.gL2b[i]+=g.gL2b[i];
+    for(let i=0;i<G.gL3W.length;i++) G.gL3W[i]+=g.gL3W[i];
+    G.gL3b += g.gL3b;
+  }
+
+  // Adam optimizer for parameters
+  function adamStep(grads, lr, t){
+    const beta1 = 0.9, beta2 = 0.999, eps = 1e-8;
+
+    // L1 weights
+    for(let i=0;i<net.L1.W.length;i++){
+      const g = grads.gL1W[i];
+      net.L1.mW[i] = beta1*net.L1.mW[i] + (1-beta1)*g;
+      net.L1.vW[i] = beta2*net.L1.vW[i] + (1-beta2)*g*g;
+      const mhat = net.L1.mW[i]/(1-Math.pow(beta1,t));
+      const vhat = net.L1.vW[i]/(1-Math.pow(beta2,t));
+      net.L1.W[i] -= lr * mhat / (Math.sqrt(vhat)+eps);
+    }
+    for(let i=0;i<net.L1.b.length;i++){
+      const g = grads.gL1b[i];
+      net.L1.mb[i] = beta1*net.L1.mb[i] + (1-beta1)*g;
+      net.L1.vb[i] = beta2*net.L1.vb[i] + (1-beta2)*g*g;
+      const mhat = net.L1.mb[i]/(1-Math.pow(beta1,t));
+      const vhat = net.L1.vb[i]/(1-Math.pow(beta2,t));
+      net.L1.b[i] -= lr * mhat / (Math.sqrt(vhat)+eps);
+    }
+    // L2
+    for(let i=0;i<net.L2.W.length;i++){
+      const g = grads.gL2W[i];
+      net.L2.mW[i] = beta1*net.L2.mW[i] + (1-beta1)*g;
+      net.L2.vW[i] = beta2*net.L2.vW[i] + (1-beta2)*g*g;
+      const mhat = net.L2.mW[i]/(1-Math.pow(beta1,t));
+      const vhat = net.L2.vW[i]/(1-Math.pow(beta2,t));
+      net.L2.W[i] -= lr * mhat / (Math.sqrt(vhat)+eps);
+    }
+    for(let i=0;i<net.L2.b.length;i++){
+      const g = grads.gL2b[i];
+      net.L2.mb[i] = beta1*net.L2.mb[i] + (1-beta1)*g;
+      net.L2.vb[i] = beta2*net.L2.vb[i] + (1-beta2)*g*g;
+      const mhat = net.L2.mb[i]/(1-Math.pow(beta1,t));
+      const vhat = net.L2.vb[i]/(1-Math.pow(beta2,t));
+      net.L2.b[i] -= lr * mhat / (Math.sqrt(vhat)+eps);
+    }
+    // L3
+    for(let i=0;i<net.L3.W.length;i++){
+      const g = grads.gL3W[i];
+      net.L3.mW[i] = beta1*net.L3.mW[i] + (1-beta1)*g;
+      net.L3.vW[i] = beta2*net.L3.vW[i] + (1-beta2)*g*g;
+      const mhat = net.L3.mW[i]/(1-Math.pow(beta1,t));
+      const vhat = net.L3.vW[i]/(1-Math.pow(beta2,t));
+      net.L3.W[i] -= lr * mhat / (Math.sqrt(vhat)+eps);
+    }
+    net.L3.mb[0] = beta1*net.L3.mb[0] + (1-beta1)*grads.gL3b;
+    net.L3.vb[0] = beta2*net.L3.vb[0] + (1-beta2)*grads.gL3b*grads.gL3b;
+    const mhat = net.L3.mb[0]/(1-Math.pow(beta1,t));
+    const vhat = net.L3.vb[0]/(1-Math.pow(beta2,t));
+    net.L3.b[0] -= lr * mhat / (Math.sqrt(vhat)+1e-8);
+  }
+
+  return {net, forward, backward, zeroGrads, addGrads, adamStep};
+}
+
+// --------------------- PINN Training Setup ---------------------
+const state = {
+  mlp: makeMLP(2, 32, 1),
+  step: 0,
+  running: false,
+  alpha: 0.5,
+  T: 0.6,
+  eps: 1e-2, // for central differences
+  wPhys: 1.0,
+  wBCIC: 0.6,
+  lr: 1e-3,
+  Nc: 160,
+  history: { total: [], phys: [], bcic: [] },
+};
+
+function uiNumber(val, digits=4){
+  if (!isFinite(val)) return "–";
+  return Number(val).toFixed(digits);
+}
+
+// Sample points
+function sampleCollocation(N, eps, T){
+  const pts = [];
+  for(let i=0;i<N;i++){
+    const x = lerp(eps, 1-eps, Math.random());
+    const t = lerp(eps, T-eps, Math.random());
+    pts.push([x,t]);
+  }
+  return pts;
+}
+function sampleBoundary(Nt, T){ // boundaries at x=0 and x=1
+  const pts = [];
+  for(let i=0;i<Nt;i++){
+    const t = lerp(0, T, Math.random());
+    pts.push([0, t, 0.0]); // target 0
+    pts.push([1, t, 0.0]); // target 0
+  }
+  return pts;
+}
+function sampleInitial(Nx){ // initial at t=0
+  const pts = [];
+  for(let i=0;i<Nx;i++){
+    const x = Math.random();
+    pts.push([x, 0.0, Math.sin(Math.PI*x)]);
+  }
+  return pts;
+}
+
+// Training step: accumulate gradients
+function trainStep(){
+  const {mlp} = state;
+  const eps = state.eps;
+  const alpha = state.alpha;
+  const Nc = state.Nc;
+
+  const colloc = sampleCollocation(Nc, eps, state.T);
+  const bc = sampleBoundary(Math.max(16, Math.floor(Nc/8)), state.T);
+  const ic = sampleInitial(Math.max(16, Math.floor(Nc/8)));
+
+  // gradient accumulators
+  const G = {
+    gL1W: new Float64Array(mlp.net.L1.W.length),
+    gL1b: new Float64Array(mlp.net.L1.b.length),
+    gL2W: new Float64Array(mlp.net.L2.W.length),
+    gL2b: new Float64Array(mlp.net.L2.b.length),
+    gL3W: new Float64Array(mlp.net.L3.W.length),
+    gL3b: 0
+  };
+  mlp.zeroGrads(G);
+
+  let Lphys=0, Lbcic=0;
+
+  // Physics residual: r = (u(x,t+e)-u(x,t-e))/(2e) - alpha * (u(x+e,t)-2u(x,t)+u(x-e,t))/e^2
+  // Accumulate dL/du_* and backprop
+  for(const [x,t] of colloc){
+    const xtp = mlp.forward(x, t+eps);
+    const xtm = mlp.forward(x, t-eps);
+    const xpp = mlp.forward(x+eps, t);
+    const xpm = mlp.forward(x-eps, t);
+    const x00 = mlp.forward(x, t);
+    const utp = xtp.out, utm = xtm.out, uxp = xpp.out, uxm = xpm.out, u00 = x00.out;
+
+    const ut = (utp - utm) / (2*eps);
+    const uxx = (uxp - 2*u00 + uxm) / (eps*eps);
+    const r = ut - alpha * uxx;
+    Lphys += r*r;
+
+    // dL/du_* for this sample
+    const dL_dr = 2*r;
+    const coeff_utp = 1/(2*eps);
+    const coeff_utm = -1/(2*eps);
+    const coeff_uxp = -alpha/(eps*eps);
+    const coeff_uxm = -alpha/(eps*eps);
+    const coeff_u00 = 2*alpha/(eps*eps);
+
+    const dOut_utp = dL_dr * coeff_utp / colloc.length * state.wPhys;
+    const dOut_utm = dL_dr * coeff_utm / colloc.length * state.wPhys;
+    const dOut_uxp = dL_dr * coeff_uxp / colloc.length * state.wPhys;
+    const dOut_uxm = dL_dr * coeff_uxm / colloc.length * state.wPhys;
+    const dOut_u00 = dL_dr * coeff_u00 / colloc.length * state.wPhys;
+
+    mlp.addGrads(G, mlp.backward(xtp, dOut_utp));
+    mlp.addGrads(G, mlp.backward(xtm, dOut_utm));
+    mlp.addGrads(G, mlp.backward(xpp, dOut_uxp));
+    mlp.addGrads(G, mlp.backward(xpm, dOut_uxm));
+    mlp.addGrads(G, mlp.backward(x00, dOut_u00));
+  }
+  Lphys /= colloc.length;
+
+  // Boundary conditions
+  for(const [x,t,target] of bc){
+    const c = mlp.forward(x,t);
+    const diff = c.out - target;
+    Lbcic += diff*diff;
+    const dOut = 2*diff / bc.length * state.wBCIC;
+    mlp.addGrads(G, mlp.backward(c, dOut));
+  }
+
+  // Initial condition
+  for(const [x,t,target] of ic){
+    const c = mlp.forward(x,t);
+    const diff = c.out - target;
+    Lbcic += diff*diff;
+    const dOut = 2*diff / ic.length * state.wBCIC;
+    mlp.addGrads(G, mlp.backward(c, dOut));
+  }
+  Lbcic /= (bc.length + ic.length);
+
+  const Ltotal = state.wPhys*Lphys + state.wBCIC*Lbcic;
+
+  // Adam step
+  state.step++;
+  mlp.adamStep(G, state.lr, state.step);
+
+  // log history
+  state.history.total.push(Ltotal);
+  state.history.phys.push(Lphys);
+  state.history.bcic.push(Lbcic);
+
+  // KPIs
+  document.getElementById('kSteps').textContent = state.step;
+  document.getElementById('kPhys').textContent = uiNumber(Lphys, 5);
+  document.getElementById('kBCIC').textContent = uiNumber(Lbcic, 5);
+  document.getElementById('kTotal').textContent = uiNumber(Ltotal, 5);
+}
+
+// --------------------- Visualization ---------------------
+const heroCtx = document.getElementById('heroCanvas').getContext('2d');
+function drawHero(){
+  const ctx = heroCtx;
+  const w = ctx.canvas.width, h = ctx.canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  // ambient gradient shapes
+  const g1 = ctx.createRadialGradient(w*0.2, h*0.3, 10, w*0.2, h*0.3, 300);
+  g1.addColorStop(0, 'rgba(125,211,252,0.06)');
+  g1.addColorStop(1, 'rgba(125,211,252,0.0)');
+  ctx.fillStyle = g1;
+  ctx.fillRect(0,0,w,h);
+
+  const g2 = ctx.createRadialGradient(w*0.8, h*0.6, 10, w*0.8, h*0.6, 260);
+  g2.addColorStop(0, 'rgba(167,139,250,0.05)');
+  g2.addColorStop(1, 'rgba(167,139,250,0.0)');
+  ctx.fillStyle = g2;
+  ctx.fillRect(0,0,w,h);
+
+  // flowing lines
+  ctx.lineWidth = 1.2;
+  for(let k=0;k<24;k++){
+    const hueA = 190 + 30*Math.sin(k*0.4);
+    const hueB = 280 + 20*Math.cos(k*0.6);
+    const grad = ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0, `hsla(${hueA},80%,60%,0.3)`);
+    grad.addColorStop(1, `hsla(${hueB},80%,60%,0.25)`);
+    ctx.strokeStyle = grad;
+
+    ctx.beginPath();
+    for(let x=0;x<w;x++){
+      const t = (performance.now()*0.0005 + k*0.1);
+      const y = h*0.5 + 50*Math.sin( x*0.01 + t ) + 20*Math.sin( x*0.035 + t*0.8 );
+      if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+
+  requestAnimationFrame(drawHero);
+}
+drawHero();
+
+// Heatmap rendering
+const heatCtx = document.getElementById('heatmap').getContext('2d');
+const sliceCtx = document.getElementById('slicePlot').getContext('2d');
+const lossCtx  = document.getElementById('lossPlot').getContext('2d');
+
+function colorMap(v){
+  // v in [-1,1]
+  const x = (v+1)/2;
+  // Turbo-like approximation
+  const r = Math.min(1, Math.max(0, 1.7*x - 0.3));
+  const g = Math.min(1, Math.max(0, 1.7*(1 - Math.abs(x-0.5)*2)));
+  const b = Math.min(1, Math.max(0, 1.7*(1 - x) - 0.3));
+  return [Math.floor(r*255), Math.floor(g*255), Math.floor(b*255)];
+}
+
+function drawHeatmap(){
+  const {mlp, alpha, T} = state;
+  const ctx = heatCtx;
+  const W = ctx.canvas.width, H = ctx.canvas.height;
+  const img = ctx.createImageData(W,H);
+  let idx = 0;
+  // normalize for display
+  const vmax = 1; // initial amplitude
+  for(let j=0;j<H;j++){
+    const t = T * (j/(H-1));
+    for(let i=0;i<W;i++){
+      const x = i/(W-1);
+      const u = mlp.forward(x,t).out;
+      const [r,g,b] = colorMap(clamp(u/vmax, -1, 1));
+      img.data[idx++] = r;
+      img.data[idx++] = g;
+      img.data[idx++] = b;
+      img.data[idx++] = 255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+
+  // exact overlay as contour-ish lines
+  ctx.save();
+  ctx.globalAlpha = 0.6;
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 1;
+  const levels = 10;
+  for(let l=1;l<=levels;l++){
+    const val = l/(levels+1);
+    ctx.beginPath();
+    let started=false;
+    for(let j=0;j<H;j+=2){
+      const t = T * (j/(H-1));
+      for(let i=0;i<W;i+=2){
+        const x = i/(W-1);
+        const ue = exactU(x,t,alpha);
+        if(ue>val-0.01 && ue<val+0.01){
+          if(!started){ ctx.moveTo(i,j); started=true; }
+          else ctx.lineTo(i,j);
+        }
+      }
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawSlice(){
+  const {mlp, alpha, T} = state;
+  const ctx = sliceCtx;
+  const W = ctx.canvas.width, H = ctx.canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = 24;
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad);
+  ctx.moveTo(pad, H-pad); ctx.lineTo(pad, pad);
+  ctx.stroke();
+
+  const Nt = 256;
+  const tau = state.sliceT * T;
+  // predicted
+  ctx.strokeStyle = '#7dd3fc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for(let i=0;i<Nt;i++){
+    const x = i/(Nt-1);
+    const u = mlp.forward(x, tau).out;
+    const px = lerp(pad, W-pad, x);
+    const py = lerp(H-pad, pad, (u+1)/2);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+
+  // exact
+  ctx.strokeStyle = '#34d399';
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  for(let i=0;i<Nt;i++){
+    const x = i/(Nt-1);
+    const u = exactU(x, tau, alpha);
+    const px = lerp(pad, W-pad, x);
+    const py = lerp(H-pad, pad, (u+1)/2);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // labels
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '12px Inter, sans-serif';
+  ctx.fillText('x', W - pad + 8, H - pad + 4);
+  ctx.fillText('u(x, τ)', pad - 4, pad - 6);
+}
+
+function drawLoss(){
+  const ctx = lossCtx;
+  const W = ctx.canvas.width, H = ctx.canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = 30;
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath();
+  ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad);
+  ctx.moveTo(pad, H-pad); ctx.lineTo(pad, pad);
+  ctx.stroke();
+
+  const hist = state.history;
+  if(hist.total.length < 3) return;
+
+  // compute log scale
+  const N = hist.total.length;
+  const maxX = N-1;
+  let minY = 1e9, maxY = -1e9;
+  for(let i=0;i<N;i++){
+    const y = Math.log10(hist.total[i]+1e-12);
+    if(y<minY) minY=y; if(y>maxY) maxY=y;
+  }
+  // add padding
+  const yPad = 0.3;
+  minY -= yPad; maxY += yPad;
+
+  function plot(series, color){
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const x = i;
+      const y = Math.log10(series[i]+1e-12);
+      const px = lerp(pad, W-pad, x/maxX);
+      const py = lerp(H-pad, pad, (y-minY)/(maxY-minY));
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+
+  plot(hist.total, '#eab308'); // yellow
+  plot(hist.phys,  '#60a5fa'); // blue
+  plot(hist.bcic,  '#a78bfa'); // violet
+
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '12px Inter, sans-serif';
+  ctx.fillText('steps', W - pad + 6, H - pad + 4);
+  ctx.fillText('log loss', 4, pad - 8);
+
+  // legend
+  const items = [
+    {name:'total', color:'#eab308'},
+    {name:'physics', color:'#60a5fa'},
+    {name:'bc+ic', color:'#a78bfa'},
+  ];
+  let lx = pad+6, ly = pad+6;
+  for(const it of items){
+    ctx.fillStyle = it.color; ctx.fillRect(lx, ly-8, 12, 12);
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillText(it.name, lx+16, ly+2);
+    lx += 70;
+  }
+}
+
+function render(){
+  drawHeatmap();
+  drawSlice();
+  drawLoss();
+  if(state.running){
+    // take a few optimization steps per frame for speed
+    const stepsPerFrame = 2;
+    for(let k=0;k<stepsPerFrame;k++) trainStep();
+  }
+  requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+
+// --------------------- UI wiring ---------------------
+const $ = (id)=>document.getElementById(id);
+
+// Controls display mapping
+function syncUI(){
+  $('lrVal').textContent = uiNumber(state.lr, 4);
+  $('wPhysVal').textContent = uiNumber(state.wPhys, 2);
+  $('wBCICVal').textContent = uiNumber(state.wBCIC, 2);
+  $('alphaVal').textContent = uiNumber(state.alpha, 3);
+  $('TVal').textContent = uiNumber(state.T, 3);
+  $('NcVal').textContent = state.Nc;
+  $('sliceTVal').textContent = 'τ = ' + uiNumber(state.sliceT*state.T, 3);
+}
+$('lr').addEventListener('input', e => { state.lr = Math.pow(10, -4 + (+e.target.value)/100 * 2); syncUI(); });
+$('wPhys').addEventListener('input', e => { state.wPhys = (+e.target.value)/100; syncUI(); });
+$('wBCIC').addEventListener('input', e => { state.wBCIC = (+e.target.value)/100; syncUI(); });
+$('alpha').addEventListener('input', e => { state.alpha = (+e.target.value)/100; syncUI(); });
+$('T').addEventListener('input', e => { state.T = (+e.target.value)/100; syncUI(); });
+$('Nc').addEventListener('input', e => { state.Nc = Math.round(+e.target.value); syncUI(); });
+$('sliceT').addEventListener('input', e => { state.sliceT = (+e.target.value)/100; syncUI(); });
+
+$('startBtn').addEventListener('click', () => state.running = true);
+$('pauseBtn').addEventListener('click', () => state.running = false);
+$('resetBtn').addEventListener('click', () => {
+  state.mlp = makeMLP(2, 32, 1);
+  state.step = 0;
+  state.history = {total:[], phys:[], bcic:[]};
+});
+
+$('downloadBtn').addEventListener('click', () => {
+  // Dump predicted u(x,t) on a grid as CSV
+  const W = 128, H = 64;
+  let csv = 'x,t,u_pred,u_exact\n';
+  for(let j=0;j<H;j++){
+    const t = state.T * (j/(H-1));
+    for(let i=0;i<W;i++){
+      const x = i/(W-1);
+      const up = state.mlp.forward(x,t).out;
+      const ue = exactU(x,t,state.alpha);
+      csv += `${x.toFixed(6)},${t.toFixed(6)},${up.toFixed(8)},${ue.toFixed(8)}\n`;
+    }
+  }
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pinn_heat_solution.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+// Initial values from sliders
+(function initUI(){
+  // set consistent displayed values with default slider positions
+  $('lr').dispatchEvent(new Event('input'));
+  $('wPhys').dispatchEvent(new Event('input'));
+  $('wBCIC').dispatchEvent(new Event('input'));
+  $('alpha').dispatchEvent(new Event('input'));
+  $('T').dispatchEvent(new Event('input'));
+  $('Nc').dispatchEvent(new Event('input'));
+  $('sliceT').dispatchEvent(new Event('input'));
+})();
+
+// Initial slice parameter
+state.sliceT = 0.2;
+syncUI();
+
+</script>
+</body>
+</html>
