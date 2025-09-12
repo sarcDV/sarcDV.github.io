@@ -34,6 +34,7 @@
                 var(--bg);
     color:var(--text);
     line-height:1.5;
+    overflow-x: hidden;
   }
   header{
     position:relative;
@@ -208,6 +209,29 @@
   @media (max-width: 580px){
     .controls{ grid-template-columns: 1fr; }
   }
+  @media (max-width: 580px) {
+    header {
+      padding: 32px 16px 24px;
+    }
+    h1 {
+      font-size: 28px;
+      line-height: 1.2;
+      max-width: 100%;
+      word-break: break-word;
+    }
+    .lead {
+      font-size: 16px;
+      max-width: 100%;
+      word-break: break-word;
+    }
+    .hero {
+      grid-template-columns: 1fr;
+    }
+    .hero-canvas {
+      min-height: 240px;
+    }
+  }
+
 </style>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async
