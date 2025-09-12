@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <title>Self-Organizing Map (SOM): Concepts, Simulation, and Demos</title>
+  <style>
+    :root{
+      --bg: #0f1226;
+      --bg-soft: #141735;
+      --card: #171a3d;
+      --ink: #e7ebff;
+      --ink-dim: #c2c8ff;
+      --accent: #6d9eff;
+      --accent-2: #76f7d8;
+      --warn: #ffcc66;
+      --danger: #ff6d7f;
+      --muted: #8992d2;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.04);
+      --radius: 14px;
+      --radius-sm: 10px;
+    }
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      color: var(--ink);
+      background: radial-gradient(1000px 600px at 20% -10%, #1b2257, transparent 60%),
+                  radial-gradient(1200px 800px at 110% 10%, #093043, transparent 40%),
+                  linear-gradient(180deg, #090b1c, #090b1c 200px, #0f1226 800px);
+      background-attachment: fixed;
+    }
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(15,18,38,0.9), rgba(15,18,38,0.6));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 20px;
+    }
+    .hero{
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      align-items: center;
+      padding: 30px 0 10px;
+    }
+    .badge{
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 10px; border-radius: 999px;
+      background: linear-gradient(90deg, rgba(118,247,216,0.12), rgba(109,158,255,0.12));
+      color: var(--ink); font-weight: 600; font-size: 12px; letter-spacing: 0.02em;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    h1{
+      margin: 10px 0 14px; font-size: 44px; line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+    p.lead{
+      color: var(--ink-dim);
+      font-size: 16px;
+      max-width: 60ch;
+      margin: 0 0 16px;
+    }
+    .cta{
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .btn{
+      appearance: none; border: 0; border-radius: 12px; padding: 12px 16px;
+      background: linear-gradient(180deg, #2a3a8a, #22306e);
+      color: white; font-weight: 700; letter-spacing: 0.02em; cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    .btn.secondary{
+      background: linear-gradient(180deg, #1b204a, #151938);
+      color: var(--ink); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(23,26,61,0.92), rgba(23,26,61,0.86));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .grid{
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .col-12{ grid-column: span 12; }
+    .col-8{ grid-column: span 8; }
+    .col-6{ grid-column: span 6; }
+    .col-4{ grid-column: span 4; }
+    .col-3{ grid-column: span 3; }
+    @media (max-width: 1100px){
+      .hero{ grid-template-columns: 1fr; }
+      .col-8, .col-6, .col-4, .col-3{ grid-column: span 12; }
+    }
+    h2{
+      font-size: 26px; margin: 0 0 10px;
+    }
+    h3{
+      font-size: 18px; margin: 0 0 8px;
+    }
+    .muted{ color: var(--muted); }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:4px 8px; border-radius: 999px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--ink);
+    }
+    .list{
+      display: grid; gap: 8px;
+      margin: 8px 0 0; padding: 0; list-style: none;
+    }
+    .list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--ink-dim);
+    }
+
+    .list li::before{ content: "•"; color: var(--accent-2); line-height: 20px; }
+    .control{
+      display: flex; flex-direction: column; gap: 6px;
+      background: #101333; border-radius: var(--radius-sm);
+      padding: 10px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .control label{
+      display: flex; justify-content: space-between; font-size: 12px; color: var(--muted);
+    }
+    input[type="range"]{ width: 100%; }
+    input[type="number"], select{
+      background: #0c1030; border: 1px solid rgba(255,255,255,0.1);
+      color: var(--ink); border-radius: 10px; padding: 8px 10px; width: 100%;
+    }
+    .kbd{
+      padding: 2px 6px; border-radius: 6px; background: #0d1028; border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px; color: var(--ink-dim);
+    }
+    canvas{
+      width: 100%; height: auto; border-radius: var(--radius);
+      background: #0b0e26; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .stat{
+      display:flex; align-items:center; justify-content: space-between;
+      background:#0e1231; border:1px solid rgba(255,255,255,0.06);
+      padding:10px 12px; border-radius: 12px; font-size: 13px; color: var(--ink-dim);
+    }
+    .legend{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:12px; color: var(--ink-dim);
+    }
+    .legend .chip{ width:12px; height:12px; border-radius:3px; display:inline-block; border:1px solid rgba(255,255,255,0.25); }
+    .footer{
+      margin: 40px 0 30px; text-align: center; color: var(--muted); font-size: 12px;
+    }
+    .code{
+      white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px; color: #cfe1ff; background: #0a0d22; border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 10px;
+    }
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .tab-btn{
+      background:#0e1231; border:1px solid rgba(255,255,255,0.08); color:var(--ink); border-radius:10px; padding:8px 10px; cursor:pointer;
+    }
+    .tab-btn.active{ background: linear-gradient(180deg, #2a3a8a, #22306e); }
+    .inline-tags{ display:flex; gap:6px; flex-wrap:wrap; }
+    .callout{
+      border-left: 3px solid var(--accent-2);
+      background: rgba(118,247,216,0.08);
+      padding: 10px 12px; border-radius: 10px; color: var(--ink);
+    }
+    .split{
+      display:grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    @media (max-width: 900px){ .split{ grid-template-columns: 1fr; } }
+    .panel, .wrap, .list li, p, h1, h2, h3 {
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    }
+    /* 🌐 Mobile-friendly adjustments */
+    @media (max-width: 900px) {
+      body {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      h1 {
+        font-size: 32px;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      h3 {
+        font-size: 18px;
+      }
+
+      .wrap {
+        padding: 16px 12px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 20px 0;
+      }
+
+      .control label {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100%;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .tab-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .cta {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .pill {
+        font-size: 11px;
+        padding: 4px 6px;
+      }
+
+      .kbd {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="hero">
+        <div>
+          <span class="badge">Neural topology • Competitive learning</span>
+          <h1>Self-Organizing Map (SOM)</h1>
+          <p class="lead">A Self-Organizing Map is an unsupervised neural network that projects high-dimensional data onto a low-dimensional grid, preserving topological relationships. Explore the concept, watch it learn in real-time, and try a simple use case.</p>
+          <div class="cta">
+            <button class="btn" id="jumpSim">Play with the live simulation</button>
+            <button class="btn secondary" id="jumpUseCase">Try the use case</button>
+          </div>
+          <div style="margin-top:10px;" class="inline-tags">
+            <span class="pill">Topology-preserving</span>
+            <span class="pill">Unsupervised</span>
+            <span class="pill">Dimensionality reduction</span>
+            <span class="pill">Clustering</span>
+          </div>
+        </div>
+        <div class="panel">
+          <h3 style="margin-bottom:6px;">Quick overview</h3>
+          <ul class="list">
+            <li><b>What:</b> A grid of “neurons,” each with a weight vector; they compete to represent input samples.</li>
+            <li><b>How:</b> Find the best-matching neuron (BMU), then nudge it and its neighbors toward the input.</li>
+            <li><b>Why:</b> The grid self-organizes into a map of the data manifold, revealing structure and clusters.</li>
+            <li><b>When:</b> Visualizing high-D data, clustering with topology, vector quantization, and prototyping.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Concept -->
+    <section class="grid" id="concept">
+      <div class="col-8">
+        <div class="panel">
+          <h2>What is a SOM?</h2>
+          <p>A Self-Organizing Map (SOM), also called a Kohonen map, is a 2D lattice of units. Each unit has a weight vector in the same space as the input. During training, inputs pull the most similar unit—the best matching unit (BMU)—and its neighbors closer, so nearby units in the lattice specialize in nearby regions of the data space. The result is a topology-preserving projection: neighborhoods in data map to neighborhoods on the grid.</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="panel">
+          <h2>Core mechanics</h2>
+          <ul class="list">
+            <li><b>BMU:</b> For input x, find unit i minimizing distance d(x, wᵢ) (usually Euclidean).</li>
+            <li><b>Neighborhood:</b> Units near the BMU in grid coordinates receive a larger update.</li>
+            <li><b>Update:</b> wⱼ ← wⱼ + α(t) · hⱼ,ᵇᵐᵤ(t) · (x − wⱼ), with decaying α and neighborhood width.</li>
+            <li><b>Convergence:</b> Start broad and strong; narrow and fine-tune over time.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="panel">
+          <h2>When and why to use SOMs</h2>
+          <div class="split">
+            <div>
+              <h3>Great fits</h3>
+              <ul class="list">
+                <li><b>Topology-aware clustering:</b> You want cluster structure and neighborhood relationships.</li>
+                <li><b>Visualization:</b> Map complex vectors (e.g., spectra, embeddings) onto an interpretable 2D grid.</li>
+                <li><b>Vector quantization:</b> Build codebooks for compression or fast nearest-neighbor lookups.</li>
+                <li><b>Prototyping:</b> Quick, unsupervised exploration before committing to labels or models.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Considerations</h3>
+              <ul class="list">
+                <li><b>Parameters matter:</b> Learning-rate and neighborhood schedules strongly affect outcomes.</li>
+                <li><b>Grid bias:</b> The pre-set grid size/shape constrains resolution and topology.</li>
+                <li><b>Scale sensitivity:</b> Inputs should be normalized; feature scaling changes the geometry.</li>
+                <li><b>Alternatives:</b> For pure visualization consider t-SNE/UMAP; for clustering consider k-means/GMM.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px;">
+            Tip: Normalize features (e.g., to [0,1] or z-score). Start with a larger neighborhood that decays roughly exponentially over the training horizon.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr style="border-color: rgba(255,255,255,0.08); margin: 24px 0;">
+
+    <!-- Live Simulation -->
+    <section class="grid" id="simulation">
+      <div class="col-8">
+        <div class="panel">
+          <h2>Live simulation: train a SOM</h2>
+          <div class="legend" style="margin-bottom:8px;">
+            <span class="chip" style="background:#69d2e7;"></span> Data
+            <span class="chip" style="background:#f9d56e;"></span> Neurons
+            <span class="chip" style="background:#ef6c88;"></span> BMU trace
+          </div>
+          <canvas id="simCanvas" width="720" height="520"></canvas>
+          <div class="stat" style="margin-top:10px;">
+            <div><b>Epoch:</b> <span id="epoch">0</span></div>
+            <div><b>Step:</b> <span id="step">0</span></div>
+            <div><b>Learning rate:</b> <span id="lrRead">—</span></div>
+            <div><b>Radius:</b> <span id="radRead">—</span></div>
+          </div>
+          <div class="code" style="margin-top:10px;">
+BMU: argminᵢ ∥x − wᵢ∥₂
+Update: wⱼ ← wⱼ + α(t) · exp(−∥rⱼ − rᵇᵐᵤ∥² / (2σ(t)²)) · (x − wⱼ)
+α(t), σ(t): decay from initial values to small final values over training
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="panel">
+          <h3>Controls</h3>
+          <div class="control">
+            <label>Dataset
+              <select id="dataset">
+                <option value="blobs">Blobs (3 clusters)</option>
+                <option value="ring">Ring + center</option>
+                <option value="grid">Grid points</option>
+                <option value="spiral">Two spirals</option>
+              </select>
+            </label>
+            <label>Samples
+              <input type="number" id="samples" min="100" max="10000" value="1200" />
+            </label>
+          </div>
+          <div class="control">
+            <label>Grid size (WxH)
+              <div class="split">
+                <input type="number" id="gw" min="5" max="40" value="18" />
+                <input type="number" id="gh" min="5" max="40" value="12" />
+              </div>
+            </label>
+            <label>Topology
+              <select id="topology">
+                <option value="rect">Rectangular</option>
+                <option value="hex">Hexagonal</option>
+              </select>
+            </label>
+          </div>
+          <div class="control">
+            <label>Initial learning rate
+              <input type="range" id="lr" min="0.01" max="1" step="0.01" value="0.35" />
+            </label>
+            <label>Initial radius
+              <input type="range" id="radius" min="1" max="20" step="1" value="8" />
+            </label>
+            <label>Training epochs
+              <input type="number" id="epochs" min="1" max="200" value="50" />
+            </label>
+            <label>Steps per frame
+              <input type="range" id="spf" min="1" max="200" step="1" value="30" />
+            </label>
+            <div style="display:flex; gap:8px; flex-wrap: wrap;">
+              <button class="btn" id="start">Start / Pause</button>
+              <button class="btn secondary" id="stepBtn">Step</button>
+              <button class="btn secondary" id="reset">Reset</button>
+            </div>
+            <div style="margin-top:6px; color:var(--muted); font-size:12px;">
+              Keyboard: <span class="kbd">Space</span> start/pause, <span class="kbd">.</span> step, <span class="kbd">r</span> reset
+            </div>
+          </div>
+          <div class="control">
+            <label>Visualization
+              <select id="viz">
+                <option value="lattice">Lattice over data</option>
+                <option value="umatrix">U‑Matrix (inter-neuron distances)</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr style="border-color: rgba(255,255,255,0.08); margin: 24px 0;">
+
+    <!-- Use Case: Color Quantization -->
+    <section class="grid" id="usecase">
+      <div class="col-6">
+        <div class="panel">
+          <h2>Use case: palette learning for color quantization</h2>
+          <p>Train a small SOM in RGB space to learn a palette from an image, then map each pixel to its nearest neuron. This is vector quantization guided by topology: similar colors become neighboring codewords on the grid.</p>
+          <div class="control">
+            <label>Upload image
+              <input type="file" id="imgInput" accept="image/*" />
+            </label>
+            <label>Palette grid (WxH)
+              <div class="split">
+                <input type="number" id="cgW" min="2" max="24" value="8" />
+                <input type="number" id="cgH" min="2" max="24" value="8" />
+              </div>
+            </label>
+            <label>Epochs
+              <input type="number" id="cEpochs" min="1" max="50" value="10" />
+            </label>
+            <label>Learning rate
+              <input type="range" id="cLR" min="0.05" max="1" step="0.05" value="0.5" />
+            </label>
+            <button class="btn" id="runColor">Train palette and quantize</button>
+          </div>
+          <div class="inline-tags" style="margin-top:8px;">
+            <span class="pill">Compression</span>
+            <span class="pill">Faster rendering</span>
+            <span class="pill">Artistic stylization</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="panel">
+          <div class="tabs" style="margin-bottom:8px;">
+            <button class="tab-btn active" data-tab="orig">Original</button>
+            <button class="tab-btn" data-tab="quant">Quantized</button>
+            <button class="tab-btn" data-tab="palette">Palette map</button>
+          </div>
+          <div id="tab-orig">
+            <canvas id="imgCanvas" width="600" height="380"></canvas>
+          </div>
+          <div id="tab-quant" style="display:none;">
+            <canvas id="quantCanvas" width="600" height="380"></canvas>
+          </div>
+          <div id="tab-palette" style="display:none;">
+            <canvas id="palCanvas" width="600" height="380"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr style="border-color: rgba(255,255,255,0.08); margin: 24px 0;">
+
+    <!-- Practical notes -->
+    <section class="grid">
+      <div class="col-4">
+        <div class="panel">
+          <h2>Parameter tuning</h2>
+          <ul class="list">
+            <li><b>Learning rate α(t):</b> Start larger (e.g., 0.3–0.7) and decay exponentially to ~0.01.</li>
+            <li><b>Radius σ(t):</b> Begin near max(gridW, gridH)/2 and decay to 1–2.</li>
+            <li><b>Schedule:</b> Use epoch-based decay: α(t)=α₀·exp(−t/T), σ(t)=σ₀·exp(−t/T).</li>
+            <li><b>Epochs:</b> Enough to cover rough ordering then fine tuning (e.g., 20–100).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="panel">
+          <h2>Diagnostics</h2>
+          <ul class="list">
+            <li><b>U‑Matrix:</b> Visualize distances between neighboring units—ridges suggest cluster boundaries.</li>
+            <li><b>Quantization error:</b> Average ∥x − wᵇᵐᵤ∥; should decrease and plateau.</li>
+            <li><b>Topographic error:</b> Fraction of samples where first and second BMU are non-adjacent.</li>
+            <li><b>Stability:</b> Run multiple seeds to assess consistency.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="panel">
+          <h2>Pitfalls</h2>
+          <ul class="list">
+            <li><b>Unscaled features:</b> Dominant dimensions distort topology—normalize first.</li>
+            <li><b>Too small grid:</b> Over-merges clusters; too large grid under-trains and looks noisy.</li>
+            <li><b>Too-fast decay:</b> Map freezes early; too-slow decay: never stabilizes.</li>
+            <li><b>Random init bias:</b> Try PCA-based init for faster ordering when available.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Built for exploration and learning. Play, observe, and trust what the map shows you about your data.
+    </div>
+  </main>
+
+  <script>
+    // ---------- Utilities ----------
+    function randn() {
+      // Box–Muller
+      let u=0, v=0;
+      while(u===0) u=Math.random();
+      while(v===0) v=Math.random();
+      return Math.sqrt(-2.0*Math.log(u)) * Math.cos(2.0*Math.PI*v);
+    }
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j = (Math.random()* (i+1))|0;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // ---------- Datasets (2D) ----------
+    function makeBlobs(n=1200){
+      const centers = [[-0.6,-0.4],[0.6,-0.3],[0.0,0.6]];
+      const sds = [0.12, 0.12, 0.12];
+      const out=[];
+      for(let i=0;i<n;i++){
+        const k = (Math.random()*centers.length)|0;
+        const [cx,cy] = centers[k];
+        const sd = sds[k];
+        out.push([cx + sd*randn(), cy + sd*randn()]);
+      }
+      return out;
+    }
+    function makeRing(n=1200){
+      const out=[];
+      const r1 = 0.65, r2 = 0.15;
+      for(let i=0;i<n;i++){
+        if(Math.random()<0.7){
+          const t = Math.random()*Math.PI*2;
+          const r = r1 + 0.03*randn();
+          out.push([r*Math.cos(t), r*Math.sin(t)]);
+        }else{
+          out.push([0.0 + 0.06*randn(), 0.0 + 0.06*randn()]);
+        }
+      }
+      return out;
+    }
+    function makeGrid(n=1200){
+      const side = Math.floor(Math.sqrt(n/2));
+      const out=[];
+      for(let i=0;i<side;i++){
+        for(let j=0;j<side;j++){
+          const x = lerp(-0.8, 0.8, i/(side-1)) + 0.01*randn();
+          const y = lerp(-0.8, 0.8, j/(side-1)) + 0.01*randn();
+          out.push([x,y]);
+        }
+      }
+      while(out.length<n) out.push([ (Math.random()-0.5)*1.6, (Math.random()-0.5)*1.6 ]);
+      return out;
+    }
+    function makeTwoSpirals(n=1200){
+      const out=[];
+      const m = n/2|0;
+      for(let i=0;i<m;i++){
+        const t = i/(m-1) * 4*Math.PI;
+        const r = lerp(0.1, 0.85, i/(m-1));
+        out.push([ r*Math.cos(t)+0.02*randn(), r*Math.sin(t)+0.02*randn() ]);
+      }
+      for(let i=0;i<m;i++){
+        const t = i/(m-1) * 4*Math.PI + Math.PI;
+        const r = lerp(0.1, 0.85, i/(m-1));
+        out.push([ r*Math.cos(t)+0.02*randn(), r*Math.sin(t)+0.02*randn() ]);
+      }
+      return out;
+    }
+
+    // ---------- SOM ----------
+    class SOM {
+      constructor(gridW, gridH, dim, {topology='rect', lr0=0.5, radius0=5, epochs=50}={}){
+        this.gw = gridW;
+        this.gh = gridH;
+        this.dim = dim;
+        this.topology = topology;
+        this.lr0 = lr0;
+        this.radius0 = radius0;
+        this.epochs = epochs;
+        this.t = 0;
+        this.totalSteps = 1;
+        this.weights = new Array(gridW*gridH);
+        for(let i=0;i<this.weights.length;i++){
+          const w = new Float32Array(dim);
+          for(let d=0; d<dim; d++) w[d] = Math.random()*2 - 1; // init within [-1,1] for 2D; [0,1] for RGB later
+          this.weights[i] = w;
+        }
+      }
+      resetWeights(range=[-1,1]){
+        const [a,b]=range;
+        for(let i=0;i<this.weights.length;i++){
+          const w=this.weights[i];
+          for(let d=0; d<this.dim; d++) w[d] = Math.random()*(b-a)+a;
+        }
+      }
+      idx(x,y){ return y*this.gw + x; }
+      pos(idx){ return [idx%this.gw, (idx/this.gw)|0]; }
+
+      // Grid distance (rect or hex axial approximation)
+      gridDist2(i, j){
+        const [xi, yi] = this.pos(i);
+        const [xj, yj] = this.pos(j);
+        if(this.topology === 'hex'){
+          // Convert to axial coordinates for hex distance on an "odd-r" layout
+          // Approximate by offsetting x on odd rows
+          const xi2 = xi - ((yi&1)? 0.5 : 0.0);
+          const xj2 = xj - ((yj&1)? 0.5 : 0.0);
+          const dx = xi2 - xj2;
+          const dy = yi - yj;
+          return dx*dx + dy*dy + 0.5*Math.abs(dx*dy); // mild adjustment to spread influence
+        } else {
+          const dx = xi - xj;
+          const dy = yi - yj;
+          return dx*dx + dy*dy;
+        }
+      }
+      dist2(a,b){
+        let s=0;
+        for(let d=0; d<this.dim; d++){ const dd=a[d]-b[d]; s += dd*dd; }
+        return s;
+      }
+      bestMatch(x){
+        let best = 0, bestd = Infinity;
+        for(let i=0;i<this.weights.length;i++){
+          const d2 = this.dist2(x, this.weights[i]);
+          if(d2 < bestd){ bestd = d2; best = i; }
+        }
+        return best;
+      }
+      step(sample, stepIdx){
+        const progress = this.t / Math.max(1, this.totalSteps-1);
+        const lr = this.lr0 * Math.exp(-progress);
+        const sigma = Math.max(0.5, this.radius0 * Math.exp(-progress));
+        const bmu = this.bestMatch(sample);
+        const twoSigma2 = 2*sigma*sigma;
+
+        for(let j=0;j<this.weights.length;j++){
+          const d2 = this.gridDist2(bmu, j);
+          const h = Math.exp(-d2 / twoSigma2);
+          if(h < 1e-3) continue;
+          const w = this.weights[j];
+          for(let d=0; d<this.dim; d++){
+            w[d] += lr * h * (sample[d] - w[d]);
+          }
+        }
+        this.t++;
+        return {bmu, lr, sigma};
+      }
+    }
+
+    // ---------- Simulation rendering ----------
+    const simCanvas = document.getElementById('simCanvas');
+    const sctx = simCanvas.getContext('2d');
+
+    const datasetSel = document.getElementById('dataset');
+    const samplesInp = document.getElementById('samples');
+    const gwInp = document.getElementById('gw');
+    const ghInp = document.getElementById('gh');
+    const topologySel = document.getElementById('topology');
+    const lrInp = document.getElementById('lr');
+    const radiusInp = document.getElementById('radius');
+    const epochsInp = document.getElementById('epochs');
+    const spfInp = document.getElementById('spf');
+    const startBtn = document.getElementById('start');
+    const stepBtn = document.getElementById('stepBtn');
+    const resetBtn = document.getElementById('reset');
+    const vizSel = document.getElementById('viz');
+
+    const epochRead = document.getElementById('epoch');
+    const stepRead = document.getElementById('step');
+    const lrRead = document.getElementById('lrRead');
+    const radRead = document.getElementById('radRead');
+
+    let data2D = [];
+    let som = null;
+    let running = false;
+    let stepCounter = 0;
+    let epochCounter = 0;
+    let bmuTrace = [];
+
+    function genData(){
+      const n = parseInt(samplesInp.value,10);
+      const dset = datasetSel.value;
+      if(dset==='blobs') return makeBlobs(n);
+      if(dset==='ring') return makeRing(n);
+      if(dset==='grid') return makeGrid(n);
+      return makeTwoSpirals(n);
+    }
+
+    function initSOM(){
+      const gw = parseInt(gwInp.value,10);
+      const gh = parseInt(ghInp.value,10);
+      const topo = topologySel.value;
+      const lr0 = parseFloat(lrInp.value);
+      const rad0 = parseFloat(radiusInp.value);
+      const epochs = parseInt(epochsInp.value,10);
+
+      som = new SOM(gw, gh, 2, {topology: topo, lr0: lr0, radius0: rad0, epochs});
+      som.resetWeights([-0.9,0.9]);
+      som.totalSteps = epochs * data2D.length;
+      stepCounter = 0;
+      epochCounter = 0;
+      epochRead.textContent = '0';
+      stepRead.textContent = '0';
+      bmuTrace = [];
+    }
+
+    function projectToCanvas([x,y]){
+      const pad = 30;
+      const w = simCanvas.width, h = simCanvas.height;
+      const sx = (x + 1) * 0.5;
+      const sy = (y + 1) * 0.5;
+      return [
+        pad + sx * (w - 2*pad),
+        pad + (1 - sy) * (h - 2*pad)
+      ];
+    }
+
+    function drawData(){
+      sctx.save();
+      sctx.clearRect(0,0,simCanvas.width, simCanvas.height);
+      // background subtle grid
+      sctx.fillStyle = '#0b0e26';
+      sctx.fillRect(0,0,simCanvas.width, simCanvas.height);
+
+      // Draw data
+      sctx.globalAlpha = 0.95;
+      sctx.fillStyle = '#69d2e7';
+      for(const p of data2D){
+        const [x,y] = projectToCanvas(p);
+        sctx.beginPath(); sctx.arc(x,y,2,0,Math.PI*2); sctx.fill();
+      }
+
+      // Draw SOM lattice
+      if(vizSel.value === 'lattice'){
+        sctx.globalAlpha = 0.95;
+        // lines
+        sctx.strokeStyle = 'rgba(249,213,110,0.5)';
+        sctx.lineWidth = 1.0;
+        for(let y=0;y<som.gh;y++){
+          for(let x=0;x<som.gw;x++){
+            const idx = som.idx(x,y);
+            const [px, py] = projectToCanvas(som.weights[idx]);
+            if(x+1<som.gw){
+              const [px2, py2] = projectToCanvas(som.weights[som.idx(x+1,y)]);
+              sctx.beginPath(); sctx.moveTo(px,py); sctx.lineTo(px2,py2); sctx.stroke();
+            }
+            if(y+1<som.gh){
+              const [px2, py2] = projectToCanvas(som.weights[som.idx(x,y+1)]);
+              sctx.beginPath(); sctx.moveTo(px,py); sctx.lineTo(px2,py2); sctx.stroke();
+            }
+          }
+        }
+        // nodes
+        sctx.fillStyle = '#f9d56e';
+        for(let y=0;y<som.gh;y++){
+          for(let x=0;x<som.gw;x++){
+            const [px, py] = projectToCanvas(som.weights[som.idx(x,y)]);
+            sctx.beginPath(); sctx.arc(px,py,3,0,Math.PI*2); sctx.fill();
+          }
+        }
+      } else {
+        // U-Matrix
+        const cellW = (simCanvas.width - 60) / som.gw;
+        const cellH = (simCanvas.height - 60) / som.gh;
+        const ox = 30, oy = 30;
+        // compute mean neighbor distance
+        let maxd = 1e-6, mind = 1e9;
+        const um = new Float32Array(som.gw*som.gh);
+        for(let y=0;y<som.gh;y++){
+          for(let x=0;x<som.gw;x++){
+            const i = som.idx(x,y);
+            const w = som.weights[i];
+            let sum=0, cnt=0;
+            const neigh = [[1,0],[-1,0],[0,1],[0,-1]];
+            for(const [dx,dy] of neigh){
+              const nx=x+dx, ny=y+dy;
+              if(nx<0||ny<0||nx>=som.gw||ny>=som.gh) continue;
+              const v = som.weights[som.idx(nx,ny)];
+              const d = Math.sqrt(som.dist2(w,v));
+              sum += d; cnt++;
+            }
+            const val = cnt? sum/cnt : 0;
+            um[i]=val;
+            if(val>maxd) maxd=val; if(val<mind) mind=val;
+          }
+        }
+        for(let y=0;y<som.gh;y++){
+          for(let x=0;x<som.gw;x++){
+            const i = som.idx(x,y);
+            const t = (um[i]-mind)/(maxd-mind+1e-9);
+            const c = Math.floor(255*t);
+            sctx.fillStyle = `rgb(${c}, ${50}, ${120+c/3|0})`;
+            sctx.fillRect(ox + x*cellW, oy + y*cellH, Math.ceil(cellW), Math.ceil(cellH));
+          }
+        }
+        sctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        sctx.strokeRect(ox,oy, som.gw*cellW, som.gh*cellH);
+      }
+
+      // BMU trace
+      if(bmuTrace.length){
+        sctx.globalAlpha = 0.9;
+        sctx.strokeStyle = '#ef6c88';
+        sctx.lineWidth = 1.5;
+        sctx.beginPath();
+        for(let i=0;i<bmuTrace.length;i++){
+          const [px,py]=projectToCanvas(bmuTrace[i]);
+          if(i===0) sctx.moveTo(px,py); else sctx.lineTo(px,py);
+        }
+        sctx.stroke();
+      }
+
+      sctx.restore();
+    }
+
+    function pickSample(){
+      // cycle through shuffled order per epoch
+      if(stepCounter % data2D.length === 0){
+        shuffle(data2D);
+        epochCounter++;
+        epochRead.textContent = String(epochCounter-1);
+      }
+      return data2D[stepCounter % data2D.length];
+    }
+
+    function tick(steps=1){
+      if(!som) return;
+      for(let k=0;k<steps;k++){
+        const x = pickSample();
+        const res = som.step(new Float32Array(x), stepCounter);
+        stepCounter++;
+        stepRead.textContent = String(stepCounter);
+        lrRead.textContent = res.lr.toFixed(3);
+        radRead.textContent = res.sigma.toFixed(2);
+        const w = som.weights[res.bmu];
+        bmuTrace.push([w[0], w[1]]);
+        if(bmuTrace.length>100) bmuTrace.shift();
+        if(stepCounter >= som.totalSteps){
+          running = false;
+          break;
+        }
+      }
+      drawData();
+    }
+
+    function loop(){
+      if(running){
+        const spf = parseInt(spfInp.value,10);
+        tick(spf);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    // ---------- Color quantization demo ----------
+    const imgCanvas = document.getElementById('imgCanvas');
+    const qCanvas = document.getElementById('quantCanvas');
+    const pCanvas = document.getElementById('palCanvas');
+    const ictx = imgCanvas.getContext('2d');
+    const qctx = qCanvas.getContext('2d');
+    const pctx = pCanvas.getContext('2d');
+    const imgInput = document.getElementById('imgInput');
+    const runColorBtn = document.getElementById('runColor');
+    const cgW = document.getElementById('cgW');
+    const cgH = document.getElementById('cgH');
+    const cEpochs = document.getElementById('cEpochs');
+    const cLR = document.getElementById('cLR');
+
+    function drawChecker(ctx, w, h){
+      ctx.clearRect(0,0,w,h);
+      const s=20;
+      for(let y=0;y<h;y+=s){
+        for(let x=0;x<w;x+=s){
+          const on = ((x/s + y/s)&1)===0;
+          ctx.fillStyle = on? '#10152f' : '#0c1130';
+          ctx.fillRect(x,y,s,s);
+        }
+      }
+    }
+
+    function loadImageToCanvas(file){
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = ()=>{
+        const maxW = imgCanvas.width, maxH = imgCanvas.height;
+        const scale = Math.min(maxW/img.width, maxH/img.height, 1);
+        const w = Math.floor(img.width*scale), h = Math.floor(img.height*scale);
+        drawChecker(ictx, imgCanvas.width, imgCanvas.height);
+        ictx.drawImage(img, 0,0, w, h);
+        drawChecker(qctx, qCanvas.width, qCanvas.height);
+        drawChecker(pctx, pCanvas.width, pCanvas.height);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+
+    imgInput.addEventListener('change', (e)=>{
+      const f = e.target.files?.[0];
+      if(f) loadImageToCanvas(f);
+    });
+
+    function sampleImageColors(ctx, w, h, maxSamples=20000){
+      const im = ctx.getImageData(0,0,w,h);
+      const data = im.data;
+      const out = [];
+      const step = Math.max(1, Math.floor((w*h)/maxSamples));
+      for(let i=0, idx=0; i<w*h; i+=step, idx+=step){
+        const o = i*4;
+        const r = data[o]/255, g=data[o+1]/255, b=data[o+2]/255;
+        out.push([r,g,b]);
+      }
+      return out;
+    }
+
+    function renderQuantized(palette, srcCtx, dstCtx, w, h){
+      const src = srcCtx.getImageData(0,0,w,h);
+      const out = dstCtx.createImageData(w,h);
+      const W = palette.gw, H = palette.gh;
+      // Flatten palette
+      const P = palette.weights.map(w => [clamp(w[0],0,1), clamp(w[1],0,1), clamp(w[2],0,1)]);
+      for(let i=0;i<w*h;i++){
+        const r = src.data[i*4]/255, g=src.data[i*4+1]/255, b=src.data[i*4+2]/255;
+        // find BMU in color space
+        let best=0, bestd=1e9;
+        for(let j=0;j<P.length;j++){
+          const pr=P[j];
+          const dr=r-pr[0], dg=g-pr[1], db=b-pr[2];
+          const d = dr*dr+dg*dg+db*db;
+          if(d<bestd){ bestd=d; best=j; }
+        }
+        const c = P[best];
+        out.data[i*4] = Math.round(c[0]*255);
+        out.data[i*4+1] = Math.round(c[1]*255);
+        out.data[i*4+2] = Math.round(c[2]*255);
+        out.data[i*4+3] = 255;
+      }
+      dstCtx.putImageData(out,0,0);
+    }
+
+    function renderPaletteGrid(palette, ctx, w, h){
+      ctx.clearRect(0,0,w,h);
+      const cellW = w / palette.gw;
+      const cellH = h / palette.gh;
+      for(let y=0;y<palette.gh;y++){
+        for(let x=0;x<palette.gw;x++){
+          const c = palette.weights[palette.idx(x,y)];
+          const r = Math.round(clamp(c[0],0,1)*255);
+          const g = Math.round(clamp(c[1],0,1)*255);
+          const b = Math.round(clamp(c[2],0,1)*255);
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.fillRect(Math.floor(x*cellW), Math.floor(y*cellH), Math.ceil(cellW), Math.ceil(cellH));
+        }
+      }
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      for(let x=0;x<=palette.gw;x++){
+        ctx.beginPath(); ctx.moveTo(Math.floor(x*cellW)+0.5,0); ctx.lineTo(Math.floor(x*cellW)+0.5,h); ctx.stroke();
+      }
+      for(let y=0;y<=palette.gh;y++){
+        ctx.beginPath(); ctx.moveTo(0,Math.floor(y*cellH)+0.5); ctx.lineTo(w,Math.floor(y*cellH)+0.5); ctx.stroke();
+      }
+    }
+
+    runColorBtn.addEventListener('click', ()=>{
+      // Gather data
+      const w = imgCanvas.width, h = imgCanvas.height;
+      const colors = sampleImageColors(ictx, w, h);
+      if(colors.length===0){
+        alert('Please upload an image first.');
+        return;
+      }
+      // Train color SOM
+      const gw = parseInt(cgW.value,10), gh = parseInt(cgH.value,10);
+      const epochs = parseInt(cEpochs.value,10);
+      const lr0 = parseFloat(cLR.value);
+      const colorSOM = new SOM(gw, gh, 3, {topology:'rect', lr0, radius0: Math.max(gw,gh)/2, epochs});
+      colorSOM.resetWeights([0,1]);
+      colorSOM.totalSteps = epochs * colors.length;
+      let t=0;
+      const data = colors.slice();
+      for(let e=0;e<epochs;e++){
+        shuffle(data);
+        for(const c of data){
+          colorSOM.step(new Float32Array(c), t++);
+        }
+      }
+      // Render outputs
+      renderQuantized(colorSOM, ictx, qctx, w, h);
+      renderPaletteGrid(colorSOM, pctx, pCanvas.width, pCanvas.height);
+      // Switch to quantized tab
+      switchTab('quant');
+    });
+
+    // ---------- Tabs for use case ----------
+    const tabs = document.querySelectorAll('.tab-btn');
+    function switchTab(which){
+      tabs.forEach(btn=>{
+        btn.classList.toggle('active', btn.dataset.tab === which);
+      });
+      document.getElementById('tab-orig').style.display = which==='orig' ? '' : 'none';
+      document.getElementById('tab-quant').style.display = which==='quant' ? '' : 'none';
+      document.getElementById('tab-palette').style.display = which==='palette' ? '' : 'none';
+    }
+    tabs.forEach(btn=>{
+      btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
+    });
+
+    // ---------- Initialization ----------
+    function resetAll(){
+      data2D = genData();
+      initSOM();
+      drawData();
+    }
+
+    datasetSel.addEventListener('change', resetAll);
+    samplesInp.addEventListener('change', resetAll);
+    gwInp.addEventListener('change', resetAll);
+    ghInp.addEventListener('change', resetAll);
+    topologySel.addEventListener('change', resetAll);
+    lrInp.addEventListener('input', ()=>{ /* live readout happens during training */ });
+    radiusInp.addEventListener('input', ()=>{ /* same */ });
+    epochsInp.addEventListener('change', resetAll);
+    vizSel.addEventListener('change', drawData);
+
+    startBtn.addEventListener('click', ()=>{ running = !running; });
+    stepBtn.addEventListener('click', ()=> tick(1));
+    resetBtn.addEventListener('click', resetAll);
+
+    window.addEventListener('keydown', (e)=>{
+      if(e.code==='Space'){ e.preventDefault(); running=!running; }
+      else if(e.key==='.' ){ tick(1); }
+      else if(e.key==='r'){ resetAll(); }
+    });
+
+    document.getElementById('jumpSim').addEventListener('click', ()=> {
+      document.getElementById('simulation').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    document.getElementById('jumpUseCase').addEventListener('click', ()=> {
+      document.getElementById('usecase').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+
+    // Initial paints
+    resetAll();
+    drawChecker(ictx, imgCanvas.width, imgCanvas.height);
+    drawChecker(qctx, qCanvas.width, qCanvas.height);
+    drawChecker(pctx, pCanvas.width, pCanvas.height);
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
