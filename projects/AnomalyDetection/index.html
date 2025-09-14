@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Anomaly Detection — Theory, Math, and Interactive Simulations</title>
+<meta name="description" content="Modern, mobile-friendly primer on anomaly detection: theory, mathematics, and hands-on simulations. Applications in healthcare wearables, cybersecurity (IDS), medical imaging, and fake content detection." />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel:#121823;
+    --panel-2:#0f1621;
+    --text:#e8eef5;
+    --muted:#a4b0be;
+    --accent:#64d2ff;
+    --accent-2:#7ef29a;
+    --warn:#ffb86b;
+    --danger:#ff6b6b;
+    --ok:#22c55e;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    --radius:16px;
+    --radius-sm:12px;
+    --radius-xs:10px;
+    --maxw:1200px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body {
+  margin: 0;
+  background:
+    radial-gradient(60vw 30vh at 10% -10%, #10233a 0%, transparent 55%),
+    radial-gradient(50vw 25vh at 110% 10%, #1a2538 0%, transparent 60%),
+    linear-gradient(180deg, #071018 0%, #0b0f14 100%);
+  background-color: #0b0f14;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.5;
+}
+
+  header.nav {
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(140%) blur(10px);
+    background:rgba(12,18,26,0.65);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .nav-inner{
+    max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px;
+  }
+  .logo{
+    width:28px; height:28px; border-radius:8px;
+    background: conic-gradient(from 210deg, var(--accent), #c0f 45%, #f0f 60%, #64d2ff 85%, var(--accent));
+    box-shadow: inset 0 0 14px rgba(255,255,255,.35), 0 4px 16px rgba(100,210,255,.35);
+  }
+  .nav-links{display:flex; gap:16px; flex-wrap:wrap}
+  .nav-links a{
+    color:var(--muted); text-decoration:none; padding:8px 10px; border-radius:10px;
+  }
+  .nav-links a:hover{ color:var(--text); background:rgba(255,255,255,0.06) }
+  .hero{
+    max-width:var(--maxw); margin:20px auto; padding:24px 16px 8px;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.2fr .8fr; gap:20px;
+  }
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .card.pad{ padding:22px }
+  h1{ font-size: clamp(28px, 5vw, 44px); margin:6px 0 12px }
+  p.lead{ color:var(--muted); font-size: clamp(15px, 2.3vw, 18px) }
+  .cta{
+    display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;
+  }
+  .btn{
+    appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:650; color:#051018;
+    background: linear-gradient(180deg, var(--accent), #49c3ff);
+    box-shadow: 0 8px 18px rgba(100,210,255,.35);
+  }
+  .btn.alt{
+    color:var(--text); background:transparent; border:1px solid rgba(255,255,255,0.14);
+  }
+  .tag{
+    display:inline-block; font-size:12px; color:#07202a; background: linear-gradient(180deg, #b9f8ff, #7ee6ff);
+    padding:6px 10px; border-radius:999px; font-weight:700; letter-spacing:.3px;
+  }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px }
+  .chip{
+    padding:6px 10px; border-radius:999px; border:1px dashed rgba(255,255,255,.18); color:var(--muted); font-size:12px;
+  }
+  main{ max-width:var(--maxw); margin:0 auto; padding:10px 16px 120px; }
+  section{ margin-top:24px }
+  h2{
+    font-size: clamp(22px, 4.2vw, 32px); margin: 0 0 12px;
+  }
+  h3{ font-size: clamp(18px, 3.4vw, 24px); margin: 0 0 10px; }
+  .grid{
+    display:grid; gap:18px; grid-template-columns: repeat(12, 1fr);
+  }
+  .col-12{ grid-column: span 12 }
+  .col-8{ grid-column: span 8 }
+  .col-6{ grid-column: span 6 }
+  .col-4{ grid-column: span 4 }
+  .col-5{ grid-column: span 5 }
+  .col-7{ grid-column: span 7 }
+  @media (max-width: 960px){
+    .hero-grid{ grid-template-columns: 1fr }
+    .col-8,.col-6,.col-4,.col-5,.col-7{ grid-column: span 12 }
+    .nav-links{ display:none }
+  }
+  .kpi{
+    display:flex; gap:14px; align-items:center;
+  }
+  .kpi .val{ font-size:20px; font-weight:800 }
+  .kpi small{ color:var(--muted) }
+  .sep{ height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent); margin:14px 0 }
+  .list{
+    display:grid; gap:10px;
+  }
+  .list .row{
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .bullet{
+    width:10px; height:10px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #fff 0%, #c9f 20%, #64d2ff 50%, #0af 80%);
+    margin-top:6px; flex:0 0 auto;
+  }
+  code.inline{
+    background: rgba(255,255,255,0.08);
+    padding: 2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,0.12);
+  }
+  .pill{
+    display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+    color:var(--muted); font-size:12px; margin-right:6px; margin-top:6px;
+  }
+  .note{
+    background: linear-gradient(180deg, rgba(126,242,154,0.06), rgba(126,242,154,0.02));
+    border:1px solid rgba(126,242,154,0.22);
+    padding:14px; border-radius:14px; color:#baf6cb;
+  }
+  .warn{
+    background: linear-gradient(180deg, rgba(255,184,107,0.08), rgba(255,184,107,0.03));
+    border:1px solid rgba(255,184,107,0.26);
+    padding:14px; border-radius:14px; color:#ffd9b1;
+  }
+  .canvas-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+  border: 1px solid rgba(255,255,255,0.09);
+  padding: 10px;
+}
+
+.canvas-wrap canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+  .controls{ display:flex; flex-wrap:wrap; gap:12px; margin-top:8px; align-items:center }
+  .controls .control{
+    display:flex; flex-direction:column; gap:6px; min-width:160px; flex:1 1 160px
+  }
+  .controls label{ color:var(--muted); font-size:12px }
+  .controls input[type="range"]{ width:100% }
+  .controls input[type="number"], .controls select{
+    width:100%; background: rgba(255,255,255,0.06); color:var(--text);
+    border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:8px 10px;
+  }
+  .legend{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:6px; color:var(--muted); font-size:12px;
+  }
+  .key{ display:flex; gap:6px; align-items:center }
+  .dot{ width:10px; height:10px; border-radius:50% }
+  .dot.base{ background:#7bc8ff }
+  .dot.anom{ background:#ff6b6b }
+  .dot.model{ background:#7ef29a }
+  footer{
+    border-top:1px solid rgba(255,255,255,0.08);
+    background: rgba(10,14,20,0.6);
+    margin-top:40px;
+  }
+  footer .inner{ max-width:var(--maxw); padding:18px 16px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; color:var(--muted) }
+  a { color:#7bdcff }
+</style>
+<!-- MathJax for LaTeX rendering -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\'\[','\\]'] ] },
+    options: { renderActions: { addMenu: [] } }
+  }
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>Anomaly Detection</div>
+    </div>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#theory">Theory</a>
+      <a href="#simulators">Simulations</a>
+      <a href="#applications">Applications</a>
+      <a href="#healthcare">Healthcare</a>
+      <a href="#cyber">Cybersecurity</a>
+      <a href="#imaging">Medical imaging</a>
+      <a href="#fakes">Fake details</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div class="card pad">
+      <span class="tag">Modern primer + interactive labs</span>
+      <h1>Find what doesn't fit: anomaly detection</h1>
+      <p class="lead">From statistical foundations to practical detectors for wearables, networks, and images — explore, tune, and see outliers appear in real time.</p>
+      <div class="cta">
+        <a class="btn" href="#simulators">Try simulations</a>
+        <a class="btn alt" href="#theory">Read the theory</a>
+      </div>
+      <div class="chips">
+        <span class="chip">Unsupervised</span>
+        <span class="chip">Robust statistics</span>
+        <span class="chip">Time series</span>
+        <span class="chip">Autoencoders & PCA</span>
+        <span class="chip">IDS / network</span>
+        <span class="chip">Medical imaging</span>
+      </div>
+    </div>
+    <div class="card pad">
+      <div class="kpi">
+        <div class="val">3</div><small>interactive simulators</small>
+      </div>
+      <div class="kpi">
+        <div class="val">5</div><small>practical use cases</small>
+      </div>
+      <div class="kpi">
+        <div class="val">10+</div><small>key formulas with intuition</small>
+      </div>
+      <div class="sep"></div>
+      <div class="note">
+        This page is educational. Real deployments require proper validation, drift monitoring, and domain review.
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section id="theory" class="card pad">
+    <h2>Theory and math</h2>
+    <div class="grid">
+      <div class="col-7">
+        <div class="list">
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Definition:</strong> An anomaly is an observation that deviates so much from the majority that it raises suspicion it was generated by a different mechanism.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Problem settings:</strong>
+              <div class="pill">Unsupervised</div>
+              <div class="pill">Semi-supervised (normal only)</div>
+              <div class="pill">Supervised (labeled anomalies)</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Z-score detector:</strong> For scalar data \(x\) with mean \(\mu\) and standard deviation \(\sigma\), score is \(z=\frac{x-\mu}{\sigma}\). Flag if \(|z|>\tau\). Robust variant replaces \(\mu,\sigma\) with median and \(\mathrm{MAD}=\mathrm{median}(|x-\mathrm{median}(x)|)\), scaling \(\sigma\approx 1.4826\cdot \mathrm{MAD}\).
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Multivariate Gaussian:</strong> With mean \(\boldsymbol{\mu}\) and covariance \(\Sigma\), the Mahalanobis distance is
+              
+
+\[
+              D_M(\mathbf{x})=\sqrt{(\mathbf{x}-\boldsymbol{\mu})^\top \Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})}.
+              \]
+
+
+              If data are Gaussian, \(D_M^2\) follows \(\chi^2_k\) (k = dimensions), enabling thresholds via quantiles.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Density-based view:</strong> Learn \(p(\mathbf{x})\). Flag if \(p(\mathbf{x})<\epsilon\). Approximations: kernel density estimation, Gaussian mixtures, normalizing flows.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Reconstruction-based:</strong> Learn to reconstruct normals (PCA, autoencoders). Score \(s(\mathbf{x})=\lVert \mathbf{x}-\hat{\mathbf{x}}\rVert\). Flag if \(s>\tau\).
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Time series:</strong> Baselines like EWMA and residual modeling. EWMA:
+              
+
+\[
+              m_t=\alpha x_t+(1-\alpha)m_{t-1},\quad e_t=x_t-m_t.
+              \]
+
+
+              Flag if \(|e_t|>k\cdot \hat{\sigma}_e\). Seasonality uses STL/ETS or Fourier terms before residual detection.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>PCA for anomalies:</strong> Let \(X\in\mathbb{R}^{n\times d}\), compute principal subspace \(U_r\) (top r eigenvectors). Reconstruction \(\hat{\mathbf{x}}=U_r U_r^\top \mathbf{x}\). Residual \(r=\lVert \mathbf{x}-\hat{\mathbf{x}}\rVert\). Large \(r\Rightarrow\) anomalous. In covariance form:
+              
+
+\[
+              r^2 = \sum_{j=r+1}^{d} (\mathbf{u}_j^\top \mathbf{x})^2.
+              \]
+
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Thresholding:</strong> Choose \(\tau\) via:
+              <span class="pill">Statistical quantile</span>
+              <span class="pill">Target false positive rate</span>
+              <span class="pill">Expected contamination</span>
+              <span class="pill">Validation ROC/PR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="warn">
+          Beware of dataset shift: if the “normal” distribution drifts, fixed thresholds break. Refit, recalibrate, or use adaptive methods.
+        </div>
+        <div class="sep"></div>
+        <div class="note">
+          Class imbalance is extreme in anomaly detection. Precision-Recall is more informative than ROC when positives are rare.
+        </div>
+        <div class="sep"></div>
+        <div class="list">
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>IDS intuition:</strong> Model typical traffic features (per-flow bytes, packet rate, unique ports). Outliers may indicate scans, exfiltration, or beaconing.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Medical imaging intuition:</strong> Train a model (PCA/autoencoder) on healthy images. Lesions or artifacts yield high reconstruction error or segmentation residuals.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Fake content intuition:</strong> Inconsistencies in frequency spectra, resampling footprints, or lighting geometry can be anomalous relative to genuine data.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="simulators" class="card pad">
+    <h2>Interactive simulations</h2>
+    <p class="lead">Experiment with classic detectors: z-score and MAD, EWMA for time series, and PCA-based reconstruction. Tune parameters and see anomalies light up.</p>
+
+    <div class="grid">
+      <div class="col-12">
+        <h3>Simulator 1 — distributions and time series</h3>
+      </div>
+      <div class="col-7">
+        <div class="canvas-wrap">
+          <canvas id="sim1" width="800" height="420" aria-label="Distribution/Time series canvas"></canvas>
+        </div>
+        <div class="legend">
+          <div class="key"><span class="dot base"></span> Normal</div>
+          <div class="key"><span class="dot anom"></span> Anomaly</div>
+          <div class="key"><span class="dot model"></span> Model line / bounds</div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="controls">
+          <div class="control">
+            <label for="mode1">Mode</label>
+            <select id="mode1">
+              <option value="z">Z-score (scalar)</option>
+              <option value="mad">Robust MAD (scalar)</option>
+              <option value="ewma">EWMA (time series)</option>
+            </select>
+          </div>
+          <div class="control">
+            <label for="n1">Samples (n)</label>
+            <input id="n1" type="range" min="100" max="2000" value="400" />
+          </div>
+          <div class="control">
+            <label for="contam1">Anomaly ratio (%)</label>
+            <input id="contam1" type="range" min="0" max="20" value="5" />
+          </div>
+          <div class="control">
+            <label for="tau1">Threshold τ / k</label>
+            <input id="tau1" type="range" min="1" max="5" value="3" step="0.1" />
+          </div>
+          <div class="control" data-show="ewma">
+            <label for="alpha1">EWMA α</label>
+            <input id="alpha1" type="range" min="0.01" max="0.8" value="0.2" step="0.01" />
+          </div>
+          <div class="control" data-show="z mad">
+            <label for="sigma1">Normal σ</label>
+            <input id="sigma1" type="range" min="0.2" max="3.0" value="1.0" step="0.1" />
+          </div>
+          <div class="control">
+            <button class="btn" id="regen1">Regenerate</button>
+          </div>
+          <div id="metrics1" class="note">TPR, FPR and counts appear here after simulation.</div>
+        </div>
+      </div>
+
+      <div class="col-12"><div class="sep"></div></div>
+
+      <div class="col-12">
+        <h3>Simulator 2 — PCA reconstruction in 2D</h3>
+      </div>
+      <div class="col-7">
+        <div class="canvas-wrap">
+          <canvas id="sim2" width="800" height="420" aria-label="PCA canvas"></canvas>
+        </div>
+        <div class="legend">
+          <div class="key"><span class="dot base" style="background:#7bc8ff"></span> Inliers</div>
+          <div class="key"><span class="dot anom" style="background:#ff6b6b"></span> Outliers (high residual)</div>
+          <div class="key"><span class="dot model" style="background:#7ef29a"></span> Principal axis</div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="controls">
+          <div class="control">
+            <label for="n2">Samples</label>
+            <input id="n2" type="range" min="100" max="3000" value="500" />
+          </div>
+          <div class="control">
+            <label for="spread2">Inlier spread</label>
+            <input id="spread2" type="range" min="0.2" max="3" step="0.1" value="1.2" />
+          </div>
+          <div class="control">
+            <label for="angle2">Cluster angle (°)</label>
+            <input id="angle2" type="range" min="0" max="180" value="35" />
+          </div>
+          <div class="control">
+            <label for="contam2">Outlier ratio (%)</label>
+            <input id="contam2" type="range" min="0" max="20" value="5" />
+          </div>
+          <div class="control">
+            <label for="tau2">Residual threshold τ</label>
+            <input id="tau2" type="range" min="0.2" max="4" step="0.1" value="1.3" />
+          </div>
+          <div class="control">
+            <button class="btn" id="regen2">Regenerate</button>
+          </div>
+          <div id="metrics2" class="note">Residual stats and flagged count will show here.</div>
+        </div>
+      </div>
+
+      <div class="col-12"><div class="sep"></div></div>
+
+      <div class="col-12">
+        <h3>Simulator 3 — synthetic imaging anomalies</h3>
+      </div>
+      <div class="col-7">
+        <div class="canvas-wrap">
+          <canvas id="sim3" width="800" height="420" aria-label="Imaging canvas"></canvas>
+        </div>
+        <div class="legend">
+          <div class="key"><span class="dot base" style="background:#bbb"></span> Base image</div>
+          <div class="key"><span class="dot anom"></span> Detected mask</div>
+          <div class="key"><span class="dot model" style="background:#7ef29a"></span> Threshold</div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="controls">
+          <div class="control">
+            <label for="lesion3">Lesion intensity</label>
+            <input id="lesion3" type="range" min="0" max="1" step="0.05" value="0.6" />
+          </div>
+          <div class="control">
+            <label for="noise3">Noise level</label>
+            <input id="noise3" type="range" min="0" max="0.4" step="0.02" value="0.1" />
+          </div>
+          <div class="control">
+            <label for="artifact3">Artifact strength</label>
+            <input id="artifact3" type="range" min="0" max="1" step="0.05" value="0.3" />
+          </div>
+          <div class="control">
+            <label for="tau3">Z-threshold τ</label>
+            <input id="tau3" type="range" min="1" max="5" step="0.1" value="3.0" />
+          </div>
+          <div class="control">
+            <button class="btn" id="regen3">Regenerate</button>
+          </div>
+          <div id="metrics3" class="note">Pixel-level detection rate and FP will show here.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="applications" class="card pad">
+    <h2>Applications overview</h2>
+    <div class="grid">
+      <div class="col-6">
+        <h3 id="healthcare">Healthcare monitoring with smartphones and wearables</h3>
+        <div class="list">
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Signals:</strong> Heart rate (HR), heart rate variability (HRV), step count, accelerometer, SpO₂, skin temperature, sleep stages.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Use case (logs):</strong> Model expected HR given activity and time-of-day. Residuals \(e_t = HR_t - \hat{HR}_t(\text{activity}, t)\). Persistent large residuals may indicate sensor misplacement, arrhythmias, or artifacts. Always confirm clinically before action.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Method sketch:</strong> Train a baseline on “normal” days. Use EWMA on residuals for online alerts. Robust percentiles adapt per user.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Data hygiene:</strong> Battery drops, missing data, and device swaps produce anomalies too. Add quality flags and imputation rules.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <h3 id="cyber">Cybersecurity — network anomalies and IDS</h3>
+        <div class="list">
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Features:</strong> Per-flow bytes, packets, duration, inter-arrival time stats, TCP flags, destination port entropy, unique dests per source.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Patterns:</strong> Port scans → many short flows to many ports; exfiltration → sustained large egress bytes; beaconing → periodic connections with low variance.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Approach:</strong> Windowed features + robust scaling + distance/density methods (e.g., Mahalanobis). Tune thresholds to meet alert budgets; feedback loops reduce noise.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Caveat:</strong> Encrypted traffic hides payloads. Side-channel features remain useful but require careful baselining per network segment.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <h3 id="imaging">Medical imaging — lesions and artefacts</h3>
+        <div class="list">
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Modalities:</strong> MRI, CT, X-ray, ultrasound. Anomalies include unexpected bright/dark regions, motion streaks, metal artefacts, coil failures.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Pipelines:</strong> Train on healthy scans with autoencoders or diffusion models. Use reconstruction error or uncertainty maps. For segmentation, use U-Net with out-of-distribution scoring on features.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Validation:</strong> Calibrate per site and scanner. Dice/IoU for lesion masks, pixel AUROC for detection, clinical reader studies for utility.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <h3 id="fakes">Detecting fake details</h3>
+        <div class="list">
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Targets:</strong> Spliced regions, resampling, face swaps, AI-generated edits, inconsistent reflections/shadows/specularities.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Signals:</strong> JPEG blocking inconsistencies, PRNU sensor noise mismatch, frequency spectra anomalies, copy-move self-similarity, eye specular highlights mismatch.
+            </div>
+          </div>
+          <div class="row">
+            <div class="bullet"></div>
+            <div>
+              <strong>Workflow:</strong> Localize suspect regions → compute forensic features → threshold via robust stats → optional human-in-the-loop review.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="use-cases" class="card pad">
+    <h2>Simple use cases</h2>
+    <div class="grid">
+      <div class="col-4">
+        <div class="list">
+          <div class="row"><div class="bullet"></div><div><strong>Wearable HR spike:</strong> Unusually high HR during sleep; cross-check with accelerometer. If no movement, flag sensor misread vs. tachycardia pattern.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Step count reset:</strong> Sudden zeros at midday. Anomaly may be app restart → auto-resume heuristics.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Network scan burst:</strong> Spike in unique destination ports per minute → alert as potential scan.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>CT metal artifact:</strong> High-frequency streaks localized near implants → artifact-aware masking before analysis.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Copy-move forgery:</strong> Duplicate texture blocks with different lighting → high self-similarity but inconsistent gradients.</div></div>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="note">
+          Start simple: robust baselines + interpretable thresholds. Then layer representation learning where it truly reduces false positives or reveals subtle patterns.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card pad">
+    <h2>Evaluation and deployment tips</h2>
+    <div class="grid">
+      <div class="col-6">
+        <div class="list">
+          <div class="row"><div class="bullet"></div><div><strong>Metrics:</strong> Precision, recall, F1; AUROC and AUPRC; time-to-detect for streaming.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Calibration:</strong> Convert scores into probabilities with Platt/isotonic on validated sets; maintain target alert rate.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Drift:</strong> Monitor population stats, PSI, or KS; schedule retraining; keep backtesting windows.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Explainability:</strong> Show top contributing features, nearest neighbors, or reconstruction heatmaps.</div></div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="list">
+          <div class="row"><div class="bullet"></div><div><strong>Human in the loop:</strong> Triage queue with context and feedback improves precision over time.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Privacy:</strong> Minimize PII, aggregate where possible, and enforce purpose limitation for sensitive domains.</div></div>
+          <div class="row"><div class="bullet"></div><div><strong>Safety:</strong> Never act automatically on medical anomalies without clinical confirmation. Treat alerts as prompts for review.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="inner">
+    <div>© 2025 Anomaly Detection Lab — Educational content</div>
+    <div>Built for clarity, not as a medical or security device.</div>
+  </div>
+</footer>
+
+<script>
+  // Utility functions
+  const randn = (() => {
+    // Box-Muller
+    let spare = null;
+    return () => {
+      if (spare !== null){ const v = spare; spare = null; return v; }
+      let u=0,v=0,s=0;
+      do { u = Math.random()*2-1; v = Math.random()*2-1; s = u*u+v*v; } while(s===0||s>=1);
+      const mul = Math.sqrt(-2*Math.log(s)/s);
+      spare = v*mul; return u*mul;
+    };
+  })();
+
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const mean = arr => arr.reduce((a,b)=>a+b,0)/arr.length;
+  const median = arr => {
+    const a = [...arr].sort((x,y)=>x-y);
+    const m = Math.floor(a.length/2);
+    return a.length%2 ? a[m] : (a[m-1]+a[m])/2;
+  };
+  const mad = arr => median(arr.map(x=>Math.abs(x - median(arr))));
+  const std = arr => {
+    const m = mean(arr), v = mean(arr.map(x => (x-m)**2));
+    return Math.sqrt(v);
+  };
+
+  // Drawing helpers
+  function clearCanvas(ctx){
+    ctx.save();
+    ctx.fillStyle = "rgba(0,0,0,0)";
+    ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+    // background panel
+    ctx.fillStyle = "rgba(255,255,255,0.02)";
+    ctx.fillRect(0,0,ctx.canvas.width, ctx.canvas.height);
+    ctx.restore();
+  }
+  function drawAxes(ctx, x0, y0, x1, y1, labels={}){
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, y1); ctx.lineTo(x1, y1);
+    ctx.moveTo(x0, y0); ctx.lineTo(x0, y1);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.font = "12px system-ui, -apple-system, Segoe UI, Roboto";
+    if(labels.x) ctx.fillText(labels.x, x1-60, y1-8);
+    if(labels.y) ctx.fillText(labels.y, x0+8, y0+16);
+    ctx.restore();
+  }
+  function scaleLinear(domain, range){
+    const [d0,d1] = domain, [r0,r1] = range;
+    const m = (r1-r0)/(d1-d0);
+    const b = r0 - m*d0;
+    return x => m*x + b;
+  }
+
+  // Simulator 1: z-score / MAD / EWMA
+  (function(){
+    const c = document.getElementById('sim1');
+    const ctx = c.getContext('2d');
+    const modeEl = document.getElementById('mode1');
+    const nEl = document.getElementById('n1');
+    const contamEl = document.getElementById('contam1');
+    const tauEl = document.getElementById('tau1');
+    const alphaEl = document.getElementById('alpha1');
+    const sigmaEl = document.getElementById('sigma1');
+    const regen = document.getElementById('regen1');
+    const metrics = document.getElementById('metrics1');
+
+    function showHideControls(){
+      const mode = modeEl.value;
+      document.querySelectorAll('[data-show]').forEach(div=>{
+        const modes = div.getAttribute('data-show').split(' ');
+        div.style.display = modes.includes(mode) ? 'flex' : 'none';
+      });
+    }
+
+    function genData(){
+      const n = parseInt(nEl.value,10);
+      const contam = parseInt(contamEl.value,10)/100;
+      const mode = modeEl.value;
+
+      if(mode === 'ewma'){
+        // time series baseline with change + spikes
+        const base = [];
+        let level = 0;
+        const noise = parseFloat(sigmaEl.value || 1) * 0.6 + 0.2;
+        const changePt = Math.floor(n*0.5);
+        for(let t=0;t<n;t++){
+          if(t===changePt) level += 2.5;
+          let val = level + randn()*noise;
+          // random spikes as anomalies
+          if(Math.random() < contam*1.2){
+            val += (Math.random()<0.5?-1:1) * (2 + Math.abs(randn())*2.5);
+          }
+          base.push(val);
+        }
+        return {mode, series: base};
+      } else {
+        // scalar i.i.d. with mixture anomalies
+        const sigma = parseFloat(sigmaEl.value);
+        const data = [];
+        const labels = [];
+        for(let i=0;i<n;i++){
+          if(Math.random() < contam){
+            const sign = Math.random()<0.5?-1:1;
+            const val = sign*(3 + Math.abs(randn())*2.5) + randn()*0.5;
+            data.push(val); labels.push(1);
+          } else {
+            data.push(randn()*sigma); labels.push(0);
+          }
+        }
+        return {mode, data, labels};
+      }
+    }
+
+    function draw(){
+      clearCanvas(ctx);
+      const pad = {l:50,t:20,r:10,b:40};
+      const mode = modeEl.value;
+      const tau = parseFloat(tauEl.value);
+      const alpha = parseFloat(alphaEl.value);
+
+      const payload = genData();
+
+      if(mode === 'ewma'){
+        // Draw time series with EWMA and bounds
+        const x0=pad.l, y0=pad.t, x1=c.width-pad.r, y1=c.height-pad.b;
+        const s = payload.series;
+        const xs = scaleLinear([0, s.length-1], [x0, x1]);
+        const minY = Math.min(...s), maxY = Math.max(...s);
+        const ys = scaleLinear([minY, maxY], [y1, y0]);
+        drawAxes(ctx, x0, y0, x1, y1, {x:"t", y:"x_t"});
+
+        // EWMA
+        let m = s[0];
+        const residuals = [];
+        const mArr = [m];
+        for(let t=1;t<s.length;t++){
+          m = alpha*s[t] + (1-alpha)*m;
+          mArr.push(m);
+          residuals.push(s[t]-m);
+        }
+        const rStd = std(residuals);
+        const up = mArr.map(v=>v + tau*rStd);
+        const lo = mArr.map(v=>v - tau*rStd);
+
+        // draw series
+        ctx.strokeStyle="#7bc8ff"; ctx.lineWidth=1.5; ctx.beginPath();
+        s.forEach((v,i)=>{ const X=xs(i), Y=ys(v); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+        ctx.stroke();
+
+        // draw EWMA
+        ctx.strokeStyle="#7ef29a"; ctx.lineWidth=1.2; ctx.setLineDash([6,4]); ctx.beginPath();
+        mArr.forEach((v,i)=>{ const X=xs(i), Y=ys(v); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+        ctx.stroke(); ctx.setLineDash([]);
+
+        // bounds
+        ctx.strokeStyle="rgba(255,107,107,0.85)"; ctx.lineWidth=1; ctx.setLineDash([3,5]); ctx.beginPath();
+        up.forEach((v,i)=>{ const X=xs(i), Y=ys(v); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+        ctx.stroke(); ctx.beginPath();
+        lo.forEach((v,i)=>{ const X=xs(i), Y=ys(v); if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); });
+        ctx.stroke(); ctx.setLineDash([]);
+
+        // mark anomalies (outside bounds)
+        let flagged=0;
+        s.forEach((v,i)=>{
+          if(v>up[i] || v<lo[i]){
+            flagged++;
+            ctx.fillStyle="#ff6b6b";
+            ctx.beginPath(); ctx.arc(xs(i), ys(v), 3, 0, Math.PI*2); ctx.fill();
+          }
+        });
+
+        metrics.textContent = `EWMA α=${alpha.toFixed(2)}, τ=${tau.toFixed(2)} — flagged ${flagged} / ${s.length} (${((flagged/s.length)*100).toFixed(1)}%).`;
+
+      } else {
+        // Histogram + z/MAD thresholding
+        const data = payload.data, labels = payload.labels;
+        // estimate center & scale
+        let center, scale;
+        if(mode==='z'){ center = mean(data); scale = std(data) || 1e-6; }
+        else { center = median(data); const MAD = mad(data) || 1e-6; scale = 1.4826*MAD; }
+
+        const zscores = data.map(x => (x - center)/scale);
+        const isAnom = zscores.map(z => Math.abs(z) > tau);
+        const tp = isAnom.filter((f,i)=>f && labels[i]===1).length;
+        const fp = isAnom.filter((f,i)=>f && labels[i]===0).length;
+        const fn = isAnom.filter((f,i)=>!f && labels[i]===1).length;
+        const tn = isAnom.filter((f,i)=>!f && labels[i]===0).length;
+
+        // Plot: scatter on 1D axis and vertical thresholds
+        const padX = {l:50,r:10}; const padY = {t:20,b:40};
+        const x0=padX.l, x1=c.width-padX.r, y0=padY.t, y1=c.height-padY.b;
+        const minX = Math.min(...data), maxX = Math.max(...data);
+        const xs = scaleLinear([minX, maxX], [x0, x1]);
+        const ys = (i) => y1 - 10 - (i % 30) * 10 * 0.03; // slight jitter line
+
+        drawAxes(ctx, x0, y0, x1, y1, {x:"x", y:""});
+        // thresholds at center ± tau*scale
+        const thL = center - tau*scale, thR = center + tau*scale;
+
+        // points
+        for(let i=0;i<data.length;i++){
+          const col = isAnom[i] ? "#ff6b6b" : "#7bc8ff";
+          ctx.fillStyle = col;
+          ctx.beginPath(); ctx.arc(xs(data[i]), ys(i), 3, 0, Math.PI*2); ctx.fill();
+        }
+
+        // threshold lines
+        ctx.strokeStyle="#7ef29a"; ctx.setLineDash([6,4]); ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(xs(thL), y0); ctx.lineTo(xs(thL), y1); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(xs(thR), y0); ctx.lineTo(xs(thR), y1); ctx.stroke();
+        ctx.setLineDash([]);
+
+        const precision = tp+fp>0 ? tp/(tp+fp) : 0;
+        const recall = tp+fn>0 ? tp/(tp+fn) : 0;
+        const fpr = fp/(fp+tn||1);
+        metrics.textContent = `${mode==='z'?'Z-score':'MAD'} τ=${tau.toFixed(2)} — TP=${tp}, FP=${fp}, FN=${fn}, TN=${tn}, Precision=${(precision*100).toFixed(1)}%, Recall=${(recall*100).toFixed(1)}%, FPR=${(fpr*100).toFixed(1)}%.`;
+      }
+    }
+
+    showHideControls();
+    [modeEl,nEl,contamEl,tauEl,alphaEl,sigmaEl].forEach(el=>el.addEventListener('input', ()=>{ showHideControls(); draw(); }));
+    regen.addEventListener('click', draw);
+    draw();
+  })();
+
+  // Simulator 2: PCA in 2D with residual threshold
+  (function(){
+    const c = document.getElementById('sim2');
+    const ctx = c.getContext('2d');
+    const nEl = document.getElementById('n2');
+    const spreadEl = document.getElementById('spread2');
+    const angleEl = document.getElementById('angle2');
+    const contamEl = document.getElementById('contam2');
+    const tauEl = document.getElementById('tau2');
+    const regen = document.getElementById('regen2');
+    const metrics = document.getElementById('metrics2');
+
+    function gen(){
+      const n = parseInt(nEl.value,10);
+      const contam = parseInt(contamEl.value,10)/100;
+      const spread = parseFloat(spreadEl.value);
+      const angle = parseFloat(angleEl.value) * Math.PI/180;
+
+      const cos = Math.cos(angle), sin = Math.sin(angle);
+      const pts = [];
+      const labels = [];
+      for(let i=0;i<n;i++){
+        const isOut = Math.random()<contam;
+        if(isOut){
+          // outliers away from principal axis
+          const r = 4 + Math.abs(randn())*2.5;
+          const theta = angle + (Math.random()<0.5?Math.PI/2:-Math.PI/2) + randn()*0.3;
+          const x = r*Math.cos(theta), y = r*Math.sin(theta);
+          pts.push([x,y]); labels.push(1);
+        } else {
+          // elongated Gaussian cluster
+          const u = randn()*spread*1.6;
+          const v = randn()*spread*0.5;
+          const x = u*cos - v*sin;
+          const y = u*sin + v*cos;
+          pts.push([x,y]); labels.push(0);
+        }
+      }
+      return {pts, labels};
+    }
+
+    function pcaResiduals(pts){
+      const n = pts.length;
+      const mx = pts.reduce((a,p)=>a+p[0],0)/n;
+      const my = pts.reduce((a,p)=>a+p[1],0)/n;
+      const X = pts.map(p=>[p[0]-mx, p[1]-my]);
+      // Covariance
+      let sxx=0, sxy=0, syy=0;
+      for(const [x,y] of X){ sxx += x*x; sxy += x*y; syy += y*y; }
+      sxx/=n; sxy/=n; syy/=n;
+      // Eigenvalues for 2x2
+      const tr = sxx+syy;
+      const det = sxx*syy - sxy*sxy;
+      const disc = Math.sqrt(Math.max(0, tr*tr/4 - det));
+      const l1 = tr/2 + disc; // largest
+      const l2 = tr/2 - disc;
+
+      // Principal eigenvector (associated with l1)
+      let vx = sxy, vy = l1 - sxx;
+      if(Math.abs(vx)+Math.abs(vy) < 1e-8){ vx = 1; vy = 0; }
+      const norm = Math.hypot(vx,vy); vx/=norm; vy/=norm;
+
+      // Reconstruction to rank-1 subspace
+      const residuals = [];
+      const proj = X.map(([x,y])=>{
+        const dot = x*vx + y*vy;
+        const rx = dot*vx, ry = dot*vy;
+        const ex = x - rx, ey = y - ry;
+        residuals.push(Math.hypot(ex,ey));
+        return {rx: rx+mx, ry: ry+my};
+      });
+
+      return {mx,my,vx,vy,l1,l2,residuals, proj};
+    }
+
+    function draw(){
+      clearCanvas(ctx);
+      const pad = {l:50,t:20,r:10,b:40};
+      const {pts, labels} = gen();
+      const xs = pts.map(p=>p[0]), ys = pts.map(p=>p[1]);
+      const minX = Math.min(...xs), maxX = Math.max(...xs);
+      const minY = Math.min(...ys), maxY = Math.max(...ys);
+      const domX = [minX-1, maxX+1], domY = [minY-1, maxY+1];
+      const x0=pad.l, x1=c.width-pad.r, y0=pad.t, y1=c.height-pad.b;
+      const sx = scaleLinear(domX, [x0, x1]);
+      const sy = scaleLinear(domY, [y1, y0]);
+      drawAxes(ctx, x0, y0, x1, y1, {x:"x1", y:"x2"});
+
+      const {mx,my,vx,vy,residuals} = pcaResiduals(pts);
+      const tau = parseFloat(tauEl.value);
+
+      // draw principal axis
+      ctx.strokeStyle="#7ef29a"; ctx.setLineDash([6,4]);
+      ctx.beginPath();
+      const ax0 = -999*vx + mx, ay0 = -999*vy + my;
+      const ax1 =  999*vx + mx, ay1 =  999*vy + my;
+      ctx.moveTo(sx(ax0), sy(ay0)); ctx.lineTo(sx(ax1), sy(ay1));
+      ctx.stroke(); ctx.setLineDash([]);
+
+      // draw points
+      let flagged=0;
+      pts.forEach((p,i)=>{
+        const r = residuals[i];
+        const flag = r > tau;
+        if(flag) flagged++;
+        ctx.fillStyle = flag ? "#ff6b6b" : "#7bc8ff";
+        ctx.beginPath(); ctx.arc(sx(p[0]), sy(p[1]), 3, 0, Math.PI*2); ctx.fill();
+      });
+
+      const rMean = mean(residuals);
+      const rStd = std(residuals);
+      document.getElementById('metrics2').textContent =
+        `Principal axis shown. Residual mean=${rMean.toFixed(2)}, std=${rStd.toFixed(2)}, τ=${tau.toFixed(2)} → flagged ${flagged}/${pts.length} (${(flagged/pts.length*100).toFixed(1)}%).`;
+    }
+
+    [nEl,spreadEl,angleEl,contamEl,tauEl].forEach(el=>el.addEventListener('input', draw));
+    regen.addEventListener('click', draw);
+    draw();
+  })();
+
+  // Simulator 3: Imaging toy (lesion + artifact) with z-thresholding on local z-map
+  (function(){
+    const c = document.getElementById('sim3');
+    const ctx = c.getContext('2d');
+    const lesionEl = document.getElementById('lesion3');
+    const noiseEl = document.getElementById('noise3');
+    const artifactEl = document.getElementById('artifact3');
+    const tauEl = document.getElementById('tau3');
+    const regen = document.getElementById('regen3');
+    const metrics = document.getElementById('metrics3');
+
+    function genImage(W,H, lesionI, noise, artifact){
+      // base smooth field
+      const img = new Float32Array(W*H);
+      for(let y=0;y<H;y++){
+        for(let x=0;x<W;x++){
+          const nx = x/W, ny = y/H;
+          const base = 0.5 + 0.3*(nx-0.5) + 0.2*(Math.sin(2*Math.PI*ny));
+          img[y*W+x] = base + randn()*noise;
+        }
+      }
+      // lesion: bright disk
+      const cx = Math.floor(W*0.35), cy = Math.floor(H*0.55), r = Math.floor(Math.min(W,H)*0.12);
+      for(let y=Math.max(0,cy-r); y<Math.min(H,cy+r); y++){
+        for(let x=Math.max(0,cx-r); x<Math.min(W,cx+r); x++){
+          const d = Math.hypot(x-cx, y-cy);
+          if(d<r){
+            const fall = Math.cos((d/r)*Math.PI)*0.5+0.5;
+            img[y*W+x] += lesionI*fall;
+          }
+        }
+      }
+      // artifact: vertical streaks
+      const stripes = Math.max(1, Math.floor(artifact*10));
+      for(let s=0;s<stripes;s++){
+        const sx = Math.floor(W*(0.6 + 0.35*Math.random()));
+        for(let y=0;y<H;y++){
+          const amp = artifact*(0.4 + 0.6*Math.random());
+          img[y*W+sx] += amp*(Math.random()<0.6?1:-1);
+        }
+      }
+      return img;
+    }
+
+    function zMap(img, W, H){
+      // local mean/std via box filter (simple separable)
+      const k = 7; // window radius
+      const box = (arr) => {
+        const out = new Float32Array(W*H);
+        // horizontal pass
+        const tmp = new Float32Array(W*H);
+        for(let y=0;y<H;y++){
+          let acc = 0;
+          for(let x=0;x<W;x++){
+            const add = arr[y*W + clamp(x+k,0,W-1)];
+            const rem = arr[y*W + clamp(x-k-1,0,W-1)];
+            acc += add - rem;
+            tmp[y*W+x] = acc / (k*2+1);
+          }
+        }
+        // vertical pass
+        for(let x=0;x<W;x++){
+          let acc = 0;
+          for(let y=0;y<H;y++){
+            const add = tmp[clamp(y+k,0,H-1)*W + x];
+            const rem = tmp[clamp(y-k-1,0,H-1)*W + x];
+            acc += add - rem;
+            out[y*W+x] = acc / (k*2+1);
+          }
+        }
+        return out;
+      };
+      const meanLocal = box(img);
+      const sq = new Float32Array(W*H);
+      for(let i=0;i<img.length;i++) sq[i]=img[i]*img[i];
+      const meanSq = box(sq);
+      const varLocal = new Float32Array(W*H);
+      for(let i=0;i<img.length;i++){
+        varLocal[i] = Math.max(1e-6, meanSq[i] - meanLocal[i]*meanLocal[i]);
+      }
+      const stdLocal = new Float32Array(W*H);
+      for(let i=0;i<img.length;i++) stdLocal[i] = Math.sqrt(varLocal[i]);
+      const z = new Float32Array(W*H);
+      for(let i=0;i<img.length;i++) z[i] = (img[i]-meanLocal[i]) / (stdLocal[i]||1e-6);
+      return z;
+    }
+
+    function draw(){
+      clearCanvas(ctx);
+      const W = 160, H = 160;
+      const lesionI = parseFloat(lesionEl.value);
+      const noise = parseFloat(noiseEl.value);
+      const artifact = parseFloat(artifactEl.value);
+      const tau = parseFloat(tauEl.value);
+
+      const img = genImage(W,H, lesionI, noise, artifact);
+      const z = zMap(img, W, H);
+
+      // scale to canvas
+      const pad = {l:20,t:20,r:20,b:40};
+      const cw = ctx.canvas.width, ch = ctx.canvas.height;
+      const pw = cw - pad.l - pad.r;
+      const ph = ch - pad.t - pad.b;
+      const scale = Math.min(pw/W, ph/H);
+      const ox = pad.l + (pw - W*scale)/2;
+      const oy = pad.t + (ph - H*scale)/2;
+
+      // draw base image
+      const imData = ctx.createImageData(W, H);
+      let minV = Infinity, maxV = -Infinity;
+      for(let i=0;i<img.length;i++){ if(img[i]<minV)minV=img[i]; if(img[i]>maxV)maxV=img[i]; }
+      const map = v => (v-minV)/(maxV-minV+1e-9);
+      for(let i=0;i<img.length;i++){
+        const g = Math.floor(map(img[i])*255);
+        imData.data[i*4+0]=g; imData.data[i*4+1]=g; imData.data[i*4+2]=g; imData.data[i*4+3]=255;
+      }
+      // draw scaled
+      const off = document.createElement('canvas'); off.width=W; off.height=H;
+      const octx = off.getContext('2d');
+      octx.putImageData(imData, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(off, 0, 0, W, H, ox, oy, W*scale, H*scale);
+
+      // overlay detection mask where |z| > tau
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      for(let y=0;y<H;y++){
+        for(let x=0;x<W;x++){
+          const idx = y*W+x;
+          if(Math.abs(z[idx]) > tau){
+            ctx.fillStyle = "#ff6b6b";
+            ctx.fillRect(ox + x*scale, oy + y*scale, scale, scale);
+          }
+        }
+      }
+      ctx.restore();
+
+      // simple metrics: proportion flagged
+      const flagged = z.filter(v => Math.abs(v)>tau).length;
+      metrics.textContent = `Local z-threshold τ=${tau.toFixed(1)} — flagged ${flagged} / ${W*H} pixels (${(flagged/(W*H)*100).toFixed(2)}%). Increase noise reduces z; stronger lesion/artifact enlarges mask.`;
+    }
+
+    [lesionEl, noiseEl, artifactEl, tauEl].forEach(el=>el.addEventListener('input', draw));
+    regen.addEventListener('click', draw);
+    draw();
+  })();
+</script>
+</body>
+</html>
