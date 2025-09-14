@@ -7,671 +7,691 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-    :root {
-        --bg: #0a0e17;
-        --card-bg: #111827;
-        --text: #e0e0e0;
-        --muted: #9ca3af;
-        --primary: #60a5fa;
-        --accent: #8b5cf6;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
-        --border: rgba(255, 255, 255, 0.06);
-    }
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: var(--bg);
-        color: var(--text);
-        line-height: 1.75;
-        overflow-x: hidden;
-        padding-bottom: 80px;
-    }
-    h1, h2, h3, h4, h5 {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        line-height: 1.3;
-        margin-bottom: 1rem;
-        color: var(--text);
-    }
+:root {
+    --bg: #0a0e17;
+    --card-bg: #111827;
+    --text: #e0e0e0;
+    --muted: #9ca3af;
+    --primary: #60a5fa;
+    --accent: #8b5cf6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+    --border: rgba(255, 255, 255, 0.06);
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    overflow-x: hidden;
+    padding-bottom: 80px;
+}
+h1, h2, h3, h4, h5 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+.container {
+    width: 100%;
+    max-width: 1080px; /* Expanded for desktop */
+    margin: 0 auto;
+    padding: 0 24px;
+}
+/* Header & Navigation */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(10, 14, 23, 0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+}
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.nav-links {
+    display: flex;
+    gap: 28px;
+}
+.nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    padding-bottom: 4px;
+    position: relative;
+}
+.nav-links a:hover {
+    color: var(--primary);
+}
+.nav-links a:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: var(--primary);
+    transition: var(--transition);
+}
+.nav-links a:hover:after {
+    width: 100%;
+}
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+}
+/* Blog Content */
+.blog-content {
+    padding: 160px 0 80px; /* Increased top padding for desktop */
+}
+.blog-header {
+    margin-bottom: 60px;
+    text-align: center;
+}
+.blog-title {
+    font-size: 3.2rem;
+    margin-bottom: 24px;
+    line-height: 1.2;
+    color: var(--text);
+    word-wrap: break-word;
+    letter-spacing: -0.5px;
+}
+.blog-meta {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+.author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.author-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+/* --- FIXED .blog-hero STYLES --- */
+.blog-hero {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(139, 92, 246, 0.08) 100%);
+    border-radius: 20px;
+    margin-bottom: 60px;
+    /* Key changes for flexible height and centering */
+    display: flex;
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    /* Flexbox properties for height flexibility */
+    flex-direction: column; /* Stack content vertically if needed */
+    flex-shrink: 0; /* Prevents it from shrinking below content size */
+    /* Ensure padding/border are included */
+    box-sizing: border-box;
+    /* Remove any explicit 'height' property from here */
+    position: relative;
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    /* Removed fixed height: ...; if it was here */
+}
+/* --- END FIXED .blog-hero STYLES --- */
+.blog-hero-content {
+    text-align: center;
+    z-index: 2;
+    position: relative;
+    max-width: 800px;
+    padding: 32px; /* Add padding back here as default */
+    box-sizing: border-box; /* Ensure padding is included in width/height */
+}
+.blog-hero-content h2 {
+    font-size: 2.2rem;
+    color: var(--primary);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    margin-top: 0; /* Explicitly remove top margin */
+    margin-bottom: 20px; /* Explicitly set bottom margin */
+}
+.blog-hero-content p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 300;
+    max-width: 700px;
+    margin: 0 auto;
+}
+.blog-body {
+    font-size: 1.1rem;
+    line-height: 1.85;
+    margin-bottom: 60px;
+    color: var(--text);
+}
+.blog-body p {
+    margin-bottom: 28px;
+    opacity: 0.92;
+    text-align: justify;
+}
+.blog-body h3 {
+    font-size: 1.9rem;
+    margin: 56px 0 28px;
+    color: var(--primary);
+    border-left: 5px solid var(--accent);
+    padding-left: 20px;
+    position: relative;
+    letter-spacing: -0.2px;
+}
+.highlight-box {
+    background: rgba(96, 165, 250, 0.06);
+    border-left: 5px solid var(--primary);
+    padding: 32px;
+    border-radius: 12px;
+    margin: 50px 0;
+    border: 1px solid var(--border);
+    font-style: italic;
+    position: relative;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+.highlight-box::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    font-size: 5rem;
+    color: rgba(96, 165, 250, 0.1);
+    font-family: Georgia, serif;
+    line-height: 1;
+    font-weight: bold;
+}
+/* Comparison Table — Desktop-Optimized */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 60px 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    font-size: 0.98rem;
+}
+.comparison-table th,
+.comparison-table td {
+    padding: 22px 24px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    transition: var(--transition);
+}
+.comparison-table th {
+    background: rgba(96, 165, 250, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: 0.9rem;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(8px);
+    z-index: 1;
+}
+.comparison-table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+.comparison-table tr:hover {
+    background: rgba(96, 165, 250, 0.12);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(96, 165, 250, 0.1);
+    transition: var(--transition);
+}
+.tech-name {
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+.tech-name i {
+    font-size: 1.1rem;
+}
+.llm { color: var(--primary); }
+.agentic { color: var(--accent); }
+.digital-twin { color: var(--success); }
+.chatbot { color: var(--warning); }
+.virtual-assistant { color: var(--danger); }
+.status-good::before {
+    content: "✓";
+    color: var(--success);
+    margin-right: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.status-partial::before {
+    content: "⚠";
+    color: var(--warning);
+    margin-right: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.status-none::before {
+    content: "✗";
+    color: var(--danger);
+    margin-right: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.example {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    color: var(--muted);
+    font-style: italic;
+    border-left: 2px solid var(--border);
+    padding-left: 16px;
+    padding-top: 8px;
+}
+/* Digital Twin Diagram */
+.digital-twin-diagram {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 40px;
+    margin: 60px 0;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+.diagram-title {
+    text-align: center;
+    margin-bottom: 36px;
+    color: var(--primary);
+    font-size: 2rem;
+    position: relative;
+    letter-spacing: -0.3px;
+}
+.diagram-title::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 2px;
+    background: var(--accent);
+    margin: 14px auto 0;
+    border-radius: 10px;
+}
+.diagram-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+.physical-side, .digital-side {
+    flex: 1;
+    min-width: 300px;
+    padding: 30px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+.physical-side {
+    border-left: 4px solid #f59e0b;
+}
+.digital-side {
+    border-left: 4px solid var(--success);
+}
+.side-title {
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 1.3rem;
+    letter-spacing: -0.1px;
+}
+.connection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-width: 64px;
+}
+.connection-line {
+    width: 2px;
+    height: 90px;
+    background: var(--primary);
+    position: relative;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
+}
+.connection-line:before, .connection-line:after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    background: rgba(96, 165, 250, 0.2);
+    left: -5px;
+}
+.connection-line:before {
+    top: -6px;
+}
+.connection-line:after {
+    bottom: -6px;
+}
+.data-flow {
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-weight: 600;
+}
+.diagram-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    opacity: 0.9;
+    transition: var(--transition);
+}
+.diagram-item:hover {
+    transform: translateX(4px);
+}
+.diagram-item i {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+/* Footer */
+footer {
+    background: rgba(10, 14, 23, 0.96);
+    padding: 50px 0 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+}
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+}
+.footer-logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.footer-links {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 20px;
+}
+.footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+.footer-links a:hover {
+    color: var(--primary);
+    text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+.footer-bottom {
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+}
+/* Responsive Styles — Mobile First, but Desktop Optimized */
+@media (max-width: 1024px) {
     .container {
-        width: 100%;
-        max-width: 1080px; /* Expanded for desktop */
-        margin: 0 auto;
-        padding: 0 24px;
-    }
-    /* Header & Navigation */
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        background: rgba(10, 14, 23, 0.92);
-        backdrop-filter: blur(14px);
-        border-bottom: 1px solid var(--border);
-        padding: 18px 0;
-    }
-    nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .logo {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        font-size: 1.7rem;
-        color: var(--primary);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .nav-links {
-        display: flex;
-        gap: 28px;
-    }
-    .nav-links a {
-        text-decoration: none;
-        color: var(--muted);
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: var(--transition);
-        padding-bottom: 4px;
-        position: relative;
-    }
-    .nav-links a:hover {
-        color: var(--primary);
-    }
-    .nav-links a:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 1.5px;
-        background: var(--primary);
-        transition: var(--transition);
-    }
-    .nav-links a:hover:after {
-        width: 100%;
-    }
-    .mobile-menu-btn {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--text);
-    }
-    /* Blog Content */
-    .blog-content {
-        padding: 220px 0 80px;
-    }
-    .blog-header {
-        margin-bottom: 60px;
-        text-align: center;
+        padding: 0 20px;
     }
     .blog-title {
-        font-size: 3.2rem;
-        margin-bottom: 24px;
-        line-height: 1.2;
-        color: var(--text);
-        word-wrap: break-word;
-        letter-spacing: -0.5px;
+        font-size: 2.8rem;
     }
-    .blog-meta {
-        display: flex;
-        justify-content: center;
-        gap: 36px;
-        color: var(--muted);
-        font-size: 0.95rem;
-        margin-top: 12px;
-        flex-wrap: wrap;
-    }
-    .author {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .author-img {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--primary));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 0.95rem;
-        flex-shrink: 0;
-    }
-    /* --- FIXED .blog-hero STYLES --- */
-    .blog-hero {
-        width: 100%;
-        background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(139, 92, 246, 0.08) 100%);
-        border-radius: 20px;
-        margin-bottom: 60px;
-        /* Key changes for flexible height and centering */
-        display: flex;
-        align-items: center; /* Vertically center content */
-        justify-content: center; /* Horizontally center content */
-        /* Flexbox properties for height flexibility */
-        flex-direction: column; /* Stack content vertically if needed */
-        flex-shrink: 0; /* Prevents it from shrinking below content size */
-        /* Ensure padding/border are included */
-        box-sizing: border-box;
-        /* Remove any explicit 'height' property from here */
-        position: relative;
-        backdrop-filter: blur(12px);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-        /* Removed fixed height: ...; if it was here */
-    }
-    /* --- END FIXED .blog-hero STYLES --- */
-    .blog-hero-content {
-        text-align: center;
-        z-index: 2;
-        position: relative;
-        max-width: 800px;
-        padding: 32px; /* Add padding back here as default */
-        box-sizing: border-box; /* Ensure padding is included in width/height */
-    }
+    /* --- REMOVED height: 320px; from .blog-hero --- */
     .blog-hero-content h2 {
-        font-size: 2.2rem;
-        color: var(--primary);
-        font-weight: 600;
-        line-height: 1.4;
-        letter-spacing: -0.3px;
-        margin-top: 0; /* Explicitly remove top margin */
-        margin-bottom: 20px; /* Explicitly set bottom margin */
+        font-size: 2rem;
     }
-    .blog-hero-content p {
-        color: var(--muted);
-        font-size: 1.1rem;
-        font-weight: 300;
-        max-width: 700px;
-        margin: 0 auto;
-    }
-    .blog-body {
-        font-size: 1.1rem;
-        line-height: 1.85;
-        margin-bottom: 60px;
-        color: var(--text);
-    }
-    .blog-body p {
-        margin-bottom: 28px;
-        opacity: 0.92;
-        text-align: justify;
-    }
-    .blog-body h3 {
-        font-size: 1.9rem;
-        margin: 56px 0 28px;
-        color: var(--primary);
-        border-left: 5px solid var(--accent);
-        padding-left: 20px;
-        position: relative;
-        letter-spacing: -0.2px;
-    }
-    .highlight-box {
-        background: rgba(96, 165, 250, 0.06);
-        border-left: 5px solid var(--primary);
-        padding: 32px;
-        border-radius: 12px;
-        margin: 50px 0;
-        border: 1px solid var(--border);
-        font-style: italic;
-        position: relative;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
-    }
-    .highlight-box::before {
-        content: "";
-        position: absolute;
-        top: 12px;
-        left: 20px;
-        font-size: 5rem;
-        color: rgba(96, 165, 250, 0.1);
-        font-family: Georgia, serif;
-        line-height: 1;
-        font-weight: bold;
-    }
-    /* Comparison Table — Desktop-Optimized */
     .comparison-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 60px 0;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-        background: var(--card-bg);
-        font-size: 0.98rem;
+        font-size: 0.9rem;
     }
     .comparison-table th,
     .comparison-table td {
-        padding: 22px 24px;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
-        font-weight: 500;
-        transition: var(--transition);
-    }
-    .comparison-table th {
-        background: rgba(96, 165, 250, 0.1);
-        color: var(--primary);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-        font-size: 0.9rem;
-        position: sticky;
-        top: 0;
-        backdrop-filter: blur(8px);
-        z-index: 1;
-    }
-    .comparison-table tr:nth-child(even) {
-        background: rgba(255, 255, 255, 0.02);
-    }
-    .comparison-table tr:hover {
-        background: rgba(96, 165, 250, 0.12);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 16px rgba(96, 165, 250, 0.1);
-        transition: var(--transition);
-    }
-    .tech-name {
-        font-weight: 600;
-        color: var(--text);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1rem;
-    }
-    .tech-name i {
-        font-size: 1.1rem;
-    }
-    .llm { color: var(--primary); }
-    .agentic { color: var(--accent); }
-    .digital-twin { color: var(--success); }
-    .chatbot { color: var(--warning); }
-    .virtual-assistant { color: var(--danger); }
-    .status-good::before {
-        content: "✓";
-        color: var(--success);
-        margin-right: 8px;
-        font-weight: bold;
-        font-size: 1.1rem;
-    }
-    .status-partial::before {
-        content: "⚠";
-        color: var(--warning);
-        margin-right: 8px;
-        font-weight: bold;
-        font-size: 1.1rem;
-    }
-    .status-none::before {
-        content: "✗";
-        color: var(--danger);
-        margin-right: 8px;
-        font-weight: bold;
-        font-size: 1.1rem;
-    }
-    .example {
-        font-size: 0.9rem;
-        margin-top: 10px;
-        color: var(--muted);
-        font-style: italic;
-        border-left: 2px solid var(--border);
-        padding-left: 16px;
-        padding-top: 8px;
-    }
-    /* Digital Twin Diagram */
-    .digital-twin-diagram {
-        background: var(--card-bg);
-        border-radius: 18px;
-        padding: 40px;
-        margin: 60px 0;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
+        padding: 20px 18px;
     }
     .diagram-title {
-        text-align: center;
-        margin-bottom: 36px;
-        color: var(--primary);
-        font-size: 2rem;
-        position: relative;
-        letter-spacing: -0.3px;
+        font-size: 1.8rem;
     }
-    .diagram-title::after {
-        content: "";
-        display: block;
-        width: 70px;
-        height: 2px;
-        background: var(--accent);
-        margin: 14px auto 0;
-        border-radius: 10px;
-    }
-    .diagram-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 32px;
-        flex-wrap: wrap;
-    }
-    .physical-side, .digital-side {
-        flex: 1;
-        min-width: 300px;
-        padding: 30px;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-    .physical-side {
-        border-left: 4px solid #f59e0b;
-    }
-    .digital-side {
-        border-left: 4px solid var(--success);
-    }
-    .side-title {
-        text-align: center;
-        margin-bottom: 24px;
-        font-weight: 600;
-        color: var(--text);
-        font-size: 1.3rem;
-        letter-spacing: -0.1px;
-    }
-    .connection {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        min-width: 64px;
+    .digital-twin-diagram {
+        padding: 32px;
     }
     .connection-line {
-        width: 2px;
-        height: 90px;
-        background: var(--primary);
-        position: relative;
-        box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
+        height: 80px;
     }
-    .connection-line:before, .connection-line:after {
-        content: '';
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        border: 2px solid var(--primary);
-        border-radius: 50%;
-        background: rgba(96, 165, 250, 0.2);
-        left: -5px;
+}
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
     }
-    .connection-line:before {
-        top: -6px;
+    .mobile-menu-btn {
+        display: block;
     }
-    .connection-line:after {
-        bottom: -6px;
+    .blog-content {
+        padding: 160px 0 50px; /* Increased top padding for tablets/phones */
     }
-    .data-flow {
-        font-size: 0.85rem;
-        color: var(--primary);
-        font-weight: 500;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-        white-space: nowrap;
-        font-weight: 600;
+    .blog-title {
+        font-size: 2.4rem;
     }
-    .diagram-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 18px;
-        opacity: 0.9;
-        transition: var(--transition);
+    /* --- REMOVED height: 280px; from .blog-hero --- */
+    .blog-hero-content {
+        padding: 24px; /* Reduced padding */
     }
-    .diagram-item:hover {
-        transform: translateX(4px);
+    .blog-hero-content h2 {
+        font-size: 1.8rem;
+        margin-bottom: 16px; /* Slightly reduced bottom margin */
     }
-    .diagram-item i {
-        color: var(--primary);
-        font-size: 1.2rem;
+    .blog-hero-content p {
+        font-size: 1rem;
     }
-    /* Footer */
-    footer {
-        background: rgba(10, 14, 23, 0.96);
-        padding: 50px 0 24px;
-        border-top: 1px solid var(--border);
-        margin-top: 80px;
+    .blog-body h3 {
+        font-size: 1.6rem;
     }
-    .footer-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .diagram-title {
+        font-size: 1.6rem;
+    }
+    .diagram-content {
         flex-direction: column;
-        text-align: center;
         gap: 20px;
     }
-    .footer-logo {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
+    .connection {
+        flex-direction: row;
+        margin: 16px 0;
+        min-width: auto;
+    }
+    .connection-line {
+        width: 80px;
+        height: 2px;
+    }
+    .connection-line:before, .connection-line:after {
+        left: auto;
+        top: -4px;
+    }
+    .connection-line:before {
+        left: -5px;
+    }
+    .connection-line:after {
+        right: -5px;
+        left: auto;
+    }
+    .comparison-table {
+        font-size: 0.85rem;
+    }
+    .comparison-table th,
+    .comparison-table td {
+        padding: 16px 12px;
+    }
+    .example {
+        font-size: 0.85rem;
+    }
+    .sidebar {
+        display: none;
+    }
+
+    /* --- ADDED: Optimized Spacing for Mobile --- */
+    .blog-hero,
+    .blog-body,
+    .digital-twin-diagram {
+        margin-bottom: 40px; /* Reduced from 60px */
+    }
+    .highlight-box {
+        margin: 30px 0; /* Reduced from 50px */
+    }
+    .blog-body p {
+        margin-bottom: 20px; /* Reduced from 28px */
+        text-align: left; /* Changed from justify for better mobile reading */
+    }
+}
+@media (max-width: 480px) {
+    .container {
+        max-width: 100%; /* Adjusted for better small screen fit */
+        padding: 0 16px; /* Reduced padding */
+    }
+    .blog-title {
+        font-size: 2rem;
+    }
+    .blog-meta {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    /* --- REMOVED height: 240px; from .blog-hero --- */
+    .blog-hero-content {
+        padding: 20px; /* Reduced padding for small screens */
+    }
+    .blog-hero-content h2 {
         font-size: 1.6rem;
-        color: var(--primary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 16px;
+        margin-top: 0; /* Ensure top margin is 0 */
+        margin-bottom: 12px; /* Further reduced bottom margin for tight space */
+        line-height: 1.3; /* Potentially tighten line height if needed */
+    }
+    .blog-hero-content p {
+        font-size: 1rem;
+        margin-top: 0; /* Ensure paragraph top margin is 0 */
+        line-height: 1.6; /* Potentially adjust line height */
+    }
+    .highlight-box {
+        padding: 24px;
+    }
+    .digital-twin-diagram {
+        padding: 24px;
     }
     .footer-links {
-        display: flex;
-        gap: 32px;
-        margin-bottom: 20px;
+        flex-direction: column;
+        gap: 12px;
     }
-    .footer-links a {
-        color: var(--muted);
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: var(--transition);
+    .footer-logo {
+        font-size: 1.4rem;
     }
-    .footer-links a:hover {
-        color: var(--primary);
-        text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+    .comparison-table {
+        font-size: 0.8rem;
+        overflow-x: auto;
+        display: block;
+        white-space: nowrap;
     }
-    .footer-bottom {
-        color: var(--muted);
-        font-size: 0.85rem;
-        padding-top: 24px;
-        border-top: 1px solid var(--border);
-        margin-top: 24px;
+    .comparison-table th,
+    .comparison-table td {
+        min-width: 140px;
+        padding: 12px 10px; /* Slightly reduced padding */
     }
-    /* Responsive Styles — Mobile First, but Desktop Optimized */
-    @media (max-width: 1024px) {
-        .container {
-            padding: 0 20px;
-        }
-        .blog-title {
-            font-size: 2.8rem;
-        }
-        /* --- REMOVED height: 320px; from .blog-hero --- */
-        .blog-hero-content h2 {
-            font-size: 2rem;
-        }
-        .comparison-table {
-            font-size: 0.9rem;
-        }
-        .comparison-table th,
-        .comparison-table td {
-            padding: 20px 18px;
-        }
-        .diagram-title {
-            font-size: 1.8rem;
-        }
-        .digital-twin-diagram {
-            padding: 32px;
-        }
-        .connection-line {
-            height: 80px;
-        }
+    .diagram-item i {
+        font-size: 1rem; /* Slightly smaller icon */
     }
-    @media (max-width: 768px) {
-        .nav-links {
-            display: none;
-        }
-        .mobile-menu-btn {
-            display: block;
-        }
-        .blog-content {
-            padding: 200px 0 50px;
-        }
-        .blog-title {
-            font-size: 2.4rem;
-        }
-        /* --- REMOVED height: 280px; from .blog-hero --- */
-        .blog-hero-content {
-            padding: 24px; /* Reduced padding */
-        }
-        .blog-hero-content h2 {
-            font-size: 1.8rem;
-            margin-bottom: 16px; /* Slightly reduced bottom margin */
-        }
-        .blog-hero-content p {
-            font-size: 1rem;
-        }
-        .blog-body h3 {
-            font-size: 1.6rem;
-        }
-        .diagram-title {
-            font-size: 1.6rem;
-        }
-        .diagram-content {
-            flex-direction: column;
-            gap: 20px;
-        }
-        .connection {
-            flex-direction: row;
-            margin: 16px 0;
-            min-width: auto;
-        }
-        .connection-line {
-            width: 80px;
-            height: 2px;
-        }
-        .connection-line:before, .connection-line:after {
-            left: auto;
-            top: -4px;
-        }
-        .connection-line:before {
-            left: -5px;
-        }
-        .connection-line:after {
-            right: -5px;
-            left: auto;
-        }
-        .comparison-table {
-            font-size: 0.85rem;
-        }
-        .comparison-table th,
-        .comparison-table td {
-            padding: 16px 12px;
-        }
-        .example {
-            font-size: 0.85rem;
-        }
-        .sidebar {
-            display: none;
-        }
+
+    /* --- ADDED: Optimized Spacing & Readability for Small Screens --- */
+    .blog-content {
+        padding: 180px 0 40px; /* Ensures content clears header on tiny screens */
     }
-    @media (max-width: 480px) {
-        .container {
-            max-width: 100%; /* Adjusted for better small screen fit */
-            padding: 0 16px; /* Reduced padding */
-        }
-        .blog-title {
-            font-size: 2rem;
-        }
-        .blog-content {
-            padding: 180px 0 40px; /* You might need even more padding on tiny screens */
-        }
-        .blog-meta {
-            flex-direction: column;
-            gap: 12px;
-            text-align: center;
-        }
-        /* --- REMOVED height: 240px; from .blog-hero --- */
-        .blog-hero-content {
-            padding: 20px; /* Reduced padding for small screens */
-        }
-        .blog-hero-content h2 {
-            font-size: 1.6rem;
-            margin-top: 0; /* Ensure top margin is 0 */
-            margin-bottom: 12px; /* Further reduced bottom margin for tight space */
-            line-height: 1.3; /* Potentially tighten line height if needed */
-        }
-        .blog-hero-content p {
-            font-size: 1rem;
-            margin-top: 0; /* Ensure paragraph top margin is 0 */
-            line-height: 1.6; /* Potentially adjust line height */
-        }
-        .highlight-box {
-            padding: 24px;
-        }
-        .digital-twin-diagram {
-            padding: 24px;
-        }
-        .footer-links {
-            flex-direction: column;
-            gap: 12px;
-        }
-        .footer-logo {
-            font-size: 1.4rem;
-        }
-        .comparison-table {
-            font-size: 0.8rem;
-            overflow-x: auto;
-            display: block;
-            white-space: nowrap;
-        }
-        .comparison-table th,
-        .comparison-table td {
-            min-width: 140px;
-            padding: 12px 10px; /* Slightly reduced padding */
-        }
-        .diagram-item i {
-            font-size: 1rem; /* Slightly smaller icon */
-        }
+    .blog-hero,
+    .blog-body,
+    .digital-twin-diagram {
+        margin-bottom: 30px; /* Further reduced for smallest screens */
     }
-    /* Animations */
-    /* .fade-in {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.8s ease, transform 0.8s ease;
+    .highlight-box {
+        margin: 20px 0; /* Further reduced for smallest screens */
     }
-    .fade-in.visible {
-        opacity: 1;
-        transform: translateY(0);
-    } */
-    /* Scrollbar — Desktop Optimized */
-    ::-webkit-scrollbar {
-        width: 8px;
+    .blog-body p {
+        margin-bottom: 18px; /* Further reduced for smallest screens */
+        font-size: 1rem; /* Ensure font size is comfortable */
+        line-height: 1.7; /* Slightly tighter line height for better flow */
     }
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 10px;
-        border: 2px solid var(--bg);
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--primary);
-    }
-    ::-webkit-scrollbar-corner {
-        background: var(--bg);
-    }
+}
+/* Scrollbar — Desktop Optimized */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+    border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+::-webkit-scrollbar-corner {
+    background: var(--bg);
+}
 </style>
+
 </head>
 <body>
     <!-- Header & Navigation -->
@@ -987,66 +1007,13 @@ And now, in industrial settings, I see the same principles: <em>data + physics +
         </article>
     </main>
 
-    <!-- Footer -->
-    <!-- <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <i class="fas fa-industry"></i>
-                    Industrial AI
-                </div>
-                <div class="footer-links">
-                    <a href="#">About</a>
-                    <a href="#">Archive</a>
-                    <a href="#">Contact</a>
-                </div>
-                <div class="footer-bottom">
-                    © 2023 Industrial AI. All rights reserved.
-                </div>
-            </div>
-        </div>
-    </footer> -->
 
-    <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            const navLinks = document.querySelector('.nav-links');
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        });
-
-        // Animate elements on scroll
-        /*const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });*/
-
-        // Smooth scrolling for anchor links (if any)
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script>
+<script>
+    // Mobile menu toggle (only essential JS)
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+        const navLinks = document.querySelector('.nav-links');
+        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+    });
+</script>
 </body>
 </html>
