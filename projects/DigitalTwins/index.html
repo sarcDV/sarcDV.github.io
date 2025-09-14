@@ -112,7 +112,7 @@
     }
     /* Blog Content */
     .blog-content {
-        padding: 120px 0 80px;
+        padding: 220px 0 80px;
     }
     .blog-header {
         margin-bottom: 60px;
@@ -153,21 +153,29 @@
         font-size: 0.95rem;
         flex-shrink: 0;
     }
+    /* --- FIXED .blog-hero STYLES --- */
     .blog-hero {
         width: 100%;
         background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(139, 92, 246, 0.08) 100%);
         border-radius: 20px;
         margin-bottom: 60px;
+        /* Key changes for flexible height and centering */
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: center; /* Vertically center content */
+        justify-content: center; /* Horizontally center content */
+        /* Flexbox properties for height flexibility */
+        flex-direction: column; /* Stack content vertically if needed */
+        flex-shrink: 0; /* Prevents it from shrinking below content size */
+        /* Ensure padding/border are included */
+        box-sizing: border-box;
+        /* Remove any explicit 'height' property from here */
         position: relative;
         backdrop-filter: blur(12px);
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
-        /* Removed fixed height from here */
-        min-height: 360px; /* Default min-height */
+        /* Removed fixed height: ...; if it was here */
     }
+    /* --- END FIXED .blog-hero STYLES --- */
     .blog-hero-content {
         text-align: center;
         z-index: 2;
@@ -487,13 +495,7 @@
         .blog-title {
             font-size: 2.8rem;
         }
-        /* Changed height to min-height */
-        .blog-hero {
-            min-height: 320px;
-            display: flex; /* Ensure flex display */
-            align-items: center;
-            justify-content: center;
-        }
+        /* --- REMOVED height: 320px; from .blog-hero --- */
         .blog-hero-content h2 {
             font-size: 2rem;
         }
@@ -527,13 +529,7 @@
         .blog-title {
             font-size: 2.4rem;
         }
-        /* Changed height to min-height */
-        .blog-hero {
-            min-height: 280px;
-            display: flex; /* Ensure flex display */
-            align-items: center;
-            justify-content: center;
-        }
+        /* --- REMOVED height: 280px; from .blog-hero --- */
         .blog-hero-content {
             padding: 24px; /* Reduced padding */
         }
@@ -601,13 +597,7 @@
             gap: 12px;
             text-align: center;
         }
-        /* Changed height to min-height */
-        .blog-hero {
-            min-height: 240px;
-            display: flex; /* Ensure flex display */
-            align-items: center;
-            justify-content: center;
-        }
+        /* --- REMOVED height: 240px; from .blog-hero --- */
         .blog-hero-content {
             padding: 20px; /* Reduced padding for small screens */
         }
