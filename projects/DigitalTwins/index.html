@@ -601,6 +601,7 @@ footer {
     }
     .highlight-box {
         margin: 30px 0;
+        padding: 24px 16px;
     }
     .blog-body p {
         margin-bottom: 20px;
@@ -635,7 +636,8 @@ footer {
         line-height: 1.6;
     }
     .highlight-box {
-        padding: 24px;
+        padding: 20px 12px;
+        margin: 24px 0;
     }
     .digital-twin-diagram {
         padding: 24px;
@@ -654,6 +656,7 @@ footer {
     .comparison-table td {
         min-width: 140px;
         padding: 12px 10px;
+        font-size: 0.75rem;
     }
     .diagram-item i {
         font-size: 1rem;
@@ -675,6 +678,10 @@ footer {
         font-size: 1rem;
         line-height: 1.7;
     }
+    .blog-body h3 {
+        font-size: 1.4rem;
+        margin: 40px 0 20px;
+    }
 }
 /* Final Safeguard: Prevent horizontal overflow on mobile */
 @media (max-width: 768px) {
@@ -688,6 +695,11 @@ footer {
     .highlight-box {
         max-width: 100%;
         overflow-x: hidden;
+    }
+    /* Wrap long content */
+    .comparison-table {
+        display: block;
+        overflow-x: auto;
     }
 }
 /* Scrollbar */
@@ -708,7 +720,27 @@ footer {
 ::-webkit-scrollbar-corner {
     background: var(--bg);
 }
-</style>
+
+/* Added: Ensure author link displays properly on mobile */
+.blog-meta .author a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+.blog-meta .author a:hover {
+    text-decoration: underline;
+}
+
+/* Added: Ensure tables are contained within viewport */
+.table-container {
+    margin: 40px 0;
+}
+@media (max-width: 768px) {
+    .table-container {
+        margin: 30px 0;
+    }
+}
+    </style>
 
 </head>
 <body>
@@ -764,14 +796,10 @@ footer {
             <div class="blog-body fade-in">
 
                 <p>In today's rapidly evolving industrial landscape, digital twins have emerged as one of the most transformative technologies, offering unprecedented capabilities to simulate, monitor, control, and optimize physical systems in real time. By creating a dynamic digital replica of a physical asset, process, or system, digital twins enable continuous data-driven decision-making, predictive maintenance, and operational efficiency across sectors—from manufacturing and energy to transportation and healthcare.</p>
-                <p>Yet, amidst the current hype surrounding generative AI and large language models, the true strategic value of properly implemented digital twin technology is often overshadowed or misunderstood. While generative AI excels at language generation, content creation, and conversational interfaces, it typically lacks the deep integration with operational technologies (OT) and industrial protocols required for real-time responsiveness and control in mission-critical environments.
-                </p>
-                <p></p>Many startups and tech vendors tout AI-driven solutions that promise to revolutionize industrial production, but in practice, these offerings are often confined to surface-level applications such as virtual assistants, chatbots, or dashboard analytics. They rarely address the complex interplay between cyber-physical systems, sensor networks, and control loops that define modern industrial operations. Without robust connectivity to edge devices, SCADA systems, and IoT infrastructure, such solutions fall short of delivering the closed-loop automation, anomaly detection, and system-level optimization that digital twins are uniquely positioned to provide.
-                </p>
-                <p>Moreover, the successful deployment of digital twins requires more than just data ingestion and visualization—it demands semantic interoperability, domain-specific modeling, and real-time synchronization between the digital and physical worlds. This involves integrating AI with physics-based models, simulation engines, and historical performance data to create a truly intelligent system capable of forecasting outcomes, diagnosing failures, and autonomously adapting to changing conditions.
-                </p>
-                <p>Another often overlooked aspect is the scalability and lifecycle management of digital twins. Building a one-off twin for a single machine is relatively straightforward, but scaling across an entire factory or supply chain introduces challenges in data governance, model fidelity, and system orchestration. This is where enterprise-grade platforms and standards—such as the Industrial Digital Twin Association (IDTA) or Asset Administration Shells (AAS)—play a critical role.
-                </p>
+                <p>Yet, amidst the current hype surrounding generative AI and large language models, the true strategic value of properly implemented digital twin technology is often overshadowed or misunderstood. While generative AI excels at language generation, content creation, and conversational interfaces, it typically lacks the deep integration with operational technologies (OT) and industrial protocols required for real-time responsiveness and control in mission-critical environments.</p>
+                <p>Many startups and tech vendors tout AI-driven solutions that promise to revolutionize industrial production, but in practice, these offerings are often confined to surface-level applications such as virtual assistants, chatbots, or dashboard analytics. They rarely address the complex interplay between cyber-physical systems, sensor networks, and control loops that define modern industrial operations. Without robust connectivity to edge devices, SCADA systems, and IoT infrastructure, such solutions fall short of delivering the closed-loop automation, anomaly detection, and system-level optimization that digital twins are uniquely positioned to provide.</p>
+                <p>Moreover, the successful deployment of digital twins requires more than just data ingestion and visualization—it demands semantic interoperability, domain-specific modeling, and real-time synchronization between the digital and physical worlds. This involves integrating AI with physics-based models, simulation engines, and historical performance data to create a truly intelligent system capable of forecasting outcomes, diagnosing failures, and autonomously adapting to changing conditions.</p>
+                <p>Another often overlooked aspect is the scalability and lifecycle management of digital twins. Building a one-off twin for a single machine is relatively straightforward, but scaling across an entire factory or supply chain introduces challenges in data governance, model fidelity, and system orchestration. This is where enterprise-grade platforms and standards—such as the Industrial Digital Twin Association (IDTA) or Asset Administration Shells (AAS)—play a critical role.</p>
 
                 <p>In essence, while generative AI continues to capture headlines, the quiet revolution of digital twins is unfolding in the background—driving real, measurable impact in industries that demand precision, resilience, and agility. The future of industrial intelligence lies not in flashy demos, but in deeply integrated, context-aware systems that bridge the gap between the digital and physical realms.</p>
                 
@@ -779,6 +807,7 @@ footer {
                 
                 <p>To clarify the confusion, let’s compare five commonly conflated technologies in the context of a high-stakes industrial environment: a <strong>semiconductor wafer fabrication plant</strong>. Here, a single defective wafer can cost over $100,000. Precision, speed, and predictability are non-negotiable.</p>
 
+                <div class="table-container">
                 <table class="comparison-table">
                     <thead>
                         <tr>
@@ -833,10 +862,11 @@ footer {
                         </tr>
                     </tbody>
                 </table>
+                </div>
 
-                <p class="highlight-box">
+                <div class="highlight-box">
                     <strong>Digital twins are the only technology among these that provides a closed-loop, physics-aware, real-time connection between the digital and physical worlds.</strong> They don't just describe what happened — they simulate what will happen, and then act to change it.
-                </p>
+                </div>
 
                 <h3>The Essence of Digital Twins</h3>
                 
@@ -926,8 +956,6 @@ footer {
                 <div class="highlight-box">
                     <p>True digital twin implementations that connect physical assets with their digital counterparts represent the future of industrial automation. By focusing on practical applications with clear operational benefits, rather than chasing AI hype, manufacturers can achieve significant improvements in efficiency, quality, and flexibility.</p>
                 </div>    
-            <!-- aaaaa -->
-
             
             <h3>Edge computing integration</h3>
             <p>In latency-critical environments like wafer fabs, pushing compute to the edge ensures real-time responsiveness even when connectivity to the cloud is imperfect. Co-locating analytics, simulation kernels, and control logic near tools reduces round-trip delays, preserves operation during network hiccups, and limits the movement of sensitive data.</p>
@@ -1000,37 +1028,62 @@ footer {
 
             <h3>In Practice</h3>
 
-<p>After years working at the intersection of semiconductor physics, medical imaging, and AI-driven cybersecurity, I’ve learned one unshakable truth: <strong>real intelligence in industry doesn’t talk — it acts.</strong></p>
+            <p>After years working at the intersection of semiconductor physics, medical imaging, and AI-driven cybersecurity, I’ve learned one unshakable truth: <strong>real intelligence in industry doesn’t talk — it acts.</strong></p>
 
-<p>Generative AI has its place — explaining reports, drafting emails, summarizing logs. But when a $100K wafer is on the line, or a brain scan must be free of motion blur, or a critical infrastructure must resist zero-day exploits — what matters isn’t how well the AI writes, but how well it <em>responds</em>.</p>
+            <p>Generative AI has its place — explaining reports, drafting emails, summarizing logs. But when a $100K wafer is on the line, or a brain scan must be free of motion blur, or a critical infrastructure must resist zero-day exploits — what matters isn’t how well the AI writes, but how well it <em>responds</em>.</p>
 
-<p>Digital twins are not a buzzword. They are the only technology that creates a true, bidirectional bridge between the digital and physical worlds. They don’t just observe; they simulate, predict, and autonomously adjust. They integrate sensor data with physics-based models. They run on the edge. They enforce compliance. They optimize energy. And crucially — they operate within the constraints of real-world systems, not just in the cloud.</p>
+            <p>Digital twins are not a buzzword. They are the only technology that creates a true, bidirectional bridge between the digital and physical worlds. They don’t just observe; they simulate, predict, and autonomously adjust. They integrate sensor data with physics-based models. They run on the edge. They enforce compliance. They optimize energy. And crucially — they operate within the constraints of real-world systems, not just in the cloud.</p>
 
-<p>What sets this apart from other “AI” tools? <em>Control.</em>  
-LLMs answer questions. Chatbots give instructions. Agentic AI suggests actions.  
-But only digital twins — properly architected — <strong>execute them</strong> in real time, safely, and at scale.</p>
+            <p>What sets this apart from other “AI” tools? <em>Control.</em>  
+            LLMs answer questions. Chatbots give instructions. Agentic AI suggests actions.  
+            But only digital twins — properly architected — <strong>execute them</strong> in real time, safely, and at scale.</p>
 
-<p>My work in NeuroTwin — creating patient-specific brain twins for precision neurology — taught me that fidelity to biological reality is non-negotiable.  
-My work in malware analysis showed me that latency and context determine survival.  
-And now, in industrial settings, I see the same principles: <em>data + physics + control = resilience.</em></p>
+            <p>My work in NeuroTwin — creating patient-specific brain twins for precision neurology — taught me that fidelity to biological reality is non-negotiable.  
+            My work in malware analysis showed me that latency and context determine survival.  
+            And now, in industrial settings, I see the same principles: <em>data + physics + control = resilience.</em></p>
 
-<div class="highlight-box">
-    <p><strong>The bottom line?</strong> If your “AI solution” can’t send a command back to a machine, PLC, or sensor — it’s not AI for industry. It’s AI for presentations.  
-    Digital twins are the silent engines of modern manufacturing, healthcare, and critical infrastructure.  
-    They’re not here to replace humans — they’re here to elevate them.  
-    Build them right, and you don’t just improve yield. You prevent failure before it happens.</p>
-</div>
+            <div class="highlight-box">
+                <p><strong>The bottom line?</strong> If your “AI solution” can’t send a command back to a machine, PLC, or sensor — it’s not AI for industry. It’s AI for presentations.  
+                Digital twins are the silent engines of modern manufacturing, healthcare, and critical infrastructure.  
+                They’re not here to replace humans — they’re here to elevate them.  
+                Build them right, and you don’t just improve yield. You prevent failure before it happens.</p>
+            </div>
 
-</div>
+            </div>
         </article>
     </main>
 
+    <!-- Footer -->
+    <!-- <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-industry"></i>
+                    <span>Industrial AI</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Home</a>
+                    <a href="#">Articles</a>
+                    <a href="#">Case Studies</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-bottom">
+                    &copy; 2025 Industrial AI. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer> -->
 
 <script>
     // Mobile menu toggle (only essential JS)
     document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
         const navLinks = document.querySelector('.nav-links');
-        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        if (navLinks.style.display === 'flex') {
+            navLinks.style.display = 'none';
+        } else {
+            navLinks.style.display = 'flex';
+        }
     });
 </script>
 </body>
