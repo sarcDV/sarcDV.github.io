@@ -155,7 +155,6 @@
     }
     .blog-hero {
         width: 100%;
-        height: 360px;
         background: linear-gradient(135deg, rgba(96, 165, 250, 0.1) 0%, rgba(139, 92, 246, 0.08) 100%);
         border-radius: 20px;
         margin-bottom: 60px;
@@ -169,18 +168,20 @@
     }
     .blog-hero-content {
         text-align: center;
-        padding: 32px;
         z-index: 2;
         position: relative;
         max-width: 800px;
+        padding: 32px; /* Add padding back here as default */
+        box-sizing: border-box; /* Ensure padding is included in width/height */
     }
     .blog-hero-content h2 {
         font-size: 2.2rem;
-        margin-bottom: 20px;
         color: var(--primary);
         font-weight: 600;
         line-height: 1.4;
         letter-spacing: -0.3px;
+        margin-top: 0; /* Explicitly remove top margin */
+        margin-bottom: 20px; /* Explicitly set bottom margin */
     }
     .blog-hero-content p {
         color: var(--muted);
@@ -523,8 +524,12 @@
         .blog-hero {
             height: 280px;
         }
+        .blog-hero-content {
+            padding: 24px; /* Reduced padding */
+        }
         .blog-hero-content h2 {
             font-size: 1.8rem;
+            margin-bottom: 16px; /* Slightly reduced bottom margin */
         }
         .blog-hero-content p {
             font-size: 1rem;
@@ -594,6 +599,14 @@
         }
         .blog-hero-content h2 {
             font-size: 1.6rem;
+            margin-top: 0; /* Ensure top margin is 0 */
+            margin-bottom: 12px; /* Further reduced bottom margin for tight space */
+            line-height: 1.3; /* Potentially tighten line height if needed */
+        }
+        .blog-hero-content p {
+            font-size: 1rem;
+            margin-top: 0; /* Ensure paragraph top margin is 0 */
+            line-height: 1.6; /* Potentially adjust line height */
         }
         .highlight-box {
             padding: 24px;
