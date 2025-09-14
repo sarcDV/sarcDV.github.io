@@ -6,7 +6,7 @@
     <title>Industrial AI Realities: Beyond the Digital Twin Hype</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-   <style>
+    <style>
     :root {
         --bg: #0a0e17;
         --card-bg: #111827;
@@ -165,6 +165,8 @@
         backdrop-filter: blur(12px);
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
+        /* Removed fixed height from here */
+        min-height: 360px; /* Default min-height */
     }
     .blog-hero-content {
         text-align: center;
@@ -485,8 +487,12 @@
         .blog-title {
             font-size: 2.8rem;
         }
+        /* Changed height to min-height */
         .blog-hero {
-            height: 320px;
+            min-height: 320px;
+            display: flex; /* Ensure flex display */
+            align-items: center;
+            justify-content: center;
         }
         .blog-hero-content h2 {
             font-size: 2rem;
@@ -521,8 +527,12 @@
         .blog-title {
             font-size: 2.4rem;
         }
+        /* Changed height to min-height */
         .blog-hero {
-            height: 280px;
+            min-height: 280px;
+            display: flex; /* Ensure flex display */
+            align-items: center;
+            justify-content: center;
         }
         .blog-hero-content {
             padding: 24px; /* Reduced padding */
@@ -591,8 +601,12 @@
             gap: 12px;
             text-align: center;
         }
+        /* Changed height to min-height */
         .blog-hero {
-            height: 240px;
+            min-height: 240px;
+            display: flex; /* Ensure flex display */
+            align-items: center;
+            justify-content: center;
         }
         .blog-hero-content {
             padding: 20px; /* Reduced padding for small screens */
