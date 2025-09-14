@@ -6,7 +6,7 @@
     <title>Industrial AI Realities: Beyond the Digital Twin Hype</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
+   <style>
     :root {
         --bg: #0a0e17;
         --card-bg: #111827;
@@ -21,13 +21,11 @@
         --shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
         --border: rgba(255, 255, 255, 0.06);
     }
-
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
-
     body {
         font-family: 'Roboto', sans-serif;
         background-color: var(--bg);
@@ -36,7 +34,6 @@
         overflow-x: hidden;
         padding-bottom: 80px;
     }
-
     h1, h2, h3, h4, h5 {
         font-family: 'Inter', sans-serif;
         font-weight: 700;
@@ -44,14 +41,12 @@
         margin-bottom: 1rem;
         color: var(--text);
     }
-
     .container {
         width: 100%;
         max-width: 1080px; /* Expanded for desktop */
         margin: 0 auto;
         padding: 0 24px;
     }
-
     /* Header & Navigation */
     header {
         position: fixed;
@@ -64,13 +59,11 @@
         border-bottom: 1px solid var(--border);
         padding: 18px 0;
     }
-
     nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
-
     .logo {
         font-family: 'Inter', sans-serif;
         font-weight: 700;
@@ -80,12 +73,10 @@
         align-items: center;
         gap: 12px;
     }
-
     .nav-links {
         display: flex;
         gap: 28px;
     }
-
     .nav-links a {
         text-decoration: none;
         color: var(--muted);
@@ -95,11 +86,9 @@
         padding-bottom: 4px;
         position: relative;
     }
-
     .nav-links a:hover {
         color: var(--primary);
     }
-
     .nav-links a:after {
         content: '';
         position: absolute;
@@ -110,11 +99,9 @@
         background: var(--primary);
         transition: var(--transition);
     }
-
     .nav-links a:hover:after {
         width: 100%;
     }
-
     .mobile-menu-btn {
         display: none;
         background: none;
@@ -123,17 +110,14 @@
         cursor: pointer;
         color: var(--text);
     }
-
     /* Blog Content */
     .blog-content {
         padding: 120px 0 80px;
     }
-
     .blog-header {
         margin-bottom: 60px;
         text-align: center;
     }
-
     .blog-title {
         font-size: 3.2rem;
         margin-bottom: 24px;
@@ -142,7 +126,6 @@
         word-wrap: break-word;
         letter-spacing: -0.5px;
     }
-
     .blog-meta {
         display: flex;
         justify-content: center;
@@ -152,13 +135,11 @@
         margin-top: 12px;
         flex-wrap: wrap;
     }
-
     .author {
         display: flex;
         align-items: center;
         gap: 12px;
     }
-
     .author-img {
         width: 44px;
         height: 44px;
@@ -172,7 +153,6 @@
         font-size: 0.95rem;
         flex-shrink: 0;
     }
-
     .blog-hero {
         width: 100%;
         height: 360px;
@@ -188,7 +168,6 @@
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
     }
-
     .blog-hero-content {
         text-align: center;
         padding: 32px;
@@ -196,7 +175,6 @@
         position: relative;
         max-width: 800px;
     }
-
     .blog-hero-content h2 {
         font-size: 2.2rem;
         margin-bottom: 20px;
@@ -205,7 +183,6 @@
         line-height: 1.4;
         letter-spacing: -0.3px;
     }
-
     .blog-hero-content p {
         color: var(--muted);
         font-size: 1.1rem;
@@ -213,20 +190,17 @@
         max-width: 700px;
         margin: 0 auto;
     }
-
     .blog-body {
         font-size: 1.1rem;
         line-height: 1.85;
         margin-bottom: 60px;
         color: var(--text);
     }
-
     .blog-body p {
         margin-bottom: 28px;
         opacity: 0.92;
         text-align: justify;
     }
-
     .blog-body h3 {
         font-size: 1.9rem;
         margin: 56px 0 28px;
@@ -236,7 +210,6 @@
         position: relative;
         letter-spacing: -0.2px;
     }
-
     .highlight-box {
         background: rgba(96, 165, 250, 0.06);
         border-left: 5px solid var(--primary);
@@ -248,7 +221,6 @@
         position: relative;
         box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
     }
-
     .highlight-box::before {
         content: "";
         position: absolute;
@@ -260,7 +232,6 @@
         line-height: 1;
         font-weight: bold;
     }
-
     /* Comparison Table — Desktop-Optimized */
     .comparison-table {
         width: 100%;
@@ -273,7 +244,6 @@
         background: var(--card-bg);
         font-size: 0.98rem;
     }
-
     .comparison-table th,
     .comparison-table td {
         padding: 22px 24px;
@@ -282,7 +252,6 @@
         font-weight: 500;
         transition: var(--transition);
     }
-
     .comparison-table th {
         background: rgba(96, 165, 250, 0.1);
         color: var(--primary);
@@ -295,18 +264,15 @@
         backdrop-filter: blur(8px);
         z-index: 1;
     }
-
     .comparison-table tr:nth-child(even) {
         background: rgba(255, 255, 255, 0.02);
     }
-
     .comparison-table tr:hover {
         background: rgba(96, 165, 250, 0.12);
         transform: translateY(-1px);
         box-shadow: 0 4px 16px rgba(96, 165, 250, 0.1);
         transition: var(--transition);
     }
-
     .tech-name {
         font-weight: 600;
         color: var(--text);
@@ -315,17 +281,14 @@
         gap: 10px;
         font-size: 1rem;
     }
-
     .tech-name i {
         font-size: 1.1rem;
     }
-
     .llm { color: var(--primary); }
     .agentic { color: var(--accent); }
     .digital-twin { color: var(--success); }
     .chatbot { color: var(--warning); }
     .virtual-assistant { color: var(--danger); }
-
     .status-good::before {
         content: "✓";
         color: var(--success);
@@ -333,7 +296,6 @@
         font-weight: bold;
         font-size: 1.1rem;
     }
-
     .status-partial::before {
         content: "⚠";
         color: var(--warning);
@@ -341,7 +303,6 @@
         font-weight: bold;
         font-size: 1.1rem;
     }
-
     .status-none::before {
         content: "✗";
         color: var(--danger);
@@ -349,7 +310,6 @@
         font-weight: bold;
         font-size: 1.1rem;
     }
-
     .example {
         font-size: 0.9rem;
         margin-top: 10px;
@@ -359,7 +319,6 @@
         padding-left: 16px;
         padding-top: 8px;
     }
-
     /* Digital Twin Diagram */
     .digital-twin-diagram {
         background: var(--card-bg);
@@ -369,7 +328,6 @@
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
     }
-
     .diagram-title {
         text-align: center;
         margin-bottom: 36px;
@@ -378,7 +336,6 @@
         position: relative;
         letter-spacing: -0.3px;
     }
-
     .diagram-title::after {
         content: "";
         display: block;
@@ -388,7 +345,6 @@
         margin: 14px auto 0;
         border-radius: 10px;
     }
-
     .diagram-content {
         display: flex;
         justify-content: space-between;
@@ -396,7 +352,6 @@
         gap: 32px;
         flex-wrap: wrap;
     }
-
     .physical-side, .digital-side {
         flex: 1;
         min-width: 300px;
@@ -406,15 +361,12 @@
         border: 1px solid var(--border);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
-
     .physical-side {
         border-left: 4px solid #f59e0b;
     }
-
     .digital-side {
         border-left: 4px solid var(--success);
     }
-
     .side-title {
         text-align: center;
         margin-bottom: 24px;
@@ -423,7 +375,6 @@
         font-size: 1.3rem;
         letter-spacing: -0.1px;
     }
-
     .connection {
         display: flex;
         flex-direction: column;
@@ -432,7 +383,6 @@
         gap: 14px;
         min-width: 64px;
     }
-
     .connection-line {
         width: 2px;
         height: 90px;
@@ -440,7 +390,6 @@
         position: relative;
         box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
     }
-
     .connection-line:before, .connection-line:after {
         content: '';
         position: absolute;
@@ -451,15 +400,12 @@
         background: rgba(96, 165, 250, 0.2);
         left: -5px;
     }
-
     .connection-line:before {
         top: -6px;
     }
-
     .connection-line:after {
         bottom: -6px;
     }
-
     .data-flow {
         font-size: 0.85rem;
         color: var(--primary);
@@ -469,7 +415,6 @@
         white-space: nowrap;
         font-weight: 600;
     }
-
     .diagram-item {
         display: flex;
         align-items: center;
@@ -478,16 +423,13 @@
         opacity: 0.9;
         transition: var(--transition);
     }
-
     .diagram-item:hover {
         transform: translateX(4px);
     }
-
     .diagram-item i {
         color: var(--primary);
         font-size: 1.2rem;
     }
-
     /* Footer */
     footer {
         background: rgba(10, 14, 23, 0.96);
@@ -495,7 +437,6 @@
         border-top: 1px solid var(--border);
         margin-top: 80px;
     }
-
     .footer-content {
         display: flex;
         justify-content: center;
@@ -504,7 +445,6 @@
         text-align: center;
         gap: 20px;
     }
-
     .footer-logo {
         font-family: 'Inter', sans-serif;
         font-weight: 700;
@@ -515,25 +455,21 @@
         gap: 10px;
         margin-bottom: 16px;
     }
-
     .footer-links {
         display: flex;
         gap: 32px;
         margin-bottom: 20px;
     }
-
     .footer-links a {
         color: var(--muted);
         text-decoration: none;
         font-size: 0.95rem;
         transition: var(--transition);
     }
-
     .footer-links a:hover {
         color: var(--primary);
         text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
     }
-
     .footer-bottom {
         color: var(--muted);
         font-size: 0.85rem;
@@ -541,212 +477,178 @@
         border-top: 1px solid var(--border);
         margin-top: 24px;
     }
-
     /* Responsive Styles — Mobile First, but Desktop Optimized */
     @media (max-width: 1024px) {
         .container {
             padding: 0 20px;
         }
-
         .blog-title {
             font-size: 2.8rem;
         }
-
         .blog-hero {
             height: 320px;
         }
-
         .blog-hero-content h2 {
             font-size: 2rem;
         }
-
         .comparison-table {
             font-size: 0.9rem;
         }
-
         .comparison-table th,
         .comparison-table td {
             padding: 20px 18px;
         }
-
         .diagram-title {
             font-size: 1.8rem;
         }
-
         .digital-twin-diagram {
             padding: 32px;
         }
-
         .connection-line {
             height: 80px;
         }
     }
-
     @media (max-width: 768px) {
         .nav-links {
             display: none;
         }
-
         .mobile-menu-btn {
             display: block;
         }
-
         .blog-content {
             padding: 100px 0 50px;
         }
-
         .blog-title {
             font-size: 2.4rem;
         }
-
         .blog-hero {
             height: 280px;
         }
-
         .blog-hero-content h2 {
             font-size: 1.8rem;
         }
-
         .blog-hero-content p {
             font-size: 1rem;
         }
-
         .blog-body h3 {
             font-size: 1.6rem;
         }
-
         .diagram-title {
             font-size: 1.6rem;
         }
-
         .diagram-content {
             flex-direction: column;
             gap: 20px;
         }
-
         .connection {
             flex-direction: row;
             margin: 16px 0;
             min-width: auto;
         }
-
         .connection-line {
             width: 80px;
             height: 2px;
         }
-
         .connection-line:before, .connection-line:after {
             left: auto;
             top: -4px;
         }
-
         .connection-line:before {
             left: -5px;
         }
-
         .connection-line:after {
             right: -5px;
             left: auto;
         }
-
         .comparison-table {
             font-size: 0.85rem;
         }
-
         .comparison-table th,
         .comparison-table td {
             padding: 16px 12px;
         }
-
         .example {
             font-size: 0.85rem;
         }
-
         .sidebar {
             display: none;
         }
     }
-
     @media (max-width: 480px) {
+        .container {
+            max-width: 100%; /* Adjusted for better small screen fit */
+            padding: 0 16px; /* Reduced padding */
+        }
         .blog-title {
             font-size: 2rem;
         }
-
         .blog-meta {
             flex-direction: column;
             gap: 12px;
             text-align: center;
         }
-
         .blog-hero {
             height: 240px;
         }
-
+        .blog-hero-content {
+            padding: 20px; /* Reduced padding for small screens */
+        }
         .blog-hero-content h2 {
             font-size: 1.6rem;
         }
-
         .highlight-box {
             padding: 24px;
         }
-
         .digital-twin-diagram {
             padding: 24px;
         }
-
         .footer-links {
             flex-direction: column;
             gap: 12px;
         }
-
         .footer-logo {
             font-size: 1.4rem;
         }
-
         .comparison-table {
             font-size: 0.8rem;
             overflow-x: auto;
             display: block;
             white-space: nowrap;
         }
-
         .comparison-table th,
         .comparison-table td {
             min-width: 140px;
+            padding: 12px 10px; /* Slightly reduced padding */
+        }
+        .diagram-item i {
+            font-size: 1rem; /* Slightly smaller icon */
         }
     }
-
     /* Animations */
     .fade-in {
         opacity: 0;
         transform: translateY(20px);
         transition: opacity 0.8s ease, transform 0.8s ease;
     }
-
     .fade-in.visible {
         opacity: 1;
         transform: translateY(0);
     }
-
     /* Scrollbar — Desktop Optimized */
     ::-webkit-scrollbar {
         width: 8px;
     }
-
     ::-webkit-scrollbar-track {
         background: transparent;
     }
-
     ::-webkit-scrollbar-thumb {
         background: var(--border);
         border-radius: 10px;
         border: 2px solid var(--bg);
     }
-
     ::-webkit-scrollbar-thumb:hover {
         background: var(--primary);
     }
-
     ::-webkit-scrollbar-corner {
         background: var(--bg);
     }
