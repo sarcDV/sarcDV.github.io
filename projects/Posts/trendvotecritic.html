@@ -24,283 +24,309 @@
   <meta name="twitter:description" content="Sintesi per card Twitter.">
   <meta name="twitter:image" content="https://tuodominio.it/immagini/cover.jpg"> -->
 
-  <style>
-    :root{
-      /* Colori accessibili: testo molto scuro su panna calda */
-      --bg: #FAF7F0;      /* panna calda */
-      --text: #111111;    /* quasi nero per massimo contrasto */
-      --muted: #555555;   /* testo di supporto */
-      --accent: #0A66C2;  /* blu LinkedIn per link/azioni */
-      --border: #E5E1D8;  /* bordo leggero tono su tono */
+    <style>
+  :root{
+    /* Colori accessibili: testo molto scuro su panna calda */
+    --bg: #FAF7F0;      /* panna calda */
+    --text: #111111;    /* quasi nero per massimo contrasto */
+    --muted: #555555;   /* testo di supporto */
+    --accent: #0A66C2;  /* blu LinkedIn per link/azioni */
+    --border: #E5E1D8;  /* bordo leggero tono su tono */
 
-      /* Tipografia e layout */
-      --font-body: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-      --size-base: 18px;          /* base confortevole su mobile */
-      --line: 1.7;                /* leggibilità */
-      --max-width: 72ch;          /* lunghezza riga ideale */
-      --radius: 12px;
-      --space-1: .5rem;
-      --space-2: 1rem;
-      --space-3: 1.5rem;
-      --space-4: 2rem;
-    }
+    /* Tipografia e layout */
+    --font-body: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --size-base: 18px;          /* base confortevole su mobile */
+    --line: 1.7;                /* leggibilità */
+    --max-width: 72ch;          /* lunghezza riga ideale */
+    --radius: 12px;
+    --space-1: .5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2rem;
+  }
 
-    html, body {
-      padding: 0;
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: var(--size-base);
-      line-height: var(--line);
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-    }
+  html, body {
+    padding: 0;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--size-base);
+    line-height: var(--line);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    /* Skip link per accessibilità */
-    .skip-link {
-      position: absolute;
-      left: -9999px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-    .skip-link:focus {
-      position: fixed;
-      left: env(safe-area-inset-left, 8px);
-      top: env(safe-area-inset-top, 8px);
-      width: auto;
-      height: auto;
-      background: #ffffff;
-      color: #000;
-      padding: .5rem .75rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,.08);
-      z-index: 1000;
-    }
+  /* Skip link per accessibilità */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .skip-link:focus {
+    position: fixed;
+    left: env(safe-area-inset-left, 8px);
+    top: env(safe-area-inset-top, 8px);
+    width: auto;
+    height: auto;
+    background: #ffffff;
+    color: #000;
+    padding: .5rem .75rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    z-index: 1000;
+  }
 
-    /* Contenitore principale */
+  /* Contenitore principale — MODIFICATO */
+  .wrap {
+    box-sizing: border-box;
+    max-width: 100%; /* <-- Modifica 1: su mobile è 100% */
+    width: 100%;
+    margin: 0 auto;
+    padding: calc(env(safe-area-inset-top) + var(--space-3)) var(--space-2) var(--space-4);
+  }
+
+  @media (min-width: 769px) {
     .wrap {
-      box-sizing: border-box;
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: calc(env(safe-area-inset-top) + var(--space-3)) var(--space-2) var(--space-4);
+      max-width: var(--max-width); /* Ripristina 72ch solo su desktop */
     }
+  }
 
-    header.article-header{
-      margin-bottom: var(--space-3);
-    }
+  header.article-header{
+    margin-bottom: var(--space-3);
+  }
 
-    .eyebrow{
-      font-size: .9rem;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: var(--space-1);
-    }
+  .eyebrow{
+    font-size: .9rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--space-1);
+  }
 
-    h1, h2, h3, h4 {
-      line-height: 1.25;
-      margin: 0 0 var(--space-2);
-      font-weight: 800;
-      letter-spacing: -0.01em;
-    }
-    h1 { font-size: clamp(1.8rem, 4.5vw, 2.4rem); }
-    h2 { font-size: clamp(1.4rem, 3.5vw, 1.8rem); margin-top: var(--space-3); }
-    h3 { font-size: clamp(1.2rem, 3vw, 1.4rem); margin-top: var(--space-2); }
-    h4 { font-size: 1.05rem; margin-top: var(--space-2); }
+  h1, h2, h3, h4 {
+    line-height: 1.25;
+    margin: 0 0 var(--space-2);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  h1 { font-size: clamp(1.8rem, 4.5vw, 2.4rem); }
+  h2 { font-size: clamp(1.4rem, 3.5vw, 1.8rem); margin-top: var(--space-3); }
+  h3 { font-size: clamp(1.2rem, 3vw, 1.4rem); margin-top: var(--space-2); }
+  h4 { font-size: 1.05rem; margin-top: var(--space-2); }
 
-    p, ul, ol, blockquote, figure, pre {
-      margin: 0 0 var(--space-2);
-    }
+  p, ul, ol, blockquote, figure, pre {
+    margin: 0 0 var(--space-2);
+  }
 
-    p {
-      overflow-wrap: anywhere;
-    }
+  p {
+    overflow-wrap: anywhere;
+  }
 
-    ul, ol {
-      padding-left: 1.25rem;
-    }
-    li + li { margin-top: .35rem; }
+  ul, ol {
+    padding-left: 1.25rem;
+  }
+  li + li { margin-top: .35rem; }
 
-    a {
-      color: var(--accent);
-      text-decoration: underline;
-      text-decoration-thickness: 1.5px;
-      text-underline-offset: 2px;
-    }
-    a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      border-radius: 4px;
-    }
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 2px;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 
-    blockquote{
-      border-left: 4px solid var(--accent);
-      padding: .25rem 0 .25rem 1rem;
-      color: var(--muted);
-      background: rgba(10,102,194,0.04);
-      border-radius: 0 var(--radius) var(--radius) 0;
-    }
+  blockquote{
+    border-left: 4px solid var(--accent);
+    padding: .25rem 0 .25rem 1rem;
+    color: var(--muted);
+    background: rgba(10,102,194,0.04);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
 
-    figure{
-      margin: var(--space-3) 0;
-    }
-    img, svg, video{
-      max-width: 100%;
-      height: auto;
-      border-radius: var(--radius);
+  figure{
+    margin: var(--space-3) 0;
+  }
+  img, svg, video{
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    display: block;
+  }
+  figcaption{
+    font-size: .9rem;
+    color: var(--muted);
+    margin-top: .5rem;
+    text-align: center;
+  }
+
+  pre, code, kbd, samp {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  pre {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-2);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  code { background: rgba(0,0,0,.04); padding: .1rem .3rem; border-radius: 6px; }
+
+  hr{
+    border: 0;
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-3) 0;
+  }
+
+  .meta{
+    color: var(--muted);
+    font-size: .95rem;
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+
+  /* Bottoni azione */
+  .actions {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-top: var(--space-3);
+  }
+  .btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--text);
+    padding: .6rem .9rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Footer */
+  footer.article-footer{
+    margin-top: var(--space-4);
+    color: var(--muted);
+    font-size: .95rem;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-2);
+  }
+
+  /* Stampa pulita (opzionale) */
+  @media print {
+    :root { --bg: #ffffff; }
+    a { text-decoration: none; color: inherit; }
+    .actions { display: none; }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-3) 0;
+    font-size: 0.95rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  thead {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  th, td {
+    padding: .75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Tabelle Responsive — MODIFICATO COMPLETAMENTE */
+  @media (max-width: 768px) {
+    .wrap table {
       display: block;
-    }
-    figcaption{
-      font-size: .9rem;
-      color: var(--muted);
-      margin-top: .5rem;
-      text-align: center;
-    }
-
-    pre, code, kbd, samp {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    }
-    pre {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: var(--space-2);
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    code { background: rgba(0,0,0,.04); padding: .1rem .3rem; border-radius: 6px; }
-
-    hr{
-      border: 0;
-      height: 1px;
-      background: var(--border);
-      margin: var(--space-3) 0;
-    }
-
-    .meta{
-      color: var(--muted);
-      font-size: .95rem;
-      display: flex;
-      gap: .75rem;
-      flex-wrap: wrap;
-    }
-
-    /* Bottoni azione */
-    .actions {
-      display: flex;
-      gap: .75rem;
-      flex-wrap: wrap;
-      margin-top: var(--space-3);
-    }
-    .btn {
-      appearance: none;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      color: var(--text);
-      padding: .6rem .9rem;
-      border-radius: 999px;
-      font-weight: 600;
-    }
-    .btn.primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    /* Footer */
-    footer.article-footer{
-      margin-top: var(--space-4);
-      color: var(--muted);
-      font-size: .95rem;
-      border-top: 1px solid var(--border);
-      padding-top: var(--space-2);
-    }
-
-    /* Stampa pulita (opzionale) */
-    @media print {
-      :root { --bg: #ffffff; }
-      a { text-decoration: none; color: inherit; }
-      .actions { display: none; }
-    }
-
-    table {
       width: 100%;
-      border-collapse: collapse;
       margin: var(--space-3) 0;
-      font-size: 0.95rem;
+    }
+
+    .wrap thead,
+    .wrap tbody,
+    .wrap tfoot,
+    .wrap tr,
+    .wrap th,
+    .wrap td {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .wrap thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .wrap tr {
+      margin-bottom: var(--space-2);
       background: #fff;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
+      padding: var(--space-2);
+      page-break-inside: avoid;
     }
 
-    thead {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    th, td {
-      padding: .75rem;
-      text-align: left;
+    .wrap td {
+      position: relative;
+      padding: .75rem .5rem !important;
+      border: none;
       border-bottom: 1px solid var(--border);
+      text-align: right;
+      font-size: .95rem;
+      line-height: 1.4;
     }
 
-    tr:last-child td {
+    .wrap td::before {
+      content: attr(data-label) ": ";
+      font-weight: 600;
+      color: var(--muted);
+      text-align: left;
+      float: left;
+      margin-right: .5rem;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .wrap td:last-child {
       border-bottom: none;
     }
 
-    @media (max-width: 768px) {
-        table, thead, tbody, th, td, tr {
-            display: block;
-            width: 100%;
-            word-wrap: break-word; /* Forza l'andare a capo delle parole lunghe */
-            overflow-wrap: break-word; /* Alias moderno, più affidabile */
-            hyphens: auto; /* Facoltativo: migliora l'impaginazione delle parole lunghe */
-        }
-
-        thead {
-            display: none;
-        }
-
-        tr {
-            margin-bottom: var(--space-2);
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: .5rem;
-            box-sizing: border-box; /* Assicura che il padding non aumenti la larghezza */
-        }
-
-        td {
-            display: flex;
-            justify-content: space-between;
-            padding: .5rem 0;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap; /* Permette al contenuto di andare a capo se troppo lungo */
-            align-items: flex-start; /* Allinea in alto il contenuto */
-        }
-
-        td::before {
-            content: attr(data-label);
-            font-weight: 600;
-            color: var(--muted);
-            margin-right: .5rem;
-            flex: 0 0 auto; /* Non permette al label di restringersi troppo */
-            text-align: left;
-        }
-
-        /* Soluzione extra: forza il contenuto del valore a occupare il resto della riga */
-        td::after {
-            content: '';
-            flex: 1 1 auto; /* Occupa lo spazio rimanente */
-        }
-        }
-
-  </style>
+    /* Forza il contenuto a non uscire */
+    .wrap td,
+    .wrap td::before {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+  }
+</style>
 </head>
 <body>
   <a class="skip-link" href="#contenuto">Salta al contenuto</a>
