@@ -252,39 +252,53 @@
       border-bottom: none;
     }
 
-    @media (max-width: 600px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-        width: 100%;
-      }
+    @media (max-width: 768px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+            width: 100%;
+            word-wrap: break-word; /* Forza l'andare a capo delle parole lunghe */
+            overflow-wrap: break-word; /* Alias moderno, più affidabile */
+            hyphens: auto; /* Facoltativo: migliora l'impaginazione delle parole lunghe */
+        }
 
-      thead {
-        display: none;
-      }
+        thead {
+            display: none;
+        }
 
-      tr {
-        margin-bottom: var(--space-2);
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: .5rem;
-      }
+        tr {
+            margin-bottom: var(--space-2);
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: .5rem;
+            box-sizing: border-box; /* Assicura che il padding non aumenti la larghezza */
+        }
 
-      td {
-        display: flex;
-        justify-content: space-between;
-        padding: .5rem 0;
-        border: none;
-        border-bottom: 1px solid var(--border);
-      }
+        td {
+            display: flex;
+            justify-content: space-between;
+            padding: .5rem 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap; /* Permette al contenuto di andare a capo se troppo lungo */
+            align-items: flex-start; /* Allinea in alto il contenuto */
+        }
 
-      td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--muted);
-        margin-right: .5rem;
-      }
-    }
+        td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--muted);
+            margin-right: .5rem;
+            flex: 0 0 auto; /* Non permette al label di restringersi troppo */
+            text-align: left;
+        }
+
+        /* Soluzione extra: forza il contenuto del valore a occupare il resto della riga */
+        td::after {
+            content: '';
+            flex: 1 1 auto; /* Occupa lo spazio rimanente */
+        }
+        }
 
   </style>
 </head>
