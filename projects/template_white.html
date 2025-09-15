@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light only">
+  <meta name="theme-color" content="#111111">
+
+  <!-- SEO base -->
+  <title>Titolo dell’articolo</title>
+  <meta name="description" content="Una descrizione sintetica e incisiva del contenuto dell’articolo (120–160 caratteri).">
+
+  <!-- Open Graph / LinkedIn -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Titolo dell’articolo">
+  <meta property="og:description" content="Sintesi chiara del tuo articolo per l’anteprima su LinkedIn.">
+  <meta property="og:url" content="https://tuodominio.it/permalink-articolo">
+  <meta property="og:image" content="https://tuodominio.it/immagini/cover.jpg">
+  <meta property="og:locale" content="it_IT">
+
+  <!-- Twitter (opzionale) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Titolo dell’articolo">
+  <meta name="twitter:description" content="Sintesi per card Twitter.">
+  <meta name="twitter:image" content="https://tuodominio.it/immagini/cover.jpg">
+
+  <style>
+    :root{
+      /* Colori accessibili: testo molto scuro su panna calda */
+      --bg: #FAF7F0;      /* panna calda */
+      --text: #111111;    /* quasi nero per massimo contrasto */
+      --muted: #555555;   /* testo di supporto */
+      --accent: #0A66C2;  /* blu LinkedIn per link/azioni */
+      --border: #E5E1D8;  /* bordo leggero tono su tono */
+
+      /* Tipografia e layout */
+      --font-body: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      --size-base: 18px;          /* base confortevole su mobile */
+      --line: 1.7;                /* leggibilità */
+      --max-width: 72ch;          /* lunghezza riga ideale */
+      --radius: 12px;
+      --space-1: .5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2rem;
+    }
+
+    html, body {
+      padding: 0;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      line-height: var(--line);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Skip link per accessibilità */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus {
+      position: fixed;
+      left: env(safe-area-inset-left, 8px);
+      top: env(safe-area-inset-top, 8px);
+      width: auto;
+      height: auto;
+      background: #ffffff;
+      color: #000;
+      padding: .5rem .75rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      z-index: 1000;
+    }
+
+    /* Contenitore principale */
+    .wrap {
+      box-sizing: border-box;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: calc(env(safe-area-inset-top) + var(--space-3)) var(--space-2) var(--space-4);
+    }
+
+    header.article-header{
+      margin-bottom: var(--space-3);
+    }
+
+    .eyebrow{
+      font-size: .9rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--space-1);
+    }
+
+    h1, h2, h3, h4 {
+      line-height: 1.25;
+      margin: 0 0 var(--space-2);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    h1 { font-size: clamp(1.8rem, 4.5vw, 2.4rem); }
+    h2 { font-size: clamp(1.4rem, 3.5vw, 1.8rem); margin-top: var(--space-3); }
+    h3 { font-size: clamp(1.2rem, 3vw, 1.4rem); margin-top: var(--space-2); }
+    h4 { font-size: 1.05rem; margin-top: var(--space-2); }
+
+    p, ul, ol, blockquote, figure, pre {
+      margin: 0 0 var(--space-2);
+    }
+
+    p {
+      overflow-wrap: anywhere;
+    }
+
+    ul, ol {
+      padding-left: 1.25rem;
+    }
+    li + li { margin-top: .35rem; }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 2px;
+    }
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    blockquote{
+      border-left: 4px solid var(--accent);
+      padding: .25rem 0 .25rem 1rem;
+      color: var(--muted);
+      background: rgba(10,102,194,0.04);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    figure{
+      margin: var(--space-3) 0;
+    }
+    img, svg, video{
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      display: block;
+    }
+    figcaption{
+      font-size: .9rem;
+      color: var(--muted);
+      margin-top: .5rem;
+      text-align: center;
+    }
+
+    pre, code, kbd, samp {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+    pre {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-2);
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    code { background: rgba(0,0,0,.04); padding: .1rem .3rem; border-radius: 6px; }
+
+    hr{
+      border: 0;
+      height: 1px;
+      background: var(--border);
+      margin: var(--space-3) 0;
+    }
+
+    .meta{
+      color: var(--muted);
+      font-size: .95rem;
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+
+    /* Bottoni azione */
+    .actions {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-top: var(--space-3);
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text);
+      padding: .6rem .9rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Footer */
+    footer.article-footer{
+      margin-top: var(--space-4);
+      color: var(--muted);
+      font-size: .95rem;
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-2);
+    }
+
+    /* Stampa pulita (opzionale) */
+    @media print {
+      :root { --bg: #ffffff; }
+      a { text-decoration: none; color: inherit; }
+      .actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenuto">Salta al contenuto</a>
+
+  <main class="wrap" id="contenuto" role="main">
+    <header class="article-header">
+      <div class="eyebrow">Categoria o tema</div>
+      <h1>Titolo dell’articolo chiaro e descrittivo</h1>
+      <p class="meta">
+        <span>di Alessandro</span>
+        <span>•</span>
+        <time datetime="2025-09-15">15 settembre 2025</time>
+        <span>•</span>
+        <span>5 min</span>
+      </p>
+    </header>
+
+    <article>
+      <p>Paragrafo introduttivo breve e orientato al lettore: problema, promessa, valore.</p>
+
+      <h2>Sezione principale</h2>
+      <p>Scrivi frasi brevi, un’idea per paragrafo, e usa verbi attivi. Mantieni il ritmo con sottotitoli chiari.</p>
+
+      <ul>
+        <li><strong>Punto chiave:</strong> una sola idea praticabile.</li>
+        <li><strong>Esempio:</strong> mostra come applicarla.</li>
+        <li><strong>Risultato:</strong> evidenzia il beneficio concreto.</li>
+      </ul>
+
+      <blockquote>
+        Un singolo pensiero memorabile o un dato a supporto per dare autorità.
+      </blockquote>
+
+      <h3>Sottosezione</h3>
+      <p>Aggiungi dettagli, immagini, o un breve snippet di codice se utile.</p>
+
+      <figure>
+        <img src="https://via.placeholder.com/1200x630.png?text=Cover" alt="Immagine esemplificativa della copertina">
+        <figcaption>Una caption breve che aggiunge contesto all’immagine.</figcaption>
+      </figure>
+
+      <pre><code>// Esempio di snippet
+function hello(name){ return `Ciao ${name}!`; }
+</code></pre>
+
+      <hr>
+
+      <h2>Conclusione pratica</h2>
+      <p>Chiudi con un invito all’azione chiaro o una domanda che stimoli la conversazione.</p>
+
+      <div class="actions">
+        <a class="btn primary" href="#condividi">Condividi su LinkedIn</a>
+        <a class="btn" href="#iscriviti">Iscriviti alla newsletter</a>
+      </div>
+    </article>
+
+    <footer class="article-footer">
+      <p>© 2025 Alessandro — Tutti i diritti riservati</p>
+    </footer>
+  </main>
+</body>
+</html>
