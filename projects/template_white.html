@@ -225,6 +225,67 @@
       a { text-decoration: none; color: inherit; }
       .actions { display: none; }
     }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-3) 0;
+      font-size: 0.95rem;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    thead {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    th, td {
+      padding: .75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: var(--space-2);
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: .5rem;
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        padding: .5rem 0;
+        border: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--muted);
+        margin-right: .5rem;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -270,6 +331,45 @@
       <pre><code>// Esempio di snippet
 function hello(name){ return `Ciao ${name}!`; }
 </code></pre>
+
+      <hr>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Parametro</th>
+            <th>Descrizione</th>
+            <th>Valore</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Parametro">CTR</td>
+            <td data-label="Descrizione">Click-through rate</td>
+            <td data-label="Valore">4.2%</td>
+          </tr>
+          <tr>
+            <td data-label="Parametro">Conversioni</td>
+            <td data-label="Descrizione">Totale lead generati</td>
+            <td data-label="Valore">128</td>
+          </tr>
+          <tr>
+            <td data-label="Parametro">Tempo medio</td>
+            <td data-label="Descrizione">Durata media di lettura</td>
+            <td data-label="Valore">3 min 45 sec</td>
+          </tr>
+          <tr>
+            <td data-label="Parametro">Bounce rate</td>
+            <td data-label="Descrizione">Percentuale di abbandono</td>
+            <td data-label="Valore">38%</td>
+          </tr>
+          <tr>
+            <td data-label="Parametro">Condivisioni</td>
+            <td data-label="Descrizione">Articolo condiviso su LinkedIn</td>
+            <td data-label="Valore">57</td>
+          </tr>
+        </tbody>
+      </table>
 
       <hr>
 
