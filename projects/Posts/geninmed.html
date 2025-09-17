@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light only">
+  <meta name="theme-color" content="#111111">
+
+  <!-- SEO base -->
+  <title>MAIAT</title>
+  <meta name="description" content="Malware Analysis & Intelligence Tools - Blog di Alessandro Sciarra, Ph.D.">
+
+  <!-- Open Graph / LinkedIn -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="MAIAT">
+  <meta property="og:description" content="Malware Analysis & Intelligence Tools - Blog di Alessandro Sciarra, Ph.D.">
+    <!-- <meta property="og:url" content="https://tuodominio.it/permalink-articolo">
+    <meta property="og:image" content="https://tuodominio.it/immagini/cover.jpg"> -->
+  <meta property="og:locale" content="it_IT">
+
+    <style>
+  :root{
+    /* Colori accessibili: testo molto scuro su panna calda */
+    --bg: #FAF7F0;      /* panna calda */
+    --text: #111111;    /* quasi nero per massimo contrasto */
+    --muted: #555555;   /* testo di supporto */
+    --accent: #0A66C2;  /* blu LinkedIn per link/azioni */
+    --border: #E5E1D8;  /* bordo leggero tono su tono */
+
+    /* Tipografia e layout */
+    --font-body: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --size-base: 18px;          /* base confortevole su mobile */
+    --line: 1.7;                /* leggibilità */
+    --max-width: 72ch;          /* lunghezza riga ideale */
+    --radius: 12px;
+    --space-1: .5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2rem;
+  }
+
+  html, body {
+    padding: 0;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: var(--size-base);
+    line-height: var(--line);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Skip link per accessibilità */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .skip-link:focus {
+    position: fixed;
+    left: env(safe-area-inset-left, 8px);
+    top: env(safe-area-inset-top, 8px);
+    width: auto;
+    height: auto;
+    background: #ffffff;
+    color: #000;
+    padding: .5rem .75rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    z-index: 1000;
+  }
+
+  /* Contenitore principale — MODIFICATO */
+  .wrap {
+    box-sizing: border-box;
+    max-width: 100%; /* <-- Modifica 1: su mobile è 100% */
+    width: 100%;
+    margin: 0 auto;
+    padding: calc(env(safe-area-inset-top) + var(--space-3)) var(--space-2) var(--space-4);
+  }
+
+  @media (min-width: 769px) {
+    .wrap {
+      max-width: var(--max-width); /* Ripristina 72ch solo su desktop */
+    }
+  }
+
+  header.article-header{
+    margin-bottom: var(--space-3);
+  }
+
+  .eyebrow{
+    font-size: .9rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--space-1);
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.25;
+    margin: 0 0 var(--space-2);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  h1 { font-size: clamp(1.8rem, 4.5vw, 2.4rem); }
+  h2 { font-size: clamp(1.4rem, 3.5vw, 1.8rem); margin-top: var(--space-3); }
+  h3 { font-size: clamp(1.2rem, 3vw, 1.4rem); margin-top: var(--space-2); }
+  h4 { font-size: 1.05rem; margin-top: var(--space-2); }
+
+  p, ul, ol, blockquote, figure, pre {
+    margin: 0 0 var(--space-2);
+  }
+
+  p {
+    overflow-wrap: anywhere;
+  }
+
+  ul, ol {
+    padding-left: 1.25rem;
+  }
+  li + li { margin-top: .35rem; }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 2px;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  blockquote{
+    border-left: 4px solid var(--accent);
+    padding: .25rem 0 .25rem 1rem;
+    color: var(--muted);
+    background: rgba(10,102,194,0.04);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  figure{
+    margin: var(--space-3) 0;
+  }
+  img, svg, video{
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    display: block;
+  }
+  figcaption{
+    font-size: .9rem;
+    color: var(--muted);
+    margin-top: .5rem;
+    text-align: center;
+  }
+
+  pre, code, kbd, samp {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  pre {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-2);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  code { background: rgba(0,0,0,.04); padding: .1rem .3rem; border-radius: 6px; }
+
+  hr{
+    border: 0;
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-3) 0;
+  }
+
+  .meta{
+    color: var(--muted);
+    font-size: .95rem;
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+
+  /* Bottoni azione */
+  .actions {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+    margin-top: var(--space-3);
+  }
+  .btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--text);
+    padding: .6rem .9rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Footer */
+  footer.article-footer{
+    margin-top: var(--space-4);
+    color: var(--muted);
+    font-size: .95rem;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-2);
+  }
+
+  /* Stampa pulita (opzionale) */
+  @media print {
+    :root { --bg: #ffffff; }
+    a { text-decoration: none; color: inherit; }
+    .actions { display: none; }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-3) 0;
+    font-size: 0.95rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  thead {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  th, td {
+    padding: .75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Tabelle Responsive — MODIFICATO COMPLETAMENTE */
+  @media (max-width: 768px) {
+    .wrap table {
+      display: block;
+      width: 100%;
+      margin: var(--space-3) 0;
+    }
+
+    .wrap thead,
+    .wrap tbody,
+    .wrap tfoot,
+    .wrap tr,
+    .wrap th,
+    .wrap td {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .wrap thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .wrap tr {
+      margin-bottom: var(--space-2);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-2);
+      page-break-inside: avoid;
+    }
+
+    .wrap td {
+      position: relative;
+      padding: .75rem .5rem !important;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      font-size: .95rem;
+      line-height: 1.4;
+    }
+
+    .wrap td::before {
+      content: attr(data-label) ": ";
+      font-weight: 600;
+      color: var(--muted);
+      text-align: left;
+      float: left;
+      margin-right: .5rem;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .wrap td:last-child {
+      border-bottom: none;
+    }
+
+    /* Forza il contenuto a non uscire */
+    .wrap td,
+    .wrap td::before {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+  }
+    </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenuto">Skip the content</a>
+
+  <main class="wrap" id="contenuto" role="main">
+  <header class="article-header">
+    <div class="eyebrow">AI - Biomedicine - Generative Models - Predictive Analytics</div> 
+    <h1>Generative Models for Biomedical Intelligence: From Autoencoders to Transformers</h1> 
+    <p class="meta"> <span>by Alessandro Sciarra, Ph.D.</span> </p> 
+    <p class="meta"> <time datetime="2025-09-17">17 September 2025</time> 
+      <span>•</span> 
+      <span>7 min</span>
+    </p>
+  </header>
+
+  <article>
+    <p> Generative machine learning models are reshaping biomedical research by enabling simulation, prediction, and synthesis of complex biological data. From autoencoders to transformers, these architectures offer powerful tools for modeling disease progression, generating synthetic patient profiles, and integrating multi-omics data. Yet, their use demands caution: generative models are not universally applicable, and their misuse can lead to misleading or even dangerous conclusions. </p>
+
+<h2 id="models">Model Landscape: AE, VAE, GAN, Transformers</h2> <table> <thead> <tr> <th>Model</th> <th>Core Idea</th> <th>Strengths</th> <th>Limitations</th> <th>Best Use Cases</th> </tr> </thead> <tbody> <tr> <td><strong>Autoencoder (AE)</strong></td> <td>Compresses and reconstructs input data</td> <td>Dimensionality reduction, anomaly detection</td> <td>No generative control, deterministic output</td> <td>Denoising biomedical signals, feature extraction</td> </tr> <tr> <td><strong>Variational Autoencoder (VAE)</strong></td> <td>Probabilistic latent space for controlled generation</td> <td>Generates diverse synthetic samples, interpretable latent space</td> <td>Blurry outputs, limited fidelity for high-resolution data</td> <td>Synthetic patient profiles, disease simulation</td> </tr> <tr> <td><strong>Generative Adversarial Network (GAN)</strong></td> <td>Adversarial training between generator and discriminator</td> <td>High-fidelity image generation, realistic data synthesis</td> <td>Training instability, mode collapse, lacks interpretability</td> <td>Biomedical image synthesis, rare disease augmentation</td> </tr> <tr> <td><strong>Transformer-based Models</strong></td> <td>Self-attention for modeling long-range dependencies</td> <td>Handles sequential and multi-modal data, scalable</td> <td>Computationally intensive, requires large datasets</td> <td>Genomic sequence modeling, EHR prediction, multi-omics fusion</td> </tr> </tbody> </table>
+
+<h2 id="limits">Critical Limitations of Generative Models</h2> <p> Despite their promise, generative models pose significant risks when applied indiscriminately to biomedical data: </p> <ul> <li><strong>False Realism:</strong> Synthetic data may appear plausible but lack biological validity, leading to incorrect clinical assumptions.</li> <li><strong>Overfitting and Bias Amplification:</strong> Models trained on biased datasets can replicate and amplify existing disparities, especially in underrepresented populations.</li> <li><strong>Lack of Explainability:</strong> GANs and VAEs often operate as black boxes, making it difficult to trace the origin of generated features.</li> <li><strong>Fatal Misclassification:</strong> Using generative models for diagnostic classification can result in dangerous errors if synthetic patterns are mistaken for real ones.</li> <li><strong>Regulatory and Ethical Risks:</strong> Synthetic patient data must be carefully validated to avoid misuse in clinical or policy contexts.</li> </ul>
+
+<h2 id="discriminative">Generative vs. Discriminative Models</h2> <p> It’s crucial to distinguish between tasks suited for generative modeling and those better addressed by discriminative approaches: </p> <ul> <li><strong>Generative models</strong> are ideal for: <ul> <li>Data augmentation</li> <li>Simulation of disease progression</li> <li>Privacy-preserving synthetic datasets</li> <li>Unsupervised representation learning</li> </ul> </li> <li><strong>Discriminative models</strong> (e.g., logistic regression, random forests, support vector machines, transformers used for classification) are preferable for: <ul> <li>Diagnosis prediction</li> <li>Risk stratification</li> <li>Outcome regression</li> <li>Biomarker classification</li> </ul> </li> </ul> <p> In short: use generative models to explore and simulate, not to decide. </p>
+
+<h2 id="conclusion">Conclusion</h2> <p> Generative models offer powerful tools for biomedical innovation, but they must be applied with precision and caution. Their strength lies in synthesis and exploration—not in decision-making. For tasks requiring accuracy, interpretability, and accountability, discriminative models remain the gold standard. As we continue to integrate AI into healthcare, understanding these boundaries is essential to avoid costly mistakes and ensure ethical, effective outcomes. </p>
+
+<h2 id="contact">Let’s Collaborate</h2> <p> If you're working on generative modeling in biomedicine or interested in exploring clinical applications, feel free to reach out: <strong>alex.sciarra@gmail.com</strong> </p> </article>
+
+<footer class="article-footer"> <p>© 2025 Alessandro Sciarra — All rights reserved</p> </footer>
+</main>
+
+</body>
+</html>
