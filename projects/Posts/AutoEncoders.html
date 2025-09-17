@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AutoEncoder</title>
+  <meta name="description" content="Everything you need to know about AutoEncoders, including theory, training, applications, and an interactive simulation.">
+  <style>
+    :root {
+      --bg: #FAF7F0;
+      --text: #111;
+      --muted: #555;
+      --accent: #0A66C2;
+      --border: #E5E1D8;
+      --font-body: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --size-base: 18px;
+      --line: 1.7;
+      --max-width: 72ch;
+      --radius: 12px;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: var(--size-base);
+      line-height: var(--line);
+      margin: 0;
+      padding: var(--space-3);
+    }
+    h1, h2 {
+      font-weight: 800;
+      margin-bottom: var(--space-2);
+    }
+    .wrap {
+      max-width: var(--max-width);
+      margin: auto;
+    }
+    canvas {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: var(--space-2);
+    }
+    label {
+      display: block;
+      margin-top: var(--space-2);
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>AutoEncoder: Theory, Applications & Simulation</h1>
+      <p class="meta">by Alessandro Sciarra, Ph.D.</p>
+    </header>
+
+    <section>
+      <h2>What is an AutoEncoder?</h2>
+      <p>
+        An AutoEncoder is a type of neural network that learns to compress and reconstruct data. It consists of two parts:
+      </p>
+      <ul>
+        <li><strong>Encoder:</strong> reduces the input to a latent representation.</li>
+        <li><strong>Decoder:</strong> reconstructs the input from the latent space.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Use Cases</h2>
+      <ul>
+        <li>Image compression and reconstruction</li>
+        <li>Denoising corrupted data</li>
+        <li>Anomaly detection in cybersecurity and finance</li>
+        <li>Dimensionality reduction for simulations (e.g., fluid dynamics)</li>
+        <li>Data generation (foundation for GANs and VAEs)</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Training & Validation</h2>
+      <p>
+        AutoEncoders are trained using unsupervised learning. The goal is to minimize the reconstruction error, typically using Mean Squared Error (MSE).
+      </p>
+      <ul>
+        <li><strong>Training:</strong> on unlabeled datasets like MNIST or CIFAR-10</li>
+        <li><strong>Validation:</strong> monitor loss on a separate validation set</li>
+        <li><strong>Testing:</strong> evaluate generalization and reconstruction quality</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Modern Variants</h2>
+      <ul>
+        <li><strong>Denoising AutoEncoder:</strong> reconstructs clean data from noisy input</li>
+        <li><strong>Variational AutoEncoder (VAE):</strong> learns probabilistic latent spaces</li>
+        <li><strong>Sparse AutoEncoder:</strong> enforces sparsity in the latent representation</li>
+        <li><strong>Convolutional AutoEncoder:</strong> optimized for image data</li>
+      </ul>
+    </section>
+
+    <section>
+  <h2>🧪 Simulated Denoising AutoEncoder</h2>
+  <p>This demo simulates how an AutoEncoder removes salt-and-pepper noise from a 176×176 MNIST digit.</p>
+  <div style="display: flex; gap: 20px;">
+    <div>
+      <img src="3_image_MNIST.png" alt="Original MNIST" width="176" height="176" style="border:1px solid #ccc;">
+      <p style="text-align: center; margin-top: 0.5rem;"><strong>Original</strong></p>
+    </div>
+    <div>
+      <img src="3_image_MNIST_sp.png" alt="Noisy MNIST" width="176" height="176" style="border:1px solid #ccc;">
+      <p style="text-align: center; margin-top: 0.5rem;"><strong>Noisy</strong></p>
+    </div>
+    <div>
+      <img src="3_image_MNIST_sp_d.png" alt="Denoised MNIST" width="176" height="176" style="border:1px solid #ccc;">
+      <p style="text-align: center; margin-top: 0.5rem;"><strong>Denoised</strong></p>
+    </div>
+  </div>
+
+  <p style="margin-top: 1rem;">
+    <strong>Left:</strong> Original image<br>
+    <strong>Center:</strong> Noisy input (salt & pepper)<br>
+    <strong>Right:</strong> Simulated AutoEncoder output
+  </p>
+</section>
+
+
+    <footer>
+      <hr>
+      <p>© 2025 Alessandro Sciarra — All rights reserved</p>
+    </footer>
+  </main>
+</body>
+</html>
