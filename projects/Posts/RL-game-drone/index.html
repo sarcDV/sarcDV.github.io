@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone RL Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h2>Drone Reinforcement Learning</h2>
+        <p>Episode: <span id="episode">0</span></p>
+        <p>Steps: <span id="steps">0</span></p>
+        <p>Successes: <span id="successes">0</span></p>
+        <p>Reward: <span id="reward">0</span></p>
+        <p>Status: <span id="status">Exploring</span></p>
+    </div>
+    <div id="controls">
+        <button id="trainBtn">Start Training</button>
+        <button id="resetBtn">Reset</button>
+        <button id="demoBtn">Demo Mode</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
