@@ -1,137 +1,380 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AutoEncoder</title>
-  <meta name="description" content="Everything you need to know about AutoEncoders, including theory, training, applications, and an interactive simulation.">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>AutoEncoders in Deep Learning</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #FAF7F0;
-      --text: #111;
-      --muted: #555;
-      --accent: #0A66C2;
-      --border: #E5E1D8;
-      --font-body: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      --size-base: 18px;
-      --line: 1.7;
-      --max-width: 72ch;
-      --radius: 12px;
-      --space-2: 1rem;
-      --space-3: 1.5rem;
+      --bg-dark: #1e1e2f;
+      --bg-gradient: linear-gradient(135deg, #667eea, #764ba2);
+      --card-bg: rgba(255,255,255,0.1);
+      --text-light: #ececf1;
+      --accent: #ffb400;
+      --font: "Inter", sans-serif;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: var(--size-base);
-      line-height: var(--line);
-      margin: 0;
-      padding: var(--space-3);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: var(--font);
+      line-height: 1.6;
     }
-    h1, h2 {
-      font-weight: 800;
-      margin-bottom: var(--space-2);
+    header {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: var(--bg-gradient);
+      text-align: center;
+      padding: 2rem;
     }
-    .wrap {
-      max-width: var(--max-width);
-      margin: auto;
+    header h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg,#ffb400,#ff416c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
     }
-    canvas {
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-top: var(--space-2);
+    header p { font-size: 1.2rem; max-width: 600px; }
+    section {
+      padding: 4rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
     }
-    label {
-      display: block;
-      margin-top: var(--space-2);
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      backdrop-filter: blur(6px);
     }
-    input[type="range"] {
-      width: 100%;
+    h2 { margin-bottom: .75rem; color: var(--accent); }
+    ul { margin-left: 1.25rem; margin-top: .5rem; }
+    ul li { margin-bottom: .5rem; }
+    button {
+      background: var(--accent);
+      border: none;
+      padding: .8rem 1.6rem;
+      border-radius: 25px;
+      color: var(--bg-dark);
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .3s;
+      margin-top: 1rem;
+    }
+    button:disabled { opacity: .6; cursor: default; }
+    button:hover:not(:disabled) { opacity: .9; }
+    .chart-container { margin-top: 2rem; }
+    .chart-container canvas { width: 100% !important; max-height: 320px; }
+    #error { color: #ff4f4f; margin-top: 1rem; min-height: 1.2em; }
+    footer { text-align: center; padding: 2rem; font-size: .9rem; color: #888; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 2.5rem; }
+      header p { font-size: 1rem; }
+      section { padding: 2rem 1rem; }
+      .card { padding: 1rem; }
+      button { min-width: 100%; font-size: 1rem; }
+      .chart-container canvas { max-height: 400px; }
     }
   </style>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
 </head>
 <body>
-  <main class="wrap">
-    <header>
-      <h1>AutoEncoder: Theory, Applications & Simulation</h1>
-      <p class="meta">by Alessandro Sciarra, Ph.D.</p>
-    </header>
+  <header>
+    <h1>AutoEncoders in Deep Learning</h1>
+    <p>Explore how neural networks learn compact representations. Train a tiny autoencoder right in your browser.</p>
+  </header>
 
-    <section>
-      <h2>What is an AutoEncoder?</h2>
-      <p>
-        An AutoEncoder is a type of neural network that learns to compress and reconstruct data. It consists of two parts:
-      </p>
+  <section id="intro">
+    <div class="card">
+      <h2>What is an autoencoder</h2>
+      <p>An autoencoder is a neural network that learns to reconstruct its input via a compressed latent code.</p>
       <ul>
-        <li><strong>Encoder:</strong> reduces the input to a latent representation.</li>
-        <li><strong>Decoder:</strong> reconstructs the input from the latent space.</li>
+        <li><strong>Encoder:</strong> maps input to a low-dimensional latent vector.</li>
+        <li><strong>Decoder:</strong> maps latent vector back to the original space.</li>
       </ul>
-    </section>
-
-    <section>
-      <h2>Use Cases</h2>
-      <ul>
-        <li>Image compression and reconstruction</li>
-        <li>Denoising corrupted data</li>
-        <li>Anomaly detection in cybersecurity and finance</li>
-        <li>Dimensionality reduction for simulations (e.g., fluid dynamics)</li>
-        <li>Data generation (foundation for GANs and VAEs)</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Training & Validation</h2>
-      <p>
-        AutoEncoders are trained using unsupervised learning. The goal is to minimize the reconstruction error, typically using Mean Squared Error (MSE).
-      </p>
-      <ul>
-        <li><strong>Training:</strong> on unlabeled datasets like MNIST or CIFAR-10</li>
-        <li><strong>Validation:</strong> monitor loss on a separate validation set</li>
-        <li><strong>Testing:</strong> evaluate generalization and reconstruction quality</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Modern Variants</h2>
-      <ul>
-        <li><strong>Denoising AutoEncoder:</strong> reconstructs clean data from noisy input</li>
-        <li><strong>Variational AutoEncoder (VAE):</strong> learns probabilistic latent spaces</li>
-        <li><strong>Sparse AutoEncoder:</strong> enforces sparsity in the latent representation</li>
-        <li><strong>Convolutional AutoEncoder:</strong> optimized for image data</li>
-      </ul>
-    </section>
-
-    <section>
-  <h2>🧪 Simulated Denoising AutoEncoder</h2>
-  <p>This demo simulates how an AutoEncoder removes salt-and-pepper noise from a 176×176 MNIST digit.</p>
-  <div style="display: flex; gap: 20px;">
-    <div>
-      <img src="3_image_MNIST.png" alt="Original MNIST" width="176" height="176" style="border:1px solid #ccc;">
-      <p style="text-align: center; margin-top: 0.5rem;"><strong>Original</strong></p>
+      <p>Training minimizes reconstruction error (e.g., mean squared error), encouraging compact, meaningful representations.</p>
     </div>
-    <div>
-      <img src="3_image_MNIST_sp.png" alt="Noisy MNIST" width="176" height="176" style="border:1px solid #ccc;">
-      <p style="text-align: center; margin-top: 0.5rem;"><strong>Noisy</strong></p>
-    </div>
-    <div>
-      <img src="3_image_MNIST_sp_d.png" alt="Denoised MNIST" width="176" height="176" style="border:1px solid #ccc;">
-      <p style="text-align: center; margin-top: 0.5rem;"><strong>Denoised</strong></p>
-    </div>
+
+    <div class="card">
+    <h2>Types of AutoEncoders</h2>
+    <ul>
+      <li><strong>Vanilla AutoEncoder:</strong> Basic encoder-decoder structure for reconstruction.</li>
+      <li><strong>Denoising AutoEncoder:</strong> Learns to remove noise from corrupted inputs.</li>
+      <li><strong>Sparse AutoEncoder:</strong> Encourages sparsity in latent space for feature selection.</li>
+      <li><strong>Variational AutoEncoder (VAE):</strong> Probabilistic model that enables generative sampling.</li>
+      <li><strong>Convolutional AutoEncoder:</strong> Uses CNNs for image compression and reconstruction.</li>
+    </ul>
   </div>
+    <div class="card">
+      <h2>Mathematical Foundations</h2>
+      <p>
+        AutoEncoders minimize a loss function between input \( x \) and reconstruction \( \hat{x} \):
+      </p>
+        <div style="background:rgba(255,255,255,0.05);padding:1rem;border-radius:8px;">
+          \( L(x, \hat{x}) = \|x - \hat{x}\|^2 \)
+        </div>
+      <p>
+        The encoder maps \( x \rightarrow z \), and the decoder maps \( z \rightarrow \hat{x} \). In VAEs, we model \( z \sim \mathcal{N}(\mu, \sigma^2) \) and optimize the ELBO.
+      </p>
+    </div>
+    <div class="card">
+      <h2>Applications</h2>
+      <ul>
+        <li><strong>Dimensionality Reduction:</strong> Compress high-dimensional data for visualization or preprocessing.</li>
+        <li><strong>Anomaly Detection:</strong> Identify outliers by high reconstruction error.</li>
+        <li><strong>Image Denoising:</strong> Remove noise from images while preserving details.</li>
+        <li><strong>Generative Modeling:</strong> Generate new data samples (e.g., images, text) using VAEs.</li>
+        <li><strong>Feature Learning:</strong> Learn useful representations for downstream tasks like classification.</li>
+      </ul>
+    </div>
+    <div class="card">
+  <h2>AutoEncoder vs PCA</h2>
+  <ul>
+    <li><strong>PCA:</strong> Linear projection onto orthogonal components.</li>
+    <li><strong>AutoEncoder:</strong> Nonlinear mapping via neural networks.</li>
+    <li><strong>Advantage:</strong> AutoEncoders can capture complex manifolds and hierarchical features.</li>
+  </ul>
+</div>
+  <div class="card">
+  <h2>AutoEncoders in Industry</h2>
+  <ul>
+    <li><strong>Finance:</strong> Fraud detection via anomaly scoring.</li>
+    <li><strong>Healthcare:</strong> Medical image compression and denoising.</li>
+    <li><strong>Cybersecurity:</strong> Intrusion detection using reconstruction error.</li>
+    <li><strong>Manufacturing:</strong> Predictive maintenance and defect detection.</li>
+  </ul>
+</div>
 
-  <p style="margin-top: 1rem;">
-    <strong>Left:</strong> Original image<br>
-    <strong>Center:</strong> Noisy input (salt & pepper)<br>
-    <strong>Right:</strong> Simulated AutoEncoder output
-  </p>
-</section>
 
+  </section>
 
-    <footer>
-      <hr>
-      <p>© 2025 Alessandro Sciarra — All rights reserved</p>
-    </footer>
-  </main>
+  <section id="simulation">
+    <div class="card">
+      <h2>Interactive autoencoder simulation</h2>
+      <p>Train on synthetic sine waves and watch loss and reconstruction in real time.</p>
+      <button id="start-btn">Start Training</button>
+      <div id="error"></div>
+      <div class="chart-container">
+        <canvas id="lossChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="reconChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <!-- Crafted with TensorFlow.js &amp; Chart.js • <a href="https://www.tensorflow.org/js" target="_blank">Learn TensorFlow.js</a> -->
+      <p>© 2025 <a href="https://sarcdv.github.io/" target="_blank">Alessandro Sciarra, Ph.D.</a> — All rights reserved.</p>
+  </footer>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+  <script>
+    // Colors
+    const ACCENT = '#ffb400';
+    const ORIGINAL = '#ececf1';
+
+    // Globals for charts
+    let lossChart = null;
+    let reconChart = null;
+
+    // Safe helpers
+    function showError(msg) {
+      console.error(msg);
+      const el = document.getElementById('error');
+      if (el) el.textContent = 'Error: ' + msg;
+    }
+    function clearError() {
+      const el = document.getElementById('error');
+      if (el) el.textContent = '';
+    }
+
+    // Initialize charts after DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        initCharts();
+      } catch (e) {
+        showError(e.message || e);
+      }
+
+      const btn = document.getElementById('start-btn');
+      if (!btn) {
+        showError('Start button not found in DOM.');
+        return;
+      }
+      btn.addEventListener('click', async () => {
+        clearError();
+        btn.disabled = true;
+        try {
+          await runSimulation();
+        } catch (e) {
+          showError(e.message || e);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    function initCharts() {
+      const lossCanvas = document.getElementById('lossChart');
+      const reconCanvas = document.getElementById('reconChart');
+
+      if (!lossCanvas) throw new Error('Loss canvas not found.');
+      if (!reconCanvas) throw new Error('Reconstruction canvas not found.');
+
+      const lossCtx = lossCanvas.getContext('2d');
+      const reconCtx = reconCanvas.getContext('2d');
+
+      if (!lossCtx) throw new Error('2D context for loss chart not available.');
+      if (!reconCtx) throw new Error('2D context for recon chart not available.');
+
+      // Pre-create empty charts to avoid undefined references during updates
+      lossChart = new Chart(lossCtx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Training Loss',
+            data: [],
+            borderColor: ACCENT,
+            borderWidth: 2,
+            fill: false,
+            tension: 0.3,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: false,
+          scales: {
+            x: { title: { display: true, text: 'Epoch' } },
+            y: { title: { display: true, text: 'Loss' }, type: 'linear' }
+          }
+        }
+      });
+
+      reconChart = new Chart(reconCtx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Original',
+              data: [],
+              borderColor: ORIGINAL,
+              borderWidth: 1,
+              fill: false,
+              pointRadius: 0
+            },
+            {
+              label: 'Reconstruction',
+              data: [],
+              borderColor: ACCENT,
+              borderWidth: 2,
+              fill: false,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          animation: false,
+          scales: {
+            x: { display: false },
+            y: { title: { display: true, text: 'Amplitude' } }
+          }
+        }
+      });
+    }
+
+    function updateLossChart(lossHistory) {
+      if (!lossChart || !lossChart.data || !lossChart.data.datasets?.[0]) {
+        console.warn('Loss chart not initialized yet.');
+        return;
+      }
+      lossChart.data.labels = lossHistory.map(d => d.epoch);
+      lossChart.data.datasets[0].data = lossHistory.map(d => d.loss);
+      lossChart.update('none'); // no animation for snappy updates
+    }
+
+    function updateReconChart(original, recon) {
+      if (!reconChart || !reconChart.data || reconChart.data.datasets?.length < 2) {
+        console.warn('Reconstruction chart not initialized yet.');
+        return;
+      }
+      const labels = original.map((_, i) => i);
+      reconChart.data.labels = labels;
+      reconChart.data.datasets[0].data = original;
+      reconChart.data.datasets[1].data = recon;
+      reconChart.update('none');
+    }
+
+    async function runSimulation() {
+      // Generate synthetic sine-wave dataset
+      const numSamples = 1000, seqLen = 100;
+      const data = new Array(numSamples).fill(0).map(() => {
+        const phase = Math.random() * 2 * Math.PI;
+        return Array.from({ length: seqLen }, (_, j) =>
+          Math.sin((2 * Math.PI * j) / seqLen + phase) + 0.1 * Math.random()
+        );
+      });
+
+      // Build model
+      const input = tf.input({ shape: [seqLen] });
+      const e1 = tf.layers.dense({ units: 64, activation: 'relu' }).apply(input);
+      const bottleneck = tf.layers.dense({ units: 3, activation: 'linear' }).apply(e1);
+      const d1 = tf.layers.dense({ units: 64, activation: 'relu' }).apply(bottleneck);
+      const output = tf.layers.dense({ units: seqLen }).apply(d1);
+      const autoencoder = tf.model({ inputs: input, outputs: output });
+      autoencoder.compile({ optimizer: tf.train.adam(1e-3), loss: 'meanSquaredError' });
+
+      // Prepare tensors
+      const x = tf.tensor2d(data); // [numSamples, seqLen]
+
+      const lossHistory = [];
+      const epochs = 20;
+      const batchSize = 32;
+
+      await autoencoder.fit(x, x, {
+        epochs,
+        batchSize,
+        shuffle: true,
+        callbacks: {
+          onEpochEnd: async (epoch, logs) => {
+            lossHistory.push({ epoch: epoch + 1, loss: logs.loss });
+            updateLossChart(lossHistory);
+            await tf.nextFrame(); // yield to UI so charts repaint
+          }
+        }
+      });
+
+      // Reconstruct a sample and visualize
+      const sample = tf.tensor2d([data[0]]);
+      const recon = autoencoder.predict(sample);
+      const reconArr = Array.from(recon.dataSync());
+      updateReconChart(data[0], reconArr);
+
+      // Cleanup tensors (keep model for possible reuse)
+      x.dispose();
+      sample.dispose();
+      recon.dispose();
+      // Optionally: autoencoder.dispose(); // if you won’t train again
+    }
+  </script>
 </body>
 </html>
