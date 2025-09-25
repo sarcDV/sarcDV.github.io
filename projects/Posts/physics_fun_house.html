@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Fun: The Bouncing Ball of Chaos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            text-shadow: 3px 3px 0 #ff00ff, 6px 6px 0 #00ffff;
+            margin-bottom: 10px;
+            animation: title-bounce 2s infinite alternate;
+        }
+        
+        @keyframes title-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        
+        .tagline {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .simulation-container {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        #physicsCanvas {
+            width: 100%;
+            height: 400px;
+            background: #0a0e27;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .value-display {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        button {
+            background: #ff00ff;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 0 #b200b2;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #b200b2;
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #b200b2;
+        }
+        
+        .explanation {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h2 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #ffcc00;
+            padding-bottom: 5px;
+        }
+        
+        .concept {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        
+        .concept:hover {
+            transform: scale(1.02);
+        }
+        
+        .concept h3 {
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+        
+        .physics-fact {
+            background: rgba(255, 0, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #ff00ff;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Physics Fun House</h1>
+            <p class="tagline">Where balls bounce, gravity pulls, and chaos reigns supreme!</p>
+        </header>
+        
+        <div class="content">
+            <div class="simulation-container">
+                <canvas id="physicsCanvas"></canvas>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="gravity">Gravity Strength</label>
+                        <input type="range" id="gravity" min="0.1" max="2" step="0.1" value="1">
+                        <div class="value-display">Value: <span id="gravityValue">1.0</span></div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="bounciness">Bounciness</label>
+                        <input type="range" id="bounciness" min="0.1" max="0.95" step="0.05" value="0.8">
+                        <div class="value-display">Value: <span id="bouncinessValue">0.8</span></div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="chaos">Chaos Factor</label>
+                        <input type="range" id="chaos" min="0" max="1" step="0.1" value="0.3">
+                        <div class="value-display">Value: <span id="chaosValue">0.3</span></div>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button id="addBall">Add Ball</button>
+                    <button id="reset">Reset Simulation</button>
+                    <button id="crazyMode">Crazy Mode</button>
+                </div>
+            </div>
+            
+            <div class="explanation">
+                <h2>Physics Concepts Explained</h2>
+                
+                <div class="concept">
+                    <h3>Gravity</h3>
+                    <p>Gravity is what makes things fall down. On Earth, it's about 9.8 m/s², but in our simulation, you can make it weaker or stronger. Try setting gravity to zero and watch the balls float!</p>
+                </div>
+                
+                <div class="concept">
+                    <h3>Elasticity</h3>
+                    <p>Bounciness (elasticity) determines how much energy a ball keeps when it hits something. High bounciness = super bouncy ball. Low bounciness = sad, flat ball.</p>
+                </div>
+                
+                <div class="concept">
+                    <h3>Chaos Theory</h3>
+                    <p>Tiny changes in starting conditions can lead to wildly different outcomes. This is why your balls never follow the exact same path twice (unless you're really, really lucky).</p>
+                </div>
+                
+                <div class="concept">
+                    <h3>Energy Conservation</h3>
+                    <p>Energy can't be created or destroyed, only transformed. In our simulation, balls lose a little energy with each bounce (because physics is never perfect).</p>
+                </div>
+                
+                <div class="physics-fact">
+                    <h3>Did You Know?</h3>
+                    <p>If you could bounce a ball with 100% efficiency, it would bounce forever! But in reality, some energy always turns into heat or sound.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Created with ❤️ and a little bit of chaos | Physics Fun House © 2025 | <a href="https://sarcdv.github.io/">A. Sciarra, Ph.D.</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('physicsCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas dimensions
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Ball class
+        class Ball {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.gravity = parseFloat(document.getElementById('gravity').value);
+                this.bounciness = parseFloat(document.getElementById('bounciness').value);
+                this.chaos = parseFloat(document.getElementById('chaos').value);
+                this.trail = [];
+                this.maxTrailLength = 20;
+            }
+            
+            update() {
+                // Apply gravity
+                this.vy += this.gravity;
+                
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Add current position to trail
+                this.trail.push({x: this.x, y: this.y});
+                if (this.trail.length > this.maxTrailLength) {
+                    this.trail.shift();
+                }
+                
+                // Boundary collision
+                if (this.x - this.radius < 0) {
+                    this.x = this.radius;
+                    this.vx = -this.vx * this.bounciness;
+                    this.addChaos();
+                } else if (this.x + this.radius > canvas.width) {
+                    this.x = canvas.width - this.radius;
+                    this.vx = -this.vx * this.bounciness;
+                    this.addChaos();
+                }
+                
+                if (this.y - this.radius < 0) {
+                    this.y = this.radius;
+                    this.vy = -this.vy * this.bounciness;
+                    this.addChaos();
+                } else if (this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    this.vy = -this.vy * this.bounciness;
+                    this.addChaos();
+                    
+                    // Add some friction when hitting the ground
+                    this.vx *= 0.99;
+                }
+            }
+            
+            addChaos() {
+                // Add random velocity changes based on chaos factor
+                this.vx += (Math.random() - 0.5) * this.chaos * 2;
+                this.vy += (Math.random() - 0.5) * this.chaos * 2;
+            }
+            
+            draw() {
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const point = this.trail[i];
+                    const alpha = i / this.trail.length;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, this.radius * alpha * 0.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.color}, ${alpha * 0.5})`;
+                    ctx.fill();
+                }
+                
+                // Draw ball
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgb(${this.color})`;
+                ctx.fill();
+                
+                // Add highlight for 3D effect
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius/3, this.y - this.radius/3, this.radius/3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.fill();
+            }
+        }
+        
+        // Generate random color
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            return `${r}, ${g}, ${b}`;
+        }
+        
+        // Create initial balls
+        let balls = [];
+        
+        function createBall() {
+            const radius = 15 + Math.random() * 15;
+            const x = radius + Math.random() * (canvas.width - radius * 2);
+            const y = radius + Math.random() * (canvas.height / 2 - radius * 2);
+            balls.push(new Ball(x, y, radius, getRandomColor()));
+        }
+        
+        // Create a few initial balls
+        for (let i = 0; i < 3; i++) {
+            createBall();
+        }
+        
+        // Animation loop
+        function animate() {
+            // Clear canvas with a slight fade effect for motion trails
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw a "floor"
+            ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
+            ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+            
+            // Update and draw balls
+            balls.forEach(ball => {
+                // Update physics parameters from sliders
+                ball.gravity = parseFloat(document.getElementById('gravity').value);
+                ball.bounciness = parseFloat(document.getElementById('bounciness').value);
+                ball.chaos = parseFloat(document.getElementById('chaos').value);
+                
+                ball.update();
+                ball.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Start animation
+        animate();
+        
+        // Event listeners for controls
+        document.getElementById('gravity').addEventListener('input', function() {
+            document.getElementById('gravityValue').textContent = this.value;
+        });
+        
+        document.getElementById('bounciness').addEventListener('input', function() {
+            document.getElementById('bouncinessValue').textContent = this.value;
+        });
+        
+        document.getElementById('chaos').addEventListener('input', function() {
+            document.getElementById('chaosValue').textContent = this.value;
+        });
+        
+        document.getElementById('addBall').addEventListener('click', function() {
+            createBall();
+        });
+        
+        document.getElementById('reset').addEventListener('click', function() {
+            balls = [];
+            for (let i = 0; i < 3; i++) {
+                createBall();
+            }
+        });
+        
+        document.getElementById('crazyMode').addEventListener('click', function() {
+            // Add 10 balls at once
+            for (let i = 0; i < 10; i++) {
+                createBall();
+            }
+            
+            // Set sliders to extreme values
+            document.getElementById('gravity').value = 1.8;
+            document.getElementById('gravityValue').textContent = '1.8';
+            
+            document.getElementById('bounciness').value = 0.95;
+            document.getElementById('bouncinessValue').textContent = '0.95';
+            
+            document.getElementById('chaos').value = 0.8;
+            document.getElementById('chaosValue').textContent = '0.8';
+        });
+        
+        // Add click to create ball functionality
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const radius = 15 + Math.random() * 15;
+            balls.push(new Ball(x, y, radius, getRandomColor()));
+        });
+    </script>
+</body>
+</html>
