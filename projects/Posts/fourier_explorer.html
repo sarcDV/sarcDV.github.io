@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourier Transform Explorer: Understanding MRI & Image Processing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c1a2d 0%, #1a3a5f 50%, #0c1a2d 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4cc9f0;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee, #f72585);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.4rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #b8b8b8;
+        }
+        
+        .intro {
+            max-width: 900px;
+            margin: 0 auto 40px;
+            text-align: center;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .control-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .visualization {
+            flex: 2;
+            min-width: 600px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            background: #0a0a16;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-canvas {
+            max-width: 100%;
+            border: 1px solid #4cc9f0;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .control-group:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4cc9f0;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #2d3047;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4361ee;
+            cursor: pointer;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background: rgba(76, 201, 240, 0.2);
+            border: 1px dashed #4cc9f0;
+            border-radius: 5px;
+            color: #e6e6e6;
+            margin-bottom: 10px;
+        }
+        
+        .value-display {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: #b8b8b8;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 #3a0ca3;
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 0 #3a0ca3;
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #3a0ca3;
+        }
+        
+        button.secondary {
+            background: linear-gradient(90deg, #f72585, #b5179e);
+            box-shadow: 0 4px 0 #b5179e;
+        }
+        
+        button.secondary:hover {
+            box-shadow: 0 6px 0 #b5179e;
+        }
+        
+        button.secondary:active {
+            box-shadow: 0 2px 0 #b5179e;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #4cc9f0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: rgba(76, 201, 240, 0.1);
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: rgba(76, 201, 240, 0.3);
+            border-color: #4cc9f0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .explanation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            margin-top: 30px;
+        }
+        
+        h2 {
+            color: #4cc9f0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4cc9f0;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #f72585;
+            margin: 20px 0 10px;
+        }
+        
+        .concept {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: transform 0.3s;
+            border-left: 4px solid #4361ee;
+        }
+        
+        .concept:hover {
+            transform: translateX(5px);
+        }
+        
+        .mri-application {
+            background: rgba(76, 201, 240, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .image-item {
+            text-align: center;
+        }
+        
+        .image-item canvas {
+            max-width: 100%;
+            border: 1px solid #4cc9f0;
+            border-radius: 5px;
+        }
+        
+        .image-label {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #b8b8b8;
+        }
+        
+        .spectrum-info {
+            background: rgba(247, 37, 133, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f72585;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            border-top: 1px solid #4cc9f0;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .visualization {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fourier Transform Explorer</h1>
+            <p class="tagline">Understanding MRI, Image Processing, and Frequency Domain Analysis</p>
+        </header>
+        
+        <div class="intro">
+            <p>The Fourier Transform is one of the most powerful tools in mathematics, with applications from image processing to medical imaging. This interactive explorer helps you understand how it works by visualizing the transformation between spatial and frequency domains.</p>
+            <p>Upload an image, explore its frequency components, and see how MRI machines use these principles to create detailed images of the human body.</p>
+        </div>
+        
+        <div class="content">
+            <div class="control-panel">
+                <h2>Image Controls</h2>
+                
+                <div class="control-group">
+                    <label for="imageUpload">Upload Image</label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                    <div class="value-display">Supported formats: JPG, PNG, GIF</div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="filterType">Filter Type</label>
+                    <select id="filterType" class="control-select">
+                        <option value="lowpass">Low-Pass Filter (Blur)</option>
+                        <option value="highpass">High-Pass Filter (Edge Detection)</option>
+                        <option value="bandpass">Band-Pass Filter</option>
+                        <option value="custom">Custom Selection</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="filterRadius">Filter Radius</label>
+                    <input type="range" id="filterRadius" min="1" max="100" value="30">
+                    <div class="value-display">Radius: <span id="filterRadiusValue">30</span>%</div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="displayMode">Display Mode</label>
+                    <select id="displayMode" class="control-select">
+                        <option value="magnitude">Magnitude Spectrum</option>
+                        <option value="phase">Phase Spectrum</option>
+                        <option value="both">Both Magnitude & Phase</option>
+                    </select>
+                </div>
+                
+                <div class="buttons">
+                    <button id="transformBtn">Apply Fourier Transform</button>
+                    <button id="inverseBtn" class="secondary">Apply Inverse Transform</button>
+                    <button id="resetBtn">Reset</button>
+                </div>
+                
+                <div class="mri-application">
+                    <h3>MRI Connection</h3>
+                    <p>MRI machines don't take pictures directly. They measure frequency data (k-space) and use inverse Fourier transforms to reconstruct images. Try filtering frequency components to see how MRI image quality is affected!</p>
+                </div>
+            </div>
+            
+            <div class="visualization">
+                <div class="tab-container">
+                    <div class="tab active" data-tab="original">Original Image</div>
+                    <div class="tab" data-tab="fourier">Fourier Domain</div>
+                    <div class="tab" data-tab="filtered">Filtered Result</div>
+                    <div class="tab" data-tab="comparison">Comparison</div>
+                </div>
+                
+                <div class="tab-content active" id="original-content">
+                    <div class="canvas-container" style="height: 400px;">
+                        <canvas id="originalCanvas" class="image-canvas"></canvas>
+                    </div>
+                    <p>Upload an image to begin Fourier analysis. The image will be converted to grayscale for frequency domain processing.</p>
+                </div>
+                
+                <div class="tab-content" id="fourier-content">
+                    <div class="spectrum-info">
+                        <strong>Note:</strong> The magnitude spectrum is centered using FFT shift. Low frequencies (DC component) are now in the center, with high frequencies at the edges.
+                    </div>
+                    <div class="image-grid">
+                        <div class="image-item">
+                            <canvas id="magnitudeCanvas" class="image-canvas"></canvas>
+                            <div class="image-label">Magnitude Spectrum (Centered)</div>
+                        </div>
+                        <div class="image-item">
+                            <canvas id="phaseCanvas" class="image-canvas"></canvas>
+                            <div class="image-label">Phase Spectrum</div>
+                        </div>
+                    </div>
+                    <p>The Fourier Transform decomposes an image into its frequency components. The magnitude shows frequency strength (centered with low frequencies in middle), while the phase contains location information.</p>
+                </div>
+                
+                <div class="tab-content" id="filtered-content">
+                    <div class="canvas-container" style="height: 400px;">
+                        <canvas id="filteredCanvas" class="image-canvas"></canvas>
+                    </div>
+                    <p>This is the result after applying frequency domain filtering and inverse Fourier transform. Different filters produce different effects like blurring or edge enhancement.</p>
+                </div>
+                
+                <div class="tab-content" id="comparison-content">
+                    <div class="image-grid">
+                        <div class="image-item">
+                            <canvas id="compOriginalCanvas" class="image-canvas"></canvas>
+                            <div class="image-label">Original Image</div>
+                        </div>
+                        <div class="image-item">
+                            <canvas id="compFilteredCanvas" class="image-canvas"></canvas>
+                            <div class="image-label">Filtered Image</div>
+                        </div>
+                    </div>
+                    <p>Side-by-side comparison of the original and filtered images. Notice how different frequency components affect the final image appearance.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h2>Understanding Fourier Transform in Imaging</h2>
+            
+            <div class="concept">
+                <h3>What is the Fourier Transform?</h3>
+                <p>The Fourier Transform is a mathematical operation that decomposes a signal (like an image) into its constituent frequencies. In image processing, it converts spatial information (pixels) into frequency information, revealing patterns that aren't obvious in the original image.</p>
+            </div>
+            
+            <div class="concept">
+                <h3>Magnitude vs. Phase Spectrum</h3>
+                <p><strong>Magnitude Spectrum</strong> shows the strength of each frequency component. After applying FFT shift, low frequencies (including the DC component representing average brightness) appear in the center, with high frequencies radiating outward. <strong>Phase Spectrum</strong> contains information about the position of features in the image. Surprisingly, the phase spectrum is more important for image recognition!</p>
+            </div>
+            
+            <div class="concept">
+                <h3>Why Center the Spectrum?</h3>
+                <p>Raw Fourier transform output has low frequencies at the corners. Applying an FFT shift (swapping quadrants) centers the spectrum, making it more intuitive to interpret. This centered representation is standard in image processing and MRI visualization.</p>
+            </div>
+            
+            <div class="concept">
+                <h3>Frequency Filtering</h3>
+                <p>By modifying specific frequency components, we can alter images in useful ways:</p>
+                <ul>
+                    <li><strong>Low-pass filters</strong> remove high frequencies (edges), resulting in blurring</li>
+                    <li><strong>High-pass filters</strong> remove low frequencies (smooth areas), enhancing edges</li>
+                    <li><strong>Band-pass filters</strong> keep only middle frequencies, useful for texture analysis</li>
+                </ul>
+            </div>
+            
+            <div class="mri-application">
+                <h3>Fourier Transform in MRI</h3>
+                <p>Magnetic Resonance Imaging (MRI) is one of the most important applications of Fourier Transform in medicine. Instead of capturing images directly, MRI machines:</p>
+                <ol>
+                    <li>Measure radio frequency signals from hydrogen atoms in the body</li>
+                    <li>Collect data in "k-space" (frequency domain) with low frequencies in the center</li>
+                    <li>Use inverse Fourier Transform to reconstruct anatomical images</li>
+                </ol>
+                <p>This is why MRI scan time is related to how much frequency data is collected. More data means higher resolution but longer scan times. The centered k-space representation allows radiologists to prioritize important frequency components.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Fourier Transform Explorer | Educational Tool for Understanding Frequency Domain Analysis</p>
+            <p>Note: This implementation uses a robust FFT algorithm that works with any power-of-two image size!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Canvas elements
+        const originalCanvas = document.getElementById('originalCanvas');
+        const magnitudeCanvas = document.getElementById('magnitudeCanvas');
+        const phaseCanvas = document.getElementById('phaseCanvas');
+        const filteredCanvas = document.getElementById('filteredCanvas');
+        const compOriginalCanvas = document.getElementById('compOriginalCanvas');
+        const compFilteredCanvas = document.getElementById('compFilteredCanvas');
+        
+        const originalCtx = originalCanvas.getContext('2d');
+        const magnitudeCtx = magnitudeCanvas.getContext('2d');
+        const phaseCtx = phaseCanvas.getContext('2d');
+        const filteredCtx = filteredCanvas.getContext('2d');
+        const compOriginalCtx = compOriginalCanvas.getContext('2d');
+        const compFilteredCtx = compFilteredCanvas.getContext('2d');
+        
+        // Global variables
+        let originalImageData = null;
+        let fourierData = null;
+        let filteredFourierData = null;
+        let displayOriginalWidth = 0;
+        let displayOriginalHeight = 0;
+        
+        // Initialize canvas sizes
+        function initCanvases() {
+            const size = 400;
+            originalCanvas.width = size;
+            originalCanvas.height = size;
+            magnitudeCanvas.width = size/2;
+            magnitudeCanvas.height = size/2;
+            phaseCanvas.width = size/2;
+            phaseCanvas.height = size/2;
+            filteredCanvas.width = size;
+            filteredCanvas.height = size;
+            compOriginalCanvas.width = size/2;
+            compOriginalCanvas.height = size/2;
+            compFilteredCanvas.width = size/2;
+            compFilteredCanvas.height = size/2;
+        }
+        
+        initCanvases();
+        
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+        
+        // File upload handling with zero-padding to power-of-two dimensions
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const maxSize = 256;
+                    let scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+                    let originalWidth = Math.floor(img.width * scale);
+                    let originalHeight = Math.floor(img.height * scale);
+                    
+                    displayOriginalWidth = originalWidth;
+                    displayOriginalHeight = originalHeight;
+                    
+                    // Function to find smallest power of 2 >= n
+                    function nextPowerOfTwo(n) {
+                        if (n <= 1) return 1;
+                        let power = 1;
+                        while (power < n) power *= 2;
+                        return power;
+                    }
+                    
+                    const paddedWidth = Math.min(256, nextPowerOfTwo(originalWidth));
+                    const paddedHeight = Math.min(256, nextPowerOfTwo(originalHeight));
+                    
+                    const tempCanvas = document.createElement('canvas');
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCanvas.width = originalWidth;
+                    tempCanvas.height = originalHeight;
+                    tempCtx.drawImage(img, 0, 0, originalWidth, originalHeight);
+                    
+                    const tempImageData = tempCtx.getImageData(0, 0, originalWidth, originalHeight);
+                    
+                    originalCanvas.width = paddedWidth;
+                    originalCanvas.height = paddedHeight;
+                    originalCtx.fillStyle = 'black';
+                    originalCtx.fillRect(0, 0, paddedWidth, paddedHeight);
+                    
+                    const offsetX = Math.floor((paddedWidth - originalWidth) / 2);
+                    const offsetY = Math.floor((paddedHeight - originalHeight) / 2);
+                    originalCtx.putImageData(tempImageData, offsetX, offsetY);
+                    
+                    originalImageData = originalCtx.getImageData(0, 0, paddedWidth, paddedHeight);
+                    
+                    compOriginalCanvas.width = originalWidth / 2;
+                    compOriginalCanvas.height = originalHeight / 2;
+                    compOriginalCtx.drawImage(tempCanvas, 0, 0, compOriginalCanvas.width, compOriginalCanvas.height);
+                    
+                    fourierData = null;
+                    filteredFourierData = null;
+                    document.getElementById('transformBtn').disabled = false;
+                    
+                    console.log(`Original: ${originalWidth}x${originalHeight} → Padded: ${paddedWidth}x${paddedHeight}`);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        document.getElementById('filterRadius').addEventListener('input', function() {
+            document.getElementById('filterRadiusValue').textContent = this.value;
+        });
+        
+        // Apply FFT shift to center the spectrum
+        function fftShift(data, width, height) {
+            const shifted = new Float32Array(data.length);
+            const halfWidth = Math.floor(width / 2);
+            const halfHeight = Math.floor(height / 2);
+            
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const newX = (x + halfWidth) % width;
+                    const newY = (y + halfHeight) % height;
+                    const oldIndex = y * width + x;
+                    const newIndex = newY * width + newX;
+                    shifted[newIndex] = data[oldIndex];
+                }
+            }
+            
+            return shifted;
+        }
+        
+        // Bit-reversal function for FFT
+        function bitReverse(n, bits) {
+            let reversed = 0;
+            for (let i = 0; i < bits; i++) {
+                if (n & (1 << i)) {
+                    reversed |= (1 << (bits - 1 - i));
+                }
+            }
+            return reversed;
+        }
+        
+        // Cooley-Tukey FFT implementation (in-place, iterative)
+        function fft1D(real, imag) {
+            const n = real.length;
+            if (n <= 1) return;
+            
+            // Calculate number of bits
+            const bits = Math.log2(n);
+            if (!Number.isInteger(bits)) {
+                throw new Error('Array length must be power of 2');
+            }
+            
+            // Bit-reversal permutation
+            for (let i = 0; i < n; i++) {
+                const j = bitReverse(i, bits);
+                if (j > i) {
+                    [real[i], real[j]] = [real[j], real[i]];
+                    [imag[i], imag[j]] = [imag[j], imag[i]];
+                }
+            }
+            
+            // Cooley-Tukey FFT
+            for (let len = 2; len <= n; len *= 2) {
+                const angle = -2 * Math.PI / len;
+                const wlenReal = Math.cos(angle);
+                const wlenImag = Math.sin(angle);
+                
+                for (let i = 0; i < n; i += len) {
+                    let wReal = 1;
+                    let wImag = 0;
+                    
+                    for (let j = 0; j < len / 2; j++) {
+                        const i1 = i + j;
+                        const i2 = i + j + len / 2;
+                        
+                        const tReal = wReal * real[i2] - wImag * imag[i2];
+                        const tImag = wReal * imag[i2] + wImag * real[i2];
+                        
+                        real[i2] = real[i1] - tReal;
+                        imag[i2] = imag[i1] - tImag;
+                        real[i1] = real[i1] + tReal;
+                        imag[i1] = imag[i1] + tImag;
+                        
+                        // Update w: w = w * wlen
+                        const newWReal = wReal * wlenReal - wImag * wlenImag;
+                        const newWImag = wReal * wlenImag + wImag * wlenReal;
+                        wReal = newWReal;
+                        wImag = newWImag;
+                    }
+                }
+            }
+        }
+        
+        // 2D FFT using our own implementation
+        function calculateFFT2D(imageData) {
+            const width = imageData.width;
+            const height = imageData.height;
+            const data = imageData.data;
+            
+            // Grayscale conversion
+            const gray = new Float32Array(width * height);
+            for (let i = 0; i < data.length; i += 4) {
+                gray[i/4] = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+            }
+            
+            // Initialize real and imag arrays
+            const real = new Float32Array(width * height);
+            const imag = new Float32Array(width * height);
+            
+            // Copy grayscale to real part
+            for (let i = 0; i < gray.length; i++) {
+                real[i] = gray[i];
+                imag[i] = 0;
+            }
+            
+            // FFT on rows
+            for (let y = 0; y < height; y++) {
+                const rowReal = real.slice(y * width, (y + 1) * width);
+                const rowImag = imag.slice(y * width, (y + 1) * width);
+                fft1D(rowReal, rowImag);
+                real.set(rowReal, y * width);
+                imag.set(rowImag, y * width);
+            }
+            
+            // FFT on columns
+            for (let x = 0; x < width; x++) {
+                const colReal = new Float32Array(height);
+                const colImag = new Float32Array(height);
+                
+                for (let y = 0; y < height; y++) {
+                    colReal[y] = real[y * width + x];
+                    colImag[y] = imag[y * width + x];
+                }
+                
+                fft1D(colReal, colImag);
+                
+                for (let y = 0; y < height; y++) {
+                    real[y * width + x] = colReal[y];
+                    imag[y * width + x] = colImag[y];
+                }
+            }
+            
+            return { real, imag, width, height };
+        }
+        
+        // 2D Inverse FFT
+        function calculateIFFT2D(dftResult) {
+            const { real, imag, width, height } = dftResult;
+            
+            // Create copies for inverse transform
+            const invReal = new Float32Array(real);
+            const invImag = new Float32Array(imag);
+            
+            // Conjugate the input (for inverse FFT)
+            for (let i = 0; i < invImag.length; i++) {
+                invImag[i] = -invImag[i];
+            }
+            
+            // IFFT on columns
+            for (let x = 0; x < width; x++) {
+                const colReal = new Float32Array(height);
+                const colImag = new Float32Array(height);
+                
+                for (let y = 0; y < height; y++) {
+                    colReal[y] = invReal[y * width + x];
+                    colImag[y] = invImag[y * width + x];
+                }
+                
+                fft1D(colReal, colImag);
+                
+                for (let y = 0; y < height; y++) {
+                    invReal[y * width + x] = colReal[y];
+                    invImag[y * width + x] = colImag[y];
+                }
+            }
+            
+            // IFFT on rows
+            for (let y = 0; y < height; y++) {
+                const rowReal = invReal.slice(y * width, (y + 1) * width);
+                const rowImag = invImag.slice(y * width, (y + 1) * width);
+                fft1D(rowReal, rowImag);
+                invReal.set(rowReal, y * width);
+                invImag.set(rowImag, y * width);
+            }
+            
+            // Conjugate and normalize
+            const result = new Float32Array(width * height);
+            const norm = width * height;
+            for (let i = 0; i < result.length; i++) {
+                result[i] = invReal[i] / norm; // Imaginary part should be ~0
+            }
+            
+            return result;
+        }
+        
+        // Calculate magnitude and phase from FFT results
+        function calculateSpectra(fftResult) {
+            const { real, imag, width, height } = fftResult;
+            const magnitude = new Float32Array(width * height);
+            const phase = new Float32Array(width * height);
+            
+            for (let i = 0; i < real.length; i++) {
+                magnitude[i] = Math.sqrt(real[i] * real[i] + imag[i] * imag[i]);
+                phase[i] = Math.atan2(imag[i], real[i]);
+            }
+            
+            const shiftedMagnitude = fftShift(magnitude, width, height);
+            
+            return { magnitude: shiftedMagnitude, phase, width, height };
+        }
+        
+        // Apply filter to Fourier data
+        function applyFilter(fftResult, filterType, radius) {
+            const { real, imag, width, height } = fftResult;
+            const filteredReal = new Float32Array(real.length);
+            const filteredImag = new Float32Array(imag.length);
+            
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
+            const filterRadius = (radius / 100) * maxRadius;
+            
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    let filterValue = 0;
+                    
+                    switch(filterType) {
+                        case 'lowpass':
+                            filterValue = distance <= filterRadius ? 1 : 0;
+                            break;
+                        case 'highpass':
+                            filterValue = distance > filterRadius ? 1 : 0;
+                            break;
+                        case 'bandpass':
+                            const innerRadius = filterRadius * 0.7;
+                            filterValue = (distance > innerRadius && distance <= filterRadius) ? 1 : 0;
+                            break;
+                        case 'custom':
+                            filterValue = Math.exp(-distance * distance / (2 * filterRadius * filterRadius));
+                            break;
+                    }
+                    
+                    const index = y * width + x;
+                    filteredReal[index] = real[index] * filterValue;
+                    filteredImag[index] = imag[index] * filterValue;
+                }
+            }
+            
+            return { real: filteredReal, imag: filteredImag, width, height };
+        }
+        
+        // Visualize magnitude spectrum
+        function visualizeMagnitude(magnitude, width, height, canvas, ctx) {
+            let max = 0;
+            for (let i = 0; i < magnitude.length; i++) {
+                if (magnitude[i] > max) max = magnitude[i];
+            }
+            
+            const imageData = ctx.createImageData(width, height);
+            
+            for (let i = 0; i < magnitude.length; i++) {
+                const logValue = Math.log(1 + magnitude[i]) / Math.log(1 + max);
+                const intensity = Math.min(255, Math.floor(255 * logValue));
+                
+                const dataIndex = i * 4;
+                imageData.data[dataIndex] = intensity;
+                imageData.data[dataIndex + 1] = intensity;
+                imageData.data[dataIndex + 2] = intensity;
+                imageData.data[dataIndex + 3] = 255;
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+        
+        // Visualize phase spectrum
+        function visualizePhase(phase, width, height, canvas, ctx) {
+            const imageData = ctx.createImageData(width, height);
+            
+            for (let i = 0; i < phase.length; i++) {
+                const normalizedPhase = (phase[i] + Math.PI) / (2 * Math.PI);
+                const intensity = Math.floor(255 * normalizedPhase);
+                
+                const dataIndex = i * 4;
+                imageData.data[dataIndex] = intensity;
+                imageData.data[dataIndex + 1] = intensity;
+                imageData.data[dataIndex + 2] = intensity;
+                imageData.data[dataIndex + 3] = 255;
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+        
+        // Visualize reconstructed image (remove padding)
+        function visualizeReconstructed(imageData, width, height, canvas, ctx, originalWidth, originalHeight) {
+            const fullImageData = ctx.createImageData(width, height);
+            
+            for (let i = 0; i < imageData.length; i++) {
+                const intensity = Math.max(0, Math.min(255, imageData[i]));
+                const dataIndex = i * 4;
+                fullImageData.data[dataIndex] = intensity;
+                fullImageData.data[dataIndex + 1] = intensity;
+                fullImageData.data[dataIndex + 2] = intensity;
+                fullImageData.data[dataIndex + 3] = 255;
+            }
+            
+            const offsetX = Math.floor((width - originalWidth) / 2);
+            const offsetY = Math.floor((height - originalHeight) / 2);
+            
+            const croppedImageData = ctx.createImageData(originalWidth, originalHeight);
+            for (let y = 0; y < originalHeight; y++) {
+                for (let x = 0; x < originalWidth; x++) {
+                    const srcIndex = ((y + offsetY) * width + (x + offsetX)) * 4;
+                    const dstIndex = (y * originalWidth + x) * 4;
+                    
+                    croppedImageData.data[dstIndex] = fullImageData.data[srcIndex];
+                    croppedImageData.data[dstIndex + 1] = fullImageData.data[srcIndex + 1];
+                    croppedImageData.data[dstIndex + 2] = fullImageData.data[srcIndex + 2];
+                    croppedImageData.data[dstIndex + 3] = fullImageData.data[srcIndex + 3];
+                }
+            }
+            
+            canvas.width = originalWidth;
+            canvas.height = originalHeight;
+            ctx.putImageData(croppedImageData, 0, 0);
+        }
+        
+        // Button event handlers
+        document.getElementById('transformBtn').addEventListener('click', function() {
+            if (!originalImageData) {
+                alert('Please upload an image first.');
+                return;
+            }
+            
+            this.textContent = 'Calculating...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                try {
+                    fourierData = calculateFFT2D(originalImageData);
+                    const spectra = calculateSpectra(fourierData);
+                    
+                    visualizeMagnitude(spectra.magnitude, spectra.width, spectra.height, 
+                                     magnitudeCanvas, magnitudeCtx);
+                    visualizePhase(spectra.phase, spectra.width, spectra.height, 
+                                 phaseCanvas, phaseCtx);
+                    
+                    document.querySelector('.tab[data-tab="fourier"]').click();
+                } catch (error) {
+                    console.error('FFT calculation error:', error);
+                    alert('Error during Fourier Transform calculation. The image dimensions may not be compatible.');
+                }
+                
+                this.textContent = 'Apply Fourier Transform';
+                this.disabled = false;
+                document.getElementById('inverseBtn').disabled = false;
+            }, 100);
+        });
+        
+        document.getElementById('inverseBtn').addEventListener('click', function() {
+            if (!fourierData) {
+                alert('Please calculate Fourier transform first.');
+                return;
+            }
+            
+            this.textContent = 'Calculating...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                try {
+                    const filterType = document.getElementById('filterType').value;
+                    const filterRadius = parseInt(document.getElementById('filterRadius').value);
+                    
+                    filteredFourierData = applyFilter(fourierData, filterType, filterRadius);
+                    const reconstructed = calculateIFFT2D(filteredFourierData);
+                    
+                    visualizeReconstructed(reconstructed, fourierData.width, fourierData.height, 
+                                         filteredCanvas, filteredCtx, displayOriginalWidth, displayOriginalHeight);
+                    
+                    compFilteredCanvas.width = displayOriginalWidth / 2;
+                    compFilteredCanvas.height = displayOriginalHeight / 2;
+                    compFilteredCtx.drawImage(filteredCanvas, 0, 0, compFilteredCanvas.width, compFilteredCanvas.height);
+                    
+                    document.querySelector('.tab[data-tab="filtered"]').click();
+                } catch (error) {
+                    console.error('Inverse FFT calculation error:', error);
+                    alert('Error during inverse transform. Please try again.');
+                }
+                
+                this.textContent = 'Apply Inverse Transform';
+                this.disabled = false;
+            }, 100);
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            originalCtx.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+            magnitudeCtx.clearRect(0, 0, magnitudeCanvas.width, magnitudeCanvas.height);
+            phaseCtx.clearRect(0, 0, phaseCanvas.width, phaseCanvas.height);
+            filteredCtx.clearRect(0, 0, filteredCanvas.width, filteredCanvas.height);
+            compOriginalCtx.clearRect(0, 0, compOriginalCanvas.width, compOriginalCanvas.height);
+            compFilteredCtx.clearRect(0, 0, compFilteredCanvas.width, compFilteredCanvas.height);
+            
+            originalImageData = null;
+            fourierData = null;
+            filteredFourierData = null;
+            displayOriginalWidth = 0;
+            displayOriginalHeight = 0;
+            
+            document.getElementById('imageUpload').value = '';
+            document.querySelector('.tab[data-tab="original"]').click();
+            document.getElementById('transformBtn').disabled = true;
+            document.getElementById('inverseBtn').disabled = true;
+        });
+        
+        document.getElementById('transformBtn').disabled = true;
+        document.getElementById('inverseBtn').disabled = true;
+    </script>
+</body>
+</html>
