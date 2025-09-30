@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Physics Laboratory: Modeling Information Diffusion</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            color: var(--gray);
+            font-weight: 400;
+        }
+        
+        .intro {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .intro p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .simulation-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 1100px) {
+            .simulation-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .simulation {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .controls {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+        }
+        
+        h3 {
+            margin: 15px 0 10px;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+        }
+        
+        .canvas-container {
+            width: 100%;
+            height: 400px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        #socialCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--light);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--secondary);
+            cursor: pointer;
+        }
+        
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        button.accent {
+            background: var(--accent);
+        }
+        
+        button.accent:hover {
+            background: #c0392b;
+        }
+        
+        .stats {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .stats p {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+        }
+        
+        .stats span {
+            font-weight: 600;
+        }
+        
+        .explanation {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .physics-concept {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .concept-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--secondary);
+            transition: transform 0.3s;
+        }
+        
+        .concept-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .concept-card h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .concept-card p {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .graph-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .graph-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .graph {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            height: 350px;
+        }
+        
+        .graph canvas {
+            width: 100% !important;
+            height: 280px !important;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 25px;
+            border-top: 1px solid var(--light);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .formula {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1rem;
+            text-align: center;
+            overflow-x: auto;
+        }
+        
+        .reference {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .key-term {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .section-expandable {
+            margin-top: 20px;
+            border-top: 1px solid var(--light);
+            padding-top: 20px;
+        }
+        
+        .expand-button {
+            background: none;
+            border: none;
+            color: var(--secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .expand-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .expand-content.expanded {
+            max-height: 1000px;
+        }
+        
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+        
+        .expand-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            header, .intro, .simulation, .controls, .explanation {
+                padding: 20px 15px;
+            }
+            
+            .canvas-container {
+                height: 300px;
+            }
+            
+            .graph {
+                height: 300px;
+                padding: 15px;
+            }
+            
+            .graph canvas {
+                height: 240px !important;
+            }
+            
+            .physics-concept {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .canvas-container {
+                height: 250px;
+            }
+            
+            .graph {
+                height: 280px;
+            }
+            
+            .graph canvas {
+                height: 220px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Social Physics Laboratory</h1>
+            <p class="subtitle">Modeling Information Diffusion in Social Networks</p>
+        </header>
+        
+        <section class="intro">
+            <p>Social networks exhibit complex dynamics that can be effectively modeled using principles from physics. This laboratory demonstrates how concepts like diffusion, network effects, and critical thresholds explain the spread of information in digital ecosystems.</p>
+            <p>By adjusting parameters below, you can observe how different factors influence the virality of content and the formation of information cascades.</p>
+            
+            <div class="section-expandable">
+                <button class="expand-button" onclick="toggleExpand('intro-expand')">
+                    <span>Learn More About Social Physics</span>
+                    <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div id="intro-expand" class="expand-content">
+                    <p>Social physics is an emerging interdisciplinary field that applies mathematical models and concepts from physics to understand human social behavior. It examines how ideas spread, how social networks form and evolve, and how collective behaviors emerge from individual interactions.</p>
+                    <p>Key researchers in this field include Alex Pentland at MIT, who has shown how social physics can predict human behavior with surprising accuracy, and Albert-László Barabási, whose work on network science has revealed the universal laws governing network formation.</p>
+                    <p>In this simulation, we model social networks as complex systems where nodes (users) interact through edges (connections), and information spreads according to principles similar to physical diffusion processes.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="simulation-container">
+            <div class="simulation">
+                <h2>Network Diffusion Simulation</h2>
+                <div class="canvas-container">
+                    <canvas id="socialCanvas"></canvas>
+                </div>
+                
+                <div class="graph-container">
+                    <div class="graph">
+                        <h3>Engagement Growth Dynamics</h3>
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                    <div class="graph">
+                        <h3>Network Connectivity Analysis</h3>
+                        <canvas id="networkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <h2>Experimental Parameters</h2>
+                
+                <div class="control-group">
+                    <label for="contentQuality">Content Quality (Q)</label>
+                    <input type="range" id="contentQuality" min="1" max="10" value="6">
+                    <div class="value-display">
+                        <span>Low Quality</span>
+                        <span>High Quality</span>
+                    </div>
+                    <p class="reference">Affects the intrinsic shareability of content</p>
+                </div>
+                
+                <div class="control-group">
+                    <label for="networkDensity">Network Density (ρ)</label>
+                    <input type="range" id="networkDensity" min="1" max="10" value="5">
+                    <div class="value-display">
+                        <span>Sparse (ρ→0)</span>
+                        <span>Dense (ρ→1)</span>
+                    </div>
+                    <p class="reference">Probability of connection between nodes</p>
+                </div>
+                
+                <div class="control-group">
+                    <label for="algorithmBias">Algorithm Bias (β)</label>
+                    <input type="range" id="algorithmBias" min="1" max="10" value="5">
+                    <div class="value-display">
+                        <span>Random</span>
+                        <span>Preferential</span>
+                    </div>
+                    <p class="reference">Platform's tendency to promote popular content</p>
+                </div>
+                
+                <div class="control-group">
+                    <label for="userAttention">User Attention Span (τ)</label>
+                    <input type="range" id="userAttention" min="1" max="10" value="7">
+                    <div class="value-display">
+                        <span>Short</span>
+                        <span>Long</span>
+                    </div>
+                    <p class="reference">Average time users spend engaging with content</p>
+                </div>
+                
+                <div class="button-group">
+                    <button id="addPost">Add Content Node</button>
+                    <button id="addInfluencer" class="accent">Add Influencer Node</button>
+                    <button id="reset">Reset Experiment</button>
+                </div>
+                
+                <div class="stats">
+                    <h3>Network Metrics</h3>
+                    <p>Active Nodes: <span id="postCount">0</span></p>
+                    <p>Information Cascades: <span id="cascadeCount">0</span></p>
+                    <p>Avg. Engagement: <span id="avgEngagement">0</span></p>
+                    <p>Network Clustering: <span id="clusteringCoeff">0</span></p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="explanation">
+            <h2>Theoretical Framework</h2>
+            
+            <div class="physics-concept">
+                <div class="concept-card">
+                    <h3>Diffusion Equation</h3>
+                    <p>The spread of information follows a modified diffusion equation where the rate of spread depends on network structure and content quality:</p>
+                    <div class="formula">∂I/∂t = D∇²I + αI(N-I) - δI</div>
+                    <p>Where <span class="key-term">I</span> is informed population, <span class="key-term">D</span> is diffusion coefficient, <span class="key-term">α</span> is adoption rate, <span class="key-term">N</span> is total population, and <span class="key-term">δ</span> is forgetting rate.</p>
+                    
+                    <div class="section-expandable">
+                        <button class="expand-button" onclick="toggleExpand('diffusion-expand')">
+                            <span>Mathematical Details</span>
+                            <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div id="diffusion-expand" class="expand-content">
+                            <p>The standard diffusion equation ∂I/∂t = D∇²I describes how substances spread from areas of high concentration to low concentration. In social contexts, this models how information spreads through random encounters.</p>
+                            <p>The additional term αI(N-I) represents the logistic growth component, where adoption accelerates as more people are exposed (network effects), but slows as the market saturates.</p>
+                            <p>The final term -δI accounts for the decay of information relevance over time, similar to radioactive decay in physics.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>Scale-Free Networks</h3>
+                    <p>Social networks typically follow a power-law degree distribution, where a few nodes (influencers) have many connections while most have few:</p>
+                    <div class="formula">P(k) ~ k^(-γ)</div>
+                    <p>This structure creates resilience to random failure but vulnerability to targeted attacks on highly connected nodes.</p>
+                    
+                    <div class="section-expandable">
+                        <button class="expand-button" onclick="toggleExpand('scale-free-expand')">
+                            <span>Network Properties</span>
+                            <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div id="scale-free-expand" class="expand-content">
+                            <p>Scale-free networks emerge through preferential attachment - new nodes are more likely to connect to already well-connected nodes. This "rich get richer" phenomenon explains why social platforms naturally develop influencers.</p>
+                            <p>The exponent γ typically falls between 2 and 3 for real-world networks. A lower γ indicates a more unequal distribution with stronger hub nodes.</p>
+                            <p>These networks have short average path lengths (the "small world" phenomenon) and high clustering coefficients, meaning friends of friends are likely to be friends themselves.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>Epidemiological Models</h3>
+                    <p>The SIR model (Susceptible-Infectious-Recovered) effectively describes information cascades:</p>
+                    <div class="formula">dS/dt = -βSI, dI/dt = βSI - γI, dR/dt = γI</div>
+                    <p>Where individuals transition from unaware (S) to sharing (I) to no longer sharing (R) based on transmission rate β and recovery rate γ.</p>
+                    
+                    <div class="section-expandable">
+                        <button class="expand-button" onclick="toggleExpand('sir-expand')">
+                            <span>Model Extensions</span>
+                            <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div id="sir-expand" class="expand-content">
+                            <p>The basic SIR model can be extended to account for social media specifics:</p>
+                            <ul>
+                                <li><strong>SIS model</strong>: Users can be "reinfected" by content they see multiple times</li>
+                                <li><strong>SEIR model</strong>: Adds an "Exposed" state for users who have seen content but not yet engaged</li>
+                                <li><strong>Network-based SIR</strong>: Incorporates network structure into transmission probabilities</li>
+                            </ul>
+                            <p>The basic reproduction number R₀ = β/γ determines whether content will go viral (R₀ > 1) or die out (R₀ < 1).</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>Critical Threshold</h3>
+                    <p>Content requires a minimum engagement threshold to become viral, similar to phase transitions in physics:</p>
+                    <div class="formula">R₀ = β/γ > 1</div>
+                    <p>Where R₀ is the basic reproduction number. If R₀ > 1, the content will spread; if R₀ < 1, it will die out.</p>
+                    
+                    <div class="section-expandable">
+                        <button class="expand-button" onclick="toggleExpand('threshold-expand')">
+                            <span>Phase Transitions</span>
+                            <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div id="threshold-expand" class="expand-content">
+                            <p>In physics, phase transitions occur when a system crosses a critical threshold (e.g., water boiling at 100°C). Similarly, content undergoes a phase transition from localized to viral spread.</p>
+                            <p>This critical behavior emerges from the network structure. In random networks, the epidemic threshold depends on the ratio of transmission probability to the network's average degree.</p>
+                            <p>In scale-free networks with exponent γ ≤ 3, the epidemic threshold approaches zero, meaning even poorly transmitted content can spread if it reaches highly connected nodes.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>Network Effects</h3>
+                    <p>The value of participation increases with the number of users, creating positive feedback loops:</p>
+                    <div class="formula">V = k · n²</div>
+                    <p>Where <span class="key-term">V</span> is network value, <span class="key-term">k</span> is a constant, and <span class="key-term">n</span> is the number of users (Metcalfe's Law).</p>
+                    
+                    <div class="section-expandable">
+                        <button class="expand-button" onclick="toggleExpand('network-effects-expand')">
+                            <span>Economic Implications</span>
+                            <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div id="network-effects-expand" class="expand-content">
+                            <p>Network effects create winner-take-all markets where a single platform dominates. This explains why Facebook, despite numerous competitors, maintains its position.</p>
+                            <p>There are different types of network effects:</p>
+                            <ul>
+                                <li><strong>Direct network effects</strong>: Value increases directly with users (social networks)</li>
+                                <li><strong>Indirect network effects</strong>: Value increases with complementary goods (platforms with developers)</li>
+                                <li><strong>Two-sided network effects</strong>: Value for one group increases with the other group (buyers and sellers)</li>
+                            </ul>
+                            <p>Reed's Law suggests the value of group-forming networks grows even faster - exponentially with the number of possible subgroups.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>Information Entropy</h3>
+                    <p>As information spreads, its novelty decreases following the second law of thermodynamics:</p>
+                    <div class="formula">ΔS = k ln(Ω_final/Ω_initial)</div>
+                    <p>Where <span class="key-term">S</span> is information entropy and <span class="key-term">Ω</span> is the number of microstates (possible interpretations).</p>
+                    
+                    <div class="section-expandable">
+                        <button class="expand-button" onclick="toggleExpand('entropy-expand')">
+                            <span>Information Theory</span>
+                            <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <div id="entropy-expand" class="expand-content">
+                            <p>Claude Shannon's information entropy measures the uncertainty in a message. In social contexts, high-entropy content is novel and surprising, while low-entropy content is predictable.</p>
+                            <p>As information spreads through a network:</p>
+                            <ul>
+                                <li>Its novelty decreases (entropy increases)</li>
+                                <li>Interpretations diverge (increasing Ω)</li>
+                                <li>Signal-to-noise ratio decreases</li>
+                            </ul>
+                            <p>This explains why memes evolve as they spread - users add variations that increase entropy until the original meaning is lost.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Social Physics Laboratory &copy; 2023 | An Interactive Framework for Modeling Information Diffusion</p>
+        </footer>
+    </div>
+
+    <script>
+        // Expandable section functionality
+        function toggleExpand(id) {
+            const content = document.getElementById(id);
+            const icon = content.previousElementSibling.querySelector('.expand-icon');
+            
+            content.classList.toggle('expanded');
+            icon.classList.toggle('rotated');
+        }
+        
+        // Canvas setup
+        const canvas = document.getElementById('socialCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set fixed canvas dimensions
+        function setCanvasSize() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
+        
+        // Chart setup
+        const growthCtx = document.getElementById('growthChart').getContext('2d');
+        const networkCtx = document.getElementById('networkChart').getContext('2d');
+        
+        // Set fixed dimensions for chart canvases
+        document.getElementById('growthChart').width = document.getElementById('growthChart').parentElement.clientWidth;
+        document.getElementById('growthChart').height = 280;
+        
+        document.getElementById('networkChart').width = document.getElementById('networkChart').parentElement.clientWidth;
+        document.getElementById('networkChart').height = 280;
+        
+        // Simulation variables
+        let posts = [];
+        let interactions = 0;
+        let cascades = 0;
+        let frameCount = 0;
+        let engagementHistory = [];
+        let connectivityHistory = [];
+        
+        // Control elements
+        const contentQualitySlider = document.getElementById('contentQuality');
+        const networkDensitySlider = document.getElementById('networkDensity');
+        const algorithmBiasSlider = document.getElementById('algorithmBias');
+        const userAttentionSlider = document.getElementById('userAttention');
+        const addPostBtn = document.getElementById('addPost');
+        const addInfluencerBtn = document.getElementById('addInfluencer');
+        const resetBtn = document.getElementById('reset');
+        const postCountElem = document.getElementById('postCount');
+        const cascadeCountElem = document.getElementById('cascadeCount');
+        const avgEngagementElem = document.getElementById('avgEngagement');
+        const clusteringCoeffElem = document.getElementById('clusteringCoeff');
+        
+        // Post class
+        class Post {
+            constructor(x, y, isInfluencer = false) {
+                this.x = x;
+                this.y = y;
+                this.radius = isInfluencer ? 20 : 10;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.engagement = isInfluencer ? 80 : 15;
+                this.maxEngagement = isInfluencer ? 300 : 120;
+                this.connections = [];
+                this.isInfluencer = isInfluencer;
+                this.trail = [];
+                this.trailLength = isInfluencer ? 20 : 10;
+                this.engagementHistory = [this.engagement];
+                this.createdAt = frameCount;
+                this.color = isInfluencer ? '#e74c3c' : '#3498db';
+                this.highEngagement = false;
+            }
+            
+            update() {
+                // Apply algorithm bias
+                const bias = parseInt(algorithmBiasSlider.value) / 10;
+                if (this.engagement > 40) {
+                    this.vx += (Math.random() - 0.5) * bias;
+                    this.vy += (Math.random() - 0.5) * bias;
+                }
+                
+                // Update position with bounds checking
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < this.radius || this.x > canvas.width - this.radius) {
+                    this.vx *= -0.8;
+                    this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
+                }
+                
+                if (this.y < this.radius || this.y > canvas.height - this.radius) {
+                    this.vy *= -0.8;
+                    this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
+                }
+                
+                // Add current position to trail
+                this.trail.push({x: this.x, y: this.y});
+                if (this.trail.length > this.trailLength) {
+                    this.trail.shift();
+                }
+                
+                // Gradually lose engagement (entropy)
+                const attention = parseInt(userAttentionSlider.value) / 10;
+                if (frameCount % 60 === 0) {
+                    this.engagement *= (0.96 + attention * 0.008);
+                }
+                
+                // Record engagement history
+                if (frameCount % 10 === 0) {
+                    this.engagementHistory.push(this.engagement);
+                    if (this.engagementHistory.length > 100) {
+                        this.engagementHistory.shift();
+                    }
+                }
+                
+                // Check for cascade condition
+                if (this.engagement > 70 && !this.highEngagement) {
+                    this.highEngagement = true;
+                    if (this.engagementHistory.length > 5) {
+                        cascades++;
+                    }
+                } else if (this.engagement < 30) {
+                    this.highEngagement = false;
+                }
+            }
+            
+            draw() {
+                // Draw connections
+                this.connections.forEach(conn => {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(conn.x, conn.y);
+                    ctx.strokeStyle = `rgba(52, 152, 219, ${0.2 + (this.engagement / this.maxEngagement) * 0.3})`;
+                    ctx.lineWidth = 1 + (this.engagement / this.maxEngagement) * 2;
+                    ctx.stroke();
+                });
+                
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const point = this.trail[i];
+                    const alpha = i / this.trail.length * 0.5;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, this.radius * (i / this.trail.length), 0, Math.PI * 2);
+                    ctx.fillStyle = this.isInfluencer ? 
+                        `rgba(231, 76, 60, ${alpha})` : 
+                        `rgba(52, 152, 219, ${alpha})`;
+                    ctx.fill();
+                }
+                
+                // Draw post
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // Draw engagement indicator
+                if (this.engagement > 20) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 5, 0, (this.engagement / this.maxEngagement) * Math.PI * 2);
+                    ctx.strokeStyle = this.isInfluencer ? '#e74c3c' : '#3498db';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                // Draw connection points for highly engaged posts
+                if (this.engagement > 50) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 8, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(46, 204, 113, ${0.3 + (this.engagement / this.maxEngagement) * 0.7})`;
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+            
+            interactWith(otherPost) {
+                const dx = otherPost.x - this.x;
+                const dy = otherPost.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // If posts are close enough to interact
+                const interactionDistance = this.radius + otherPost.radius + 30;
+                if (distance < interactionDistance) {
+                    // Record connection
+                    if (!this.connections.includes(otherPost) && this.connections.length < 5) {
+                        this.connections.push(otherPost);
+                    }
+                    
+                    // Transfer engagement based on content quality
+                    const quality = parseInt(contentQualitySlider.value) / 10;
+                    
+                    if (this.isInfluencer && !otherPost.isInfluencer) {
+                        // Influencer boosts regular post
+                        const transfer = 8 * quality;
+                        otherPost.engagement += transfer;
+                        interactions++;
+                    } else if (!this.isInfluencer && otherPost.isInfluencer) {
+                        // Regular post gets boost from influencer
+                        const transfer = 5 * quality;
+                        this.engagement += transfer;
+                        interactions++;
+                    } else if (!this.isInfluencer && !otherPost.isInfluencer) {
+                        // Regular posts exchange small amounts of engagement
+                        const transfer = 2 * quality;
+                        this.engagement += transfer;
+                        otherPost.engagement += transfer;
+                        interactions++;
+                    }
+                    
+                    // Cap engagement
+                    this.engagement = Math.min(this.engagement, this.maxEngagement);
+                    otherPost.engagement = Math.min(otherPost.engagement, otherPost.maxEngagement);
+                    
+                    // Apply repulsive force
+                    const force = 0.5;
+                    this.vx -= (dx / distance) * force;
+                    this.vy -= (dy / distance) * force;
+                    otherPost.vx += (dx / distance) * force;
+                    otherPost.vy += (dy / distance) * force;
+                }
+                
+                // Remove connections that are too far
+                this.connections = this.connections.filter(conn => {
+                    const dx = conn.x - this.x;
+                    const dy = conn.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    return distance < interactionDistance * 1.5;
+                });
+            }
+        }
+        
+        // Initialize with some posts
+        function initializeSimulation() {
+            posts = [];
+            interactions = 0;
+            cascades = 0;
+            engagementHistory = [];
+            connectivityHistory = [];
+            
+            // Add some initial posts
+            for (let i = 0; i < 8; i++) {
+                const x = Math.random() * (canvas.width - 40) + 20;
+                const y = Math.random() * (canvas.height - 40) + 20;
+                posts.push(new Post(x, y));
+            }
+            
+            // Add one influencer
+            const x = Math.random() * (canvas.width - 40) + 20;
+            const y = Math.random() * (canvas.height - 40) + 20;
+            posts.push(new Post(x, y, true));
+            
+            updateStats();
+            updateCharts();
+        }
+        
+        // Update statistics display
+        function updateStats() {
+            postCountElem.textContent = posts.length;
+            cascadeCountElem.textContent = cascades;
+            
+            // Calculate average engagement
+            let totalEngagement = 0;
+            posts.forEach(post => {
+                totalEngagement += post.engagement;
+            });
+            const avgEngagement = totalEngagement / posts.length;
+            avgEngagementElem.textContent = Math.round(avgEngagement * 10) / 10;
+            
+            // Calculate clustering coefficient (simplified)
+            let totalConnections = 0;
+            posts.forEach(post => {
+                totalConnections += post.connections.length;
+            });
+            const possibleConnections = posts.length * (posts.length - 1) / 2;
+            const clusteringCoeff = possibleConnections > 0 ? totalConnections / possibleConnections : 0;
+            clusteringCoeffElem.textContent = Math.round(clusteringCoeff * 100) / 100;
+            
+            // Record history for charts
+            if (frameCount % 30 === 0) {
+                engagementHistory.push(avgEngagement);
+                connectivityHistory.push(clusteringCoeff);
+                
+                if (engagementHistory.length > 50) {
+                    engagementHistory.shift();
+                    connectivityHistory.shift();
+                }
+            }
+        }
+        
+        // Charts
+        let growthChart, networkChart;
+        
+        function initializeCharts() {
+            growthChart = new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 50}, (_, i) => i),
+                    datasets: [{
+                        label: 'Average Engagement',
+                        data: engagementHistory,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Engagement Level'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time Steps'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+            
+            networkChart = new Chart(networkCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 50}, (_, i) => i),
+                    datasets: [{
+                        label: 'Network Connectivity',
+                        data: connectivityHistory,
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Connectivity Coefficient'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time Steps'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateCharts() {
+            if (growthChart && networkChart) {
+                growthChart.data.datasets[0].data = engagementHistory;
+                growthChart.update('none');
+                
+                networkChart.data.datasets[0].data = connectivityHistory;
+                networkChart.update('none');
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            // Clear canvas with a slight fade effect
+            ctx.fillStyle = 'rgba(245, 247, 250, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Update network density
+            const density = parseInt(networkDensitySlider.value);
+            if (posts.length < density * 3 && frameCount % 120 === 0 && Math.random() < 0.1) {
+                const x = Math.random() * (canvas.width - 40) + 20;
+                const y = Math.random() * (canvas.height - 40) + 20;
+                posts.push(new Post(x, y));
+            }
+            
+            // Update and draw posts
+            posts.forEach((post, index) => {
+                post.update();
+                post.draw();
+                
+                // Check interactions with other posts
+                for (let i = index + 1; i < posts.length; i++) {
+                    post.interactWith(posts[i]);
+                }
+                
+                // Remove posts with very low engagement
+                if (post.engagement < 5 && !post.isInfluencer && posts.length > 4) {
+                    posts.splice(index, 1);
+                }
+            });
+            
+            frameCount++;
+            updateStats();
+            updateCharts();
+            requestAnimationFrame(animate);
+        }
+        
+        // Event listeners
+        addPostBtn.addEventListener('click', () => {
+            const x = Math.random() * (canvas.width - 40) + 20;
+            const y = Math.random() * (canvas.height - 40) + 20;
+            posts.push(new Post(x, y));
+        });
+        
+        addInfluencerBtn.addEventListener('click', () => {
+            const x = Math.random() * (canvas.width - 40) + 20;
+            const y = Math.random() * (canvas.height - 40) + 20;
+            posts.push(new Post(x, y, true));
+        });
+        
+        resetBtn.addEventListener('click', initializeSimulation);
+        
+        // Start the simulation
+        initializeSimulation();
+        initializeCharts();
+        animate();
+    </script>
+</body>
+</html>
