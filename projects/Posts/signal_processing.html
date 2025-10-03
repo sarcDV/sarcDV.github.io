@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applied Physics for Signal Processing</title>
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg: #121826;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --accent: #f87171;
+            --success: #34d399;
+            --border: #334155;
+            --grid: #2c3a50;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e40af);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        nav ul li a:hover {
+            opacity: 0.9;
+        }
+        .hero {
+            padding: 3rem 0;
+            text-align: center;
+            background-color: var(--card-bg);
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+            color: var(--text-muted);
+        }
+        section {
+            padding: 3rem 0;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            font-size: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--primary);
+            margin: 0.75rem auto;
+            border-radius: 2px;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        .content-text h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        .content-text p, .content-text li {
+            color: var(--text-muted);
+        }
+        .content-visual {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            padding: 1.5rem;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .simulation-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 120px;
+        }
+        .control-group label {
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        .control-group input, .control-group select {
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #2d3748;
+            color: white;
+        }
+        .value-display {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+        button {
+            background: var(--primary);
+            color: #0f172a;
+            border: none;
+            padding: 0.65rem 1.4rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-top: 0.8rem;
+            width: fit-content;
+        }
+        button:hover {
+            background: #7dd3fc;
+            transform: translateY(-2px);
+        }
+        button.active {
+            background: var(--accent);
+        }
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #1a202c;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        footer {
+            background-color: #0f172a;
+            color: var(--text-muted);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+        .math {
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #2d3748;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .plot-label {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+            nav ul li {
+                margin: 0 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Signal Physics</div>
+                <nav>
+                    <ul>
+                        <li><a href="#fourier">Fourier</a></li>
+                        <li><a href="#filtering">Filtering</a></li>
+                        <li><a href="#modulation">Modulation</a></li>
+                        <li><a href="#sampling">Sampling</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Applied Physics for Signal Processing</h1>
+            <p>Explore the fundamental physics principles behind signal processing through interactive simulations and detailed explanations.</p>
+        </div>
+
+        <section id="fourier">
+            <h2 class="section-title">Fourier Analysis</h2>
+            <div class="content-grid">
+                <div class="content-text">
+                    <h3>Decomposing Signals into Frequency Components</h3>
+                    <p>The Fourier Transform is a fundamental tool in signal processing that decomposes a function into its constituent frequencies. This mathematical operation transforms a signal from its original domain (often time or space) to a representation in the frequency domain.</p>
+                    <p>In physics, this corresponds to analyzing how much of each frequency component is present in a wave. The Fourier Transform has applications across many fields including acoustics, optics, image processing, and quantum mechanics.</p>
+                    <p>The mathematical definition of the continuous Fourier Transform is:</p>
+                    <div class="math">
+                        \[F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt\]
+                    </div>
+                    <p>Where \(f(t)\) is the time-domain signal and \(F(\omega)\) is its frequency-domain representation.</p>
+                </div>
+                <div class="content-visual">
+                    <div class="simulation-controls">
+                        <div class="control-group">
+                            <label for="waveType">Wave Type</label>
+                            <select id="waveType">
+                                <option value="sine">Sine</option>
+                                <option value="square">Square</option>
+                                <option value="sawtooth">Sawtooth</option>
+                                <option value="triangle">Triangle</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="frequency">Frequency (Hz)</label>
+                            <input type="range" id="frequency" min="1" max="10" step="1" value="2">
+                            <div class="value-display" id="frequencyValue">2 Hz</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="amplitude">Amplitude</label>
+                            <input type="range" id="amplitude" min="0.1" max="1" step="0.1" value="0.5">
+                            <div class="value-display" id="amplitudeValue">0.5</div>
+                        </div>
+                    </div>
+                    <button id="fourierTransformBtn">Show Fourier Transform</button>
+                    <div class="canvas-container">
+                        <canvas id="fourierCanvas"></canvas>
+                    </div>
+                    <div class="plot-label" id="fourierLabel">Time Domain Signal</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="filtering" style="background-color: #1a202c; border-radius: 16px; padding: 2rem 0;">
+            <h2 class="section-title">Signal Filtering</h2>
+            <div class="content-grid">
+                <div class="content-visual">
+                    <div class="simulation-controls">
+                        <div class="control-group">
+                            <label for="filterType">Filter Type</label>
+                            <select id="filterType">
+                                <option value="lowpass">Low Pass</option>
+                                <option value="highpass">High Pass</option>
+                                <option value="bandpass">Band Pass</option>
+                                <option value="bandstop">Band Stop</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="cutoff">Cutoff Frequency</label>
+                            <input type="range" id="cutoff" min="1" max="10" step="1" value="5">
+                            <div class="value-display" id="cutoffValue">5 Hz</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="noiseLevel">Noise Level</label>
+                            <input type="range" id="noiseLevel" min="0" max="1" step="0.1" value="0.3">
+                            <div class="value-display" id="noiseLevelValue">0.3</div>
+                        </div>
+                    </div>
+                    <button id="applyFilterBtn">Apply Filter</button>
+                    <div class="canvas-container">
+                        <canvas id="filterCanvas"></canvas>
+                    </div>
+                    <div class="plot-label" id="filterLabel">Original (Blue) vs Filtered (Green)</div>
+                </div>
+                <div class="content-text">
+                    <h3>Removing Unwanted Frequency Components</h3>
+                    <p>Filters are systems that remove or attenuate certain frequency components from a signal while preserving others. This process is essential in many applications such as audio processing, communications, and image enhancement.</p>
+                    <p>There are four main types of filters:</p>
+                    <ul>
+                        <li><strong>Low-pass filters</strong> allow low frequencies to pass while attenuating high frequencies</li>
+                        <li><strong>High-pass filters</strong> allow high frequencies to pass while attenuating low frequencies</li>
+                        <li><strong>Band-pass filters</strong> allow a specific range of frequencies to pass</li>
+                        <li><strong>Band-stop filters</strong> attenuate a specific range of frequencies</li>
+                    </ul>
+                    <p>Filters can be implemented using various technologies including electronic circuits, digital algorithms, and optical systems. The behavior of a filter is characterized by its transfer function, which describes how it responds to different frequencies.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="modulation">
+            <h2 class="section-title">Signal Modulation</h2>
+            <div class="content-grid">
+                <div class="content-text">
+                    <h3>Encoding Information in Carrier Waves</h3>
+                    <p>Modulation is the process of varying one or more properties of a periodic waveform, called the carrier signal, with a separate signal that contains the information to be transmitted.</p>
+                    <p>Key modulation techniques include:</p>
+                    <ul>
+                        <li><strong>Amplitude Modulation (AM)</strong>: The amplitude of the carrier wave is varied in proportion to the message signal</li>
+                        <li><strong>Frequency Modulation (FM)</strong>: The frequency of the carrier wave is varied in proportion to the message signal</li>
+                        <li><strong>Phase Modulation (PM)</strong>: The phase of the carrier wave is varied in proportion to the message signal</li>
+                    </ul>
+                    <p>Modulation enables the transmission of information over long distances and allows multiple signals to share the same transmission medium through frequency division multiplexing. This principle is fundamental to radio, television, and cellular communications.</p>
+                </div>
+                <div class="content-visual">
+                    <div class="simulation-controls">
+                        <div class="control-group">
+                            <label for="modulationType">Modulation Type</label>
+                            <select id="modulationType">
+                                <option value="am">Amplitude Modulation</option>
+                                <option value="fm">Frequency Modulation</option>
+                                <option value="pm">Phase Modulation</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="carrierFreq">Carrier Frequency</label>
+                            <input type="range" id="carrierFreq" min="5" max="20" step="1" value="10">
+                            <div class="value-display" id="carrierFreqValue">10 Hz</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="modIndex">Modulation Index</label>
+                            <input type="range" id="modIndex" min="0.1" max="1" step="0.1" value="0.5">
+                            <div class="value-display" id="modIndexValue">0.5</div>
+                        </div>
+                    </div>
+                    <button id="modulateBtn">Show Modulation</button>
+                    <div class="canvas-container">
+                        <canvas id="modulationCanvas"></canvas>
+                    </div>
+                    <div class="plot-label" id="modulationLabel">Message (Top) & Modulated (Bottom)</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sampling" style="background-color: #1a202c; border-radius: 16px; padding: 2rem 0;">
+            <h2 class="section-title">Sampling Theorem</h2>
+            <div class="content-grid">
+                <div class="content-visual">
+                    <div class="simulation-controls">
+                        <div class="control-group">
+                            <label for="signalFreq">Signal Frequency</label>
+                            <input type="range" id="signalFreq" min="1" max="5" step="0.5" value="2">
+                            <div class="value-display" id="signalFreqValue">2 Hz</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="samplingRate">Sampling Rate</label>
+                            <input type="range" id="samplingRate" min="5" max="30" step="1" value="10">
+                            <div class="value-display" id="samplingRateValue">10 Hz</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="reconstruction">Reconstruction</label>
+                            <select id="reconstruction">
+                                <option value="sinc">Sinc Interpolation</option>
+                                <option value="linear">Linear Interpolation</option>
+                                <option value="zeroorder">Zero-Order Hold</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="sampleBtn">Show Sampling</button>
+                    <div class="canvas-container">
+                        <canvas id="samplingCanvas"></canvas>
+                    </div>
+                    <div class="plot-label" id="samplingLabel">Original (Blue), Samples (Red), Reconstructed (Green)</div>
+                </div>
+                <div class="content-text">
+                    <h3>Converting Continuous Signals to Discrete</h3>
+                    <p>The Nyquist-Shannon sampling theorem states that a continuous signal can be perfectly reconstructed from its samples if the sampling frequency is at least twice the highest frequency present in the signal.</p>
+                    <p>This critical frequency is known as the Nyquist rate:</p>
+                    <div class="math">
+                        \[f_s \geq 2f_{max}\]
+                    </div>
+                    <p>Where \(f_s\) is the sampling frequency and \(f_{max}\) is the highest frequency in the signal.</p>
+                    <p>If this condition is not met, aliasing occurs, where higher frequencies appear as lower frequencies in the sampled signal. To prevent aliasing, anti-aliasing filters are used before sampling to remove frequency components above the Nyquist frequency.</p>
+                    <p>The reconstruction of the original signal from its samples is performed using interpolation, with the ideal reconstruction filter being the sinc function:</p>
+                    <div class="math">
+                        \[x(t) = \sum_{n=-\infty}^{\infty} x[n] \cdot \text{sinc}\left(\frac{t - nT}{T}\right)\]
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Applied Physics for Signal Processing | Interactive Learning Platform</p>
+            <p>© 2025 Signal Physics. All rights reserved.</p>
+            <p><a href="https://sarcdv.github.io/">Alessandro Sciarra, Ph.D.</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize canvases
+        const fourierCanvas = document.getElementById('fourierCanvas');
+        const filterCanvas = document.getElementById('filterCanvas');
+        const modulationCanvas = document.getElementById('modulationCanvas');
+        const samplingCanvas = document.getElementById('samplingCanvas');
+
+        function initializeCanvases() {
+            [fourierCanvas, filterCanvas, modulationCanvas, samplingCanvas].forEach(canvas => {
+                canvas.width = 500;
+                canvas.height = 300;
+            });
+        }
+
+        window.addEventListener('load', () => {
+            initializeCanvases();
+            drawFourierSimulation();
+            drawFilterSimulation();
+            drawModulationSimulation();
+            drawSamplingSimulation();
+            updateValueDisplays();
+        });
+
+        function updateValueDisplays() {
+            const fields = [
+                ['frequency', 'frequencyValue', ' Hz'],
+                ['amplitude', 'amplitudeValue', ''],
+                ['cutoff', 'cutoffValue', ' Hz'],
+                ['noiseLevel', 'noiseLevelValue', ''],
+                ['carrierFreq', 'carrierFreqValue', ' Hz'],
+                ['modIndex', 'modIndexValue', ''],
+                ['signalFreq', 'signalFreqValue', ' Hz'],
+                ['samplingRate', 'samplingRateValue', ' Hz']
+            ];
+            fields.forEach(([id, dispId, unit]) => {
+                document.getElementById(dispId).textContent = document.getElementById(id).value + unit;
+            });
+        }
+
+        // === FOURIER SIMULATION ===
+        function drawFourierSimulation() {
+            const width = fourierCanvas.width;
+            const height = fourierCanvas.height;
+            const ctx = fourierCanvas.getContext('2d');
+            ctx.fillStyle = '#1a202c';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid
+            ctx.strokeStyle = '#2d3748';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= width; x += width / 10) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+            }
+            for (let y = 0; y <= height; y += height / 8) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+            }
+
+            // Axis
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(0, height/2); ctx.lineTo(width, height/2); ctx.stroke();
+
+            const waveType = document.getElementById('waveType').value;
+            const frequency = parseFloat(document.getElementById('frequency').value);
+            const amplitude = parseFloat(document.getElementById('amplitude').value);
+
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < width; x++) {
+                const t = (x / width) * 4 * Math.PI;
+                let y;
+                switch (waveType) {
+                    case 'sine':
+                        y = amplitude * Math.sin(frequency * t);
+                        break;
+                    case 'square':
+                        y = amplitude * Math.sign(Math.sin(frequency * t));
+                        break;
+                    case 'sawtooth':
+                        y = amplitude * (2 * (t * frequency / (2 * Math.PI) - Math.floor(0.5 + t * frequency / (2 * Math.PI))));
+                        break;
+                    case 'triangle':
+                        // ✅ FIXED: Balanced parentheses
+                        const triPhase = t * frequency / (2 * Math.PI);
+                        y = amplitude * (2 * Math.abs(2 * (triPhase - Math.floor(triPhase + 0.5))) - 1);
+                        break;
+                }
+                const pixelY = height / 2 - (y * height / 3);
+                if (x === 0) ctx.moveTo(x, pixelY);
+                else ctx.lineTo(x, pixelY);
+            }
+            ctx.stroke();
+
+            if (document.getElementById('fourierTransformBtn').classList.contains('active')) {
+                ctx.strokeStyle = '#f87171';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const freq = (x / width) * 10;
+                    let magnitude = 0;
+                    switch (waveType) {
+                        case 'sine':
+                            magnitude = (Math.abs(freq - frequency) < 0.3) ? amplitude : 0;
+                            break;
+                        case 'square':
+                            const n_sq = Math.round(freq / frequency);
+                            magnitude = (n_sq > 0 && n_sq % 2 === 1) ? amplitude / n_sq : 0;
+                            break;
+                        case 'sawtooth':
+                            const n_sw = Math.round(freq / frequency);
+                            magnitude = (n_sw > 0) ? amplitude / n_sw : 0;
+                            break;
+                        case 'triangle':
+                            const n_tr = Math.round(freq / frequency);
+                            magnitude = (n_tr > 0 && n_tr % 2 === 1) ? amplitude / (n_tr * n_tr) : 0;
+                            break;
+                    }
+                    const pixelY = height - (magnitude * height * 1.2);
+                    if (x === 0) ctx.moveTo(x, pixelY);
+                    else ctx.lineTo(x, pixelY);
+                }
+                ctx.stroke();
+                document.getElementById('fourierLabel').textContent = 'Time Domain (Blue) & Frequency Domain (Red)';
+            } else {
+                document.getElementById('fourierLabel').textContent = 'Time Domain Signal';
+            }
+        }
+
+        // === FILTERING SIMULATION ===
+        function drawFilterSimulation() {
+            const width = filterCanvas.width;
+            const height = filterCanvas.height;
+            const ctx = filterCanvas.getContext('2d');
+            ctx.fillStyle = '#1a202c';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid & axis (same as above)
+            ctx.strokeStyle = '#2d3748'; ctx.lineWidth = 1;
+            for (let x = 0; x <= width; x += width / 10) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
+            for (let y = 0; y <= height; y += height / 8) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke(); }
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(0, height/2); ctx.lineTo(width, height/2); ctx.stroke();
+
+            const filterType = document.getElementById('filterType').value;
+            const cutoff = parseFloat(document.getElementById('cutoff').value);
+            const noiseLevel = parseFloat(document.getElementById('noiseLevel').value);
+
+            // Original
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let x = 0; x < width; x++) {
+                const t = (x / width) * 4 * Math.PI;
+                const signal = 0.7 * Math.sin(2*t) + 0.5 * Math.sin(5*t) + 0.3 * Math.sin(8*t);
+                const noise = noiseLevel * (Math.random() * 2 - 1);
+                const y = signal + noise;
+                const pixelY = height/2 - (y * height / 3);
+                if (x === 0) ctx.moveTo(x, pixelY);
+                else ctx.lineTo(x, pixelY);
+            }
+            ctx.stroke();
+
+            if (document.getElementById('applyFilterBtn').classList.contains('active')) {
+                ctx.strokeStyle = '#34d399';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const t = (x / width) * 4 * Math.PI;
+                    let y = 0.7 * Math.sin(2*t) + 0.5 * Math.sin(5*t) + 0.3 * Math.sin(8*t);
+                    const noise = noiseLevel * (Math.random() * 2 - 1);
+                    y += noise;
+
+                    // Simple filter logic
+                    const comp = [
+                        {freq: 2, amp: 0.7},
+                        {freq: 5, amp: 0.5},
+                        {freq: 8, amp: 0.3}
+                    ];
+                    let filteredY = 0;
+                    comp.forEach(c => {
+                        let gain = 1;
+                        switch(filterType) {
+                            case 'lowpass': gain = (c.freq <= cutoff) ? 1 : 0.1; break;
+                            case 'highpass': gain = (c.freq >= cutoff) ? 1 : 0.1; break;
+                            case 'bandpass': gain = (Math.abs(c.freq - cutoff) < 1.5) ? 1 : 0.1; break;
+                            case 'bandstop': gain = (Math.abs(c.freq - cutoff) < 1.5) ? 0.1 : 1; break;
+                        }
+                        filteredY += gain * c.amp * Math.sin(c.freq * t);
+                    });
+                    filteredY += noise * 0.3; // reduce noise
+
+                    const pixelY = height/2 - (filteredY * height / 3);
+                    if (x === 0) ctx.moveTo(x, pixelY);
+                    else ctx.lineTo(x, pixelY);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // === MODULATION SIMULATION ===
+        function drawModulationSimulation() {
+            const width = modulationCanvas.width;
+            const height = modulationCanvas.height;
+            const ctx = modulationCanvas.getContext('2d');
+            ctx.fillStyle = '#1a202c';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid & axis
+            ctx.strokeStyle = '#2d3748'; ctx.lineWidth = 1;
+            for (let x = 0; x <= width; x += width / 10) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
+            for (let y = 0; y <= height; y += height / 8) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke(); }
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(0, height/2); ctx.lineTo(width, height/2); ctx.stroke();
+
+            const modulationType = document.getElementById('modulationType').value;
+            const carrierFreq = parseFloat(document.getElementById('carrierFreq').value);
+            const modIndex = parseFloat(document.getElementById('modIndex').value);
+
+            // Message signal (top half)
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            for (let x = 0; x < width; x++) {
+                const t = (x / width) * 4 * Math.PI;
+                const message = 0.5 * Math.sin(2 * t);
+                const pixelY = height/4 - (message * height / 6);
+                if (x === 0) ctx.moveTo(x, pixelY);
+                else ctx.lineTo(x, pixelY);
+            }
+            ctx.stroke();
+
+            if (document.getElementById('modulateBtn').classList.contains('active')) {
+                ctx.strokeStyle = '#f87171';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const t = (x / width) * 4 * Math.PI;
+                    const message = 0.5 * Math.sin(2 * t);
+                    let modulated;
+                    switch (modulationType) {
+                        case 'am':
+                            modulated = (1 + modIndex * message) * Math.sin(carrierFreq * t);
+                            break;
+                        case 'fm':
+                            modulated = Math.sin(carrierFreq * t + 5 * modIndex * Math.cos(2 * t));
+                            break;
+                        case 'pm':
+                            modulated = Math.sin(carrierFreq * t + 2 * modIndex * message);
+                            break;
+                    }
+                    const pixelY = (3*height/4) - (modulated * height / 6);
+                    if (x === 0) ctx.moveTo(x, pixelY);
+                    else ctx.lineTo(x, pixelY);
+                }
+                ctx.stroke();
+                document.getElementById('modulationLabel').textContent = 'Message (Blue) & Modulated (Red)';
+            } else {
+                ctx.strokeStyle = '#94a8c0';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const t = (x / width) * 4 * Math.PI;
+                    const carrier = 0.5 * Math.sin(carrierFreq * t);
+                    const pixelY = (3*height/4) - (carrier * height / 6);
+                    if (x === 0) ctx.moveTo(x, pixelY);
+                    else ctx.lineTo(x, pixelY);
+                }
+                ctx.stroke();
+                document.getElementById('modulationLabel').textContent = 'Message (Top) & Carrier (Bottom)';
+            }
+        }
+
+        // === SAMPLING SIMULATION ===
+        function drawSamplingSimulation() {
+            const width = samplingCanvas.width;
+            const height = samplingCanvas.height;
+            const ctx = samplingCanvas.getContext('2d');
+            ctx.fillStyle = '#1a202c';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid & axis
+            ctx.strokeStyle = '#2d3748'; ctx.lineWidth = 1;
+            for (let x = 0; x <= width; x += width / 10) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
+            for (let y = 0; y <= height; y += height / 8) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke(); }
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(0, height/2); ctx.lineTo(width, height/2); ctx.stroke();
+
+            const signalFreq = parseFloat(document.getElementById('signalFreq').value);
+            const samplingRate = parseFloat(document.getElementById('samplingRate').value);
+            const reconstruction = document.getElementById('reconstruction').value;
+
+            // Original signal
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < width; x++) {
+                const t = (x / width) * 4 * Math.PI;
+                const y = 0.7 * Math.sin(signalFreq * t);
+                const pixelY = height/2 - (y * height / 3);
+                if (x === 0) ctx.moveTo(x, pixelY);
+                else ctx.lineTo(x, pixelY);
+            }
+            ctx.stroke();
+
+            if (document.getElementById('sampleBtn').classList.contains('active')) {
+                const sampleStep = width * signalFreq / samplingRate;
+                // Samples
+                ctx.fillStyle = '#f87171';
+                for (let i = 0; i * sampleStep < width; i++) {
+                    const x = i * sampleStep;
+                    const t = (x / width) * 4 * Math.PI;
+                    const y = 0.7 * Math.sin(signalFreq * t);
+                    const pixelY = height/2 - (y * height / 3);
+                    ctx.beginPath();
+                    ctx.arc(x, pixelY, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Reconstructed signal
+                ctx.strokeStyle = '#34d399';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 4]);
+                ctx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const t = (x / width) * 4 * Math.PI;
+                    let reconstructed = 0;
+
+                    switch (reconstruction) {
+                        case 'sinc':
+                            for (let i = 0; i * sampleStep < width; i++) {
+                                const xn = i * sampleStep;
+                                const tn = (xn / width) * 4 * Math.PI;
+                                const yn = 0.7 * Math.sin(signalFreq * tn);
+                                const dt = t - tn;
+                                const sincArg = (samplingRate / (2 * Math.PI)) * dt;
+                                let sinc;
+                                if (Math.abs(sincArg) < 1e-8) {
+                                    sinc = 1;
+                                } else {
+                                    sinc = Math.sin(Math.PI * sincArg) / (Math.PI * sincArg);
+                                }
+                                reconstructed += yn * sinc;
+                            }
+                            break;
+                        case 'linear':
+                            const i0 = Math.floor(x / sampleStep);
+                            const x0 = i0 * sampleStep;
+                            const x1 = (i0 + 1) * sampleStep;
+                            if (x1 < width) {
+                                const t0 = (x0 / width) * 4 * Math.PI;
+                                const t1 = (x1 / width) * 4 * Math.PI;
+                                const y0 = 0.7 * Math.sin(signalFreq * t0);
+                                const y1 = 0.7 * Math.sin(signalFreq * t1);
+                                const ratio = (x - x0) / (x1 - x0);
+                                reconstructed = y0 + ratio * (y1 - y0);
+                            } else {
+                                const t0 = (x0 / width) * 4 * Math.PI;
+                                reconstructed = 0.7 * Math.sin(signalFreq * t0);
+                            }
+                            break;
+                        case 'zeroorder':
+                            const idx = Math.floor(x / sampleStep);
+                            const xs = idx * sampleStep;
+                            if (xs < width) {
+                                const ts = (xs / width) * 4 * Math.PI;
+                                reconstructed = 0.7 * Math.sin(signalFreq * ts);
+                            }
+                            break;
+                    }
+
+                    const pixelY = height/2 - (reconstructed * height / 3);
+                    if (x === 0) ctx.moveTo(x, pixelY);
+                    else ctx.lineTo(x, pixelY);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Aliasing warning
+                if (samplingRate < 2 * signalFreq) {
+                    ctx.fillStyle = 'rgba(248, 113, 113, 0.12)';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.fillStyle = '#f87171';
+                    ctx.font = 'bold 15px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('⚠️ ALIASING! Sampling rate < 2× signal frequency', width/2, 28);
+                }
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('fourierTransformBtn').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.textContent = this.classList.contains('active') ? 'Show Time Domain' : 'Show Fourier Transform';
+            drawFourierSimulation();
+        });
+        document.getElementById('applyFilterBtn').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.textContent = this.classList.contains('active') ? 'Show Original Only' : 'Apply Filter';
+            drawFilterSimulation();
+        });
+        document.getElementById('modulateBtn').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.textContent = this.classList.contains('active') ? 'Show Carrier Only' : 'Show Modulation';
+            drawModulationSimulation();
+        });
+        document.getElementById('sampleBtn').addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.textContent = this.classList.contains('active') ? 'Show Original Only' : 'Show Sampling';
+            drawSamplingSimulation();
+        });
+
+        // Input listeners
+        ['waveType','frequency','amplitude','filterType','cutoff','noiseLevel',
+         'modulationType','carrierFreq','modIndex','signalFreq','samplingRate','reconstruction']
+        .forEach(id => {
+            document.getElementById(id).addEventListener('input', () => {
+                if (id.endsWith('Value') === false) {
+                    updateValueDisplays();
+                    if (id === 'waveType') drawFourierSimulation();
+                    else if (['frequency','amplitude'].includes(id)) drawFourierSimulation();
+                    else if (['filterType','cutoff','noiseLevel'].includes(id)) drawFilterSimulation();
+                    else if (['modulationType','carrierFreq','modIndex'].includes(id)) drawModulationSimulation();
+                    else if (['signalFreq','samplingRate','reconstruction'].includes(id)) drawSamplingSimulation();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
