@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Small-World Networks — Watts & Strogatz (1998)</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+</head>
+<body>
+
+  <nav id="sidebar">
+    <img src="../images/output.png" height="128" alt="My Blog Logo" />
+    <h5><a href="https://sarcdv.github.io/">Alessandro Sciarra, Ph.D.</a></h5>
+    
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+        <hr />
+      <li><strong>Articles</strong></li>
+      <li><a href="articles/watts-strogatz-1998.html">Watts–Strogatz Model (1998)</a></li>
+      <li><a  href="https://sarcdv.github.io//projects/Posts/trendvotecritic.html">I numeri che non contano</a></li>
+      <li><a  href="https://sarcdv.github.io//projects/Posts/geninmed.html">Gen AI in Medicine</a></li>
+      <!-- Add more articles here -->
+        <hr />
+      <li><strong>Projects</strong></li>
+      <!-- Add project links here -->
+       <li><a  href="https://sarcdv.github.io/projects/SOMdemo/index.html">Self-Organizing Map</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/PINN/index.html">Physics-Informed Neural Networks</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/AnomalyDetection/index.html">Anomaly Detection</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/Commercialista/presentation.html">AI agents per studio commercialista</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/MAIATpresentation/presentation.html">MAIAT deck</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/SenseGuard/index.html">Sense Guard</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/Posts/physics_fun_house.html">Physics Fun House</a></li>
+       <li><a  href="https://sarcdv.github.io/projects/Posts/social_physics_simulator.html">Social Physics Simulator</a></li>
+       <li><a  href="https://sarcdv.github.io//projects/Posts/AutoEncoders.html">Auto Encoders</a></li>
+       <li><a  href="https://sarcdv.github.io//projects/Posts/fourier_explorer.html">Fourier Transform in Practice</a></li>
+       <li><a  href="https://sarcdv.github.io//projects/Posts/RL-game-drone/index.html">Reinforcement Learning, A simple game</a></li>
+
+    </ul>
+  </nav>
+
+  <main id="content">
+    <article>
+      <h1>Collective Dynamics of “Small-World” Networks</h1>
+      <p class="byline">Watts & Strogatz, <em>Nature</em> 393, 440–442 (1998)</p>
+        <p class="byline">Exploring the balance of clustering and path length in real-world networks</p>
+        <p>Original paper: <a href="https://www.nature.com/articles/30918" target="_blank">https://www.nature.com/articles/30918</a></p>
+        <section>
+        <h2>Introduction</h2>
+        <p>
+          Numerous self-organising systems, including biological oscillators, excitable media, neural networks, 
+          spatial games, genetic control networks, and Josephson junction arrays, have been modelled 
+          using networks of coupled dynamical systems. Typically, it is assumed that the connection 
+          topology is either entirely random or completely regular. 
+          However, a lot of social, technological, and biological networks fall somewhere in the middle.
+        </p>
+
+        <p>
+            Here, we examine basic network models that can be adjusted to fall anywhere in the middle: 
+            conventional networks that have been "rewired" to add more and more disorder. 
+            We discover that these systems can have tiny characteristic path lengths, similar to random graphs, 
+            but can also be strongly clustered, similar to regular lattices. 
+            By similarity with the small-world phenomena (often referred to as six degrees of separation), 
+            we refer to these networks as "small-worlds."
+        </p>
+
+        <p>
+            It is demonstrated that the electricity grid in the western United States, the neural network 
+            of the worm Caenorhabditis elegans, and the collaboration graph of movie stars are examples of small-world networks.
+            Small-world coupling dynamical system models exhibit improved synchronizability, computing capacity, 
+            and signal propagation speed. Specifically, compared to normal lattices, infectious diseases 
+            propagate more readily in small-world networks.
+        </p>
+        <p>Many real-world networks—social, biological, technological—exhibit:</p>
+        
+        <ul>
+          <li><strong>High clustering</strong>: Your friends are likely friends with each other.</li>
+          <li><strong>Short path lengths</strong>: You can reach anyone in the network in just a few steps (“six degrees of separation”).</li>
+        </ul>
+        <p>
+          Regular lattices have high clustering but long paths; random graphs have short paths but low clustering.
+          Watts and Strogatz introduced a model that bridges this gap.
+        </p>
+      </section>
+
+      <section>
+        <h2>Mathematical Formulation</h2>
+        <p>
+            We examine the subsequent random rewiring process to interpolate between regular and random networks. 
+            We begin by rewiring every edge randomly with probability \( p \) on a ring lattice consisting of \( n \) nodes 
+            and \( k \) edges per vertex. We may "tune" the graph between regularity (\( p = 0 \)) and disorder (\( p = 1 \)) using this approach, 
+            which enables us to examine the little understood transitional area \( 0 < p < 1 \).
+        </p>
+        <h3>1. Ring Lattice Initialization</h3>
+        <p>
+          Start with \( n \) nodes in a ring. Each node connects to its \( k/2 \) nearest neighbors on each side (so \( k \) must be even).
+        </p>
+
+        <h3>2. Rewiring with Probability \( p \)</h3>
+        <p>
+          For each node \( i \), consider each edge to a clockwise neighbor \( j \). With probability \( p \in [0,1] \), rewire that edge to a randomly chosen node \( l \neq i \), avoiding self-loops and duplicate edges.
+        </p>
+
+        <h3>3. Key Metrics</h3>
+        <p>
+          The structure is characterized by two quantities:
+        </p>
+        <ul>
+          <li>
+            <strong>Average path length</strong>, a global characteristic, quantifies the average distance between two graph nodes:
+            \[
+            L(p) = \frac{1}{n(n-1)} \sum_{i \neq j} d_{ij}
+            \]
+            where \( d_{ij} \) is the shortest path between \( i \) and \( j \).
+          </li>
+          <li>
+            <strong>Clustering coefficient</strong>, a local characteristic, quantifies how connected a node's neighbors are to each other:
+            \[
+            C(p) = \frac{1}{n} \sum_{i=1}^n \frac{2 e_i}{k_i(k_i - 1)}
+            \]
+            where \( e_i \) is the number of edges between neighbors of node \( i \), and \( k_i \) is its degree.
+          </li>
+        </ul>
+
+        <h3>4. Small-World Regime</h3>
+        <p>
+            The networks of interest to us have many nodes
+            with sparse connections, but not so sparse that the graph is in
+            danger of becoming disconnected.
+        </p>
+        <p>
+          As \( p \) increases from 0 to 1:
+        </p>
+        <ul>
+          <li>At \( p = 0 \) (regular lattice): High clustering \( C(0) \) and long path length \( L(0) \).</li>
+          <li>At \( p = 1 \) (random graph): Low clustering \( C(1) \approx k/n \) and short path length \( L(1) \approx \ln(n)/\ln(k) \).</li>
+        </ul>
+        <p>
+          For small \( p \) (e.g., \( p \approx 0.01 \)), \( L(p) \approx L_{\text{random}} \) while \( C(p) \gg C_{\text{random}} \). This defines the <em>small-world</em> regime.
+        </p>
+      </section>
+
+      <section>
+        <h2>Interactive Simulation</h2>
+        <p>Adjust the rewiring probability \( p \) to see its effect on network metrics.</p>
+
+        <label for="p-slider">Rewiring probability \( p \): <span id="p-value">0.00</span></label>
+        <input type="range" id="p-slider" min="0" max="1" step="0.01" value="0">
+
+        <div id="simulation-output">
+          <p><strong>Average path length:</strong> <span id="L-value">—</span></p>
+          <p><strong>Clustering coefficient:</strong> <span id="C-value">—</span></p>
+          <p><em>Note: Simulation uses \( n = 30 \), \( k = 4 \). Metrics are approximate (sampled).</em></p>
+        </div>
+
+        <div style="margin: 1.5rem 0;">
+            <canvas id="network-canvas" width="500" height="500" style="border:1px solid #ddd; display:block; margin:0 auto;"></canvas>
+        </div>
+      </section>
+
+      <section>
+        <h2>Empirical Evidence (from the <a href="https://www.nature.com/articles/30918" target="_blank">original paper</a>) </h2>
+        <table border="1" cellpadding="6" style="border-collapse: collapse; margin: 1rem 0;">
+          <thead>
+            <tr><th>Network</th><th>\(L_{\text{actual}}\)</th><th>\(L_{\text{random}}\)</th><th>\(C_{\text{actual}}\)</th><th>\(C_{\text{random}}\)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Film actors</td><td>3.65</td><td>2.99</td><td>0.79</td><td>0.00027</td></tr>
+            <tr><td>Power grid (US West)</td><td>18.7</td><td>12.4</td><td>0.080</td><td>0.005</td></tr>
+            <tr><td><em>C. elegans</em> neurons</td><td>2.65</td><td>2.25</td><td>0.28</td><td>0.05</td></tr>
+          </tbody>
+        </table>
+        <p>All exhibit \( L \approx L_{\text{random}} \) but \( C \gg C_{\text{random}} \)—the hallmark of small-world networks.</p>
+      </section>
+
+      <footer>
+        <p>© 2025 <a href="https://sarcdv.github.io/">Alessandro Sciarra, Ph.D.</a> | Based on Watts & Strogatz (1998)</p>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const n = 30;
+  const k = 4;
+  let graph = [];
+  const canvas = document.getElementById('network-canvas');
+  const ctx = canvas.getContext('2d');
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 200;
+
+  // Precompute node positions on a circle
+  const positions = [];
+  for (let i = 0; i < n; i++) {
+    const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+    positions.push({
+      x: centerX + radius * Math.cos(angle),
+      y: centerY + radius * Math.sin(angle)
+    });
+  }
+
+  function initializeLattice() {
+    graph = Array(n).fill().map(() => new Set());
+    for (let i = 0; i < n; i++) {
+      for (let d = 1; d <= k / 2; d++) {
+        graph[i].add((i + d) % n);
+        graph[i].add((i - d + n) % n);
+      }
+    }
+  }
+
+  function rewireGraph(p) {
+    initializeLattice();
+    const edges = [];
+    for (let i = 0; i < n; i++) {
+      for (const j of graph[i]) {
+        if (i < j) edges.push([i, j]);
+      }
+    }
+
+    for (const [i, j] of edges) {
+      if (Math.random() < p) {
+        graph[i].delete(j);
+        graph[j].delete(i);
+        let l;
+        do {
+          l = Math.floor(Math.random() * n);
+        } while (l === i || graph[i].has(l));
+        graph[i].add(l);
+        graph[l].add(i);
+      }
+    }
+  }
+
+  function drawGraph(p) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw edges
+    const visited = new Set();
+    for (let i = 0; i < n; i++) {
+      for (const j of graph[i]) {
+        const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+        if (visited.has(key)) continue;
+        visited.add(key);
+
+        const isLocal = Math.min(Math.abs(i - j), n - Math.abs(i - j)) <= k / 2;
+        ctx.strokeStyle = isLocal ? '#666' : '#e74c3c'; // gray for local, red for shortcuts
+        ctx.lineWidth = isLocal ? 1 : 2;
+        ctx.beginPath();
+        ctx.moveTo(positions[i].x, positions[i].y);
+        ctx.lineTo(positions[j].x, positions[j].y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw nodes
+    for (let i = 0; i < n; i++) {
+      ctx.beginPath();
+      ctx.arc(positions[i].x, positions[i].y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#2c3e50';
+      ctx.fill();
+    }
+  }
+
+  function bfs(start, end) {
+    if (start === end) return 0;
+    const queue = [{ node: start, dist: 0 }];
+    const visited = new Set([start]);
+    while (queue.length) {
+      const { node, dist } = queue.shift();
+      for (const neighbor of graph[node]) {
+        if (neighbor === end) return dist + 1;
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          queue.push({ node: neighbor, dist: dist + 1 });
+        }
+      }
+    }
+    return -1;
+  }
+
+  function computeMetrics() {
+    let C_sum = 0;
+    for (let i = 0; i < n; i++) {
+      const neighbors = Array.from(graph[i]);
+      const ki = neighbors.length;
+      if (ki < 2) continue;
+      let e = 0;
+      for (let a = 0; a < neighbors.length; a++) {
+        for (let b = a + 1; b < neighbors.length; b++) {
+          if (graph[neighbors[a]].has(neighbors[b])) e++;
+        }
+      }
+      C_sum += (2 * e) / (ki * (ki - 1));
+    }
+    const C = C_sum / n;
+
+    let totalDist = 0, valid = 0;
+    const samples = 80;
+    for (let s = 0; s < samples; s++) {
+      const i = Math.floor(Math.random() * n);
+      let j;
+      do { j = Math.floor(Math.random() * n); } while (j === i);
+      const d = bfs(i, j);
+      if (d !== -1) {
+        totalDist += d;
+        valid++;
+      }
+    }
+    const L = valid > 0 ? (totalDist / valid).toFixed(2) : '∞';
+    return { L, C: C.toFixed(3) };
+  }
+
+  const slider = document.getElementById('p-slider');
+  const pValue = document.getElementById('p-value');
+  const LDisplay = document.getElementById('L-value');
+  const CDisplay = document.getElementById('C-value');
+
+  function updateAll() {
+    const p = parseFloat(slider.value);
+    pValue.textContent = p.toFixed(2);
+    rewireGraph(p);
+    drawGraph(p);
+    const { L, C } = computeMetrics();
+    LDisplay.textContent = L;
+    CDisplay.textContent = C;
+  }
+
+  // Initialize
+  initializeLattice();
+  drawGraph(0);
+  updateAll();
+
+  slider.addEventListener('input', updateAll);
+});
+</script>
+</body>
+</html>
