@@ -20,18 +20,16 @@
 
   <nav id="sidebar">
     <img src="../images/output.png" height="128" alt="My Blog Logo" />
-    <h5><a href="https://sarcdv.github.io/">Alessandro Sciarra, Ph.D.</a></h5>
-    
     <ul>
       <li><a href="../index.html">Home</a></li>
         <hr />
-      <li><strong>Articles</strong></li>
+      <li><h4>Articles</h4></li>
       <li><a href="articles/watts-strogatz-1998.html">Watts–Strogatz Model (1998)</a></li>
       <li><a  href="https://sarcdv.github.io//projects/Posts/trendvotecritic.html">I numeri che non contano</a></li>
       <li><a  href="https://sarcdv.github.io//projects/Posts/geninmed.html">Gen AI in Medicine</a></li>
       <!-- Add more articles here -->
         <hr />
-      <li><strong>Projects</strong></li>
+      <li><h4>Projects</h4></li>
       <!-- Add project links here -->
        <li><a  href="https://sarcdv.github.io/projects/SOMdemo/index.html">Self-Organizing Map</a></li>
        <li><a  href="https://sarcdv.github.io/projects/PINN/index.html">Physics-Informed Neural Networks</a></li>
@@ -162,8 +160,8 @@
           <p><em>Note: Simulation uses \( n = 30 \), \( k = 4 \). Metrics are approximate (sampled).</em></p>
         </div>
 
-        <div style="margin: 1.5rem 0;">
-            <canvas id="network-canvas" width="500" height="500" style="border:1px solid #ddd; display:block; margin:0 auto;"></canvas>
+        <div style="width:100%; max-width:500px; margin:1.5rem auto;">
+            <canvas id="network-canvas" style="width:100%; height:auto; display:block; border:1px solid #ddd;"></canvas>
         </div>
       </section>
 
@@ -188,161 +186,180 @@
     </article>
   </main>
 
-  <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const n = 30;
-  const k = 4;
-  let graph = [];
-  const canvas = document.getElementById('network-canvas');
-  const ctx = canvas.getContext('2d');
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = 200;
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const n = 30;
+      const k = 4;
+      let graph = [];
+      const canvas = document.getElementById('network-canvas');
+      const ctx = canvas.getContext('2d');
+      let positions = [];
 
-  // Precompute node positions on a circle
-  const positions = [];
-  for (let i = 0; i < n; i++) {
-    const angle = (2 * Math.PI * i) / n - Math.PI / 2;
-    positions.push({
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle)
+      // Responsive canvas setup
+      function resizeCanvas() {
+        const container = canvas.parentElement;
+        const displayWidth = container.clientWidth;
+        const displayHeight = displayWidth;
+
+        canvas.style.width = displayWidth + 'px';
+        canvas.style.height = displayHeight + 'px';
+
+        const scale = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(displayWidth * scale);
+        canvas.height = Math.floor(displayHeight * scale);
+        ctx.scale(scale, scale);
+
+        const radius = Math.min(displayWidth, displayHeight) * 0.4;
+        const centerX = displayWidth / 2;
+        const centerY = displayHeight / 2;
+        positions = [];
+        for (let i = 0; i < n; i++) {
+          const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+          positions.push({
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle)
+          });
+        }
+      }
+
+      function initializeLattice() {
+        graph = Array(n).fill().map(() => new Set());
+        for (let i = 0; i < n; i++) {
+          for (let d = 1; d <= k / 2; d++) {
+            graph[i].add((i + d) % n);
+            graph[i].add((i - d + n) % n);
+          }
+        }
+      }
+
+      function rewireGraph(p) {
+        initializeLattice();
+        const edges = [];
+        for (let i = 0; i < n; i++) {
+          for (const j of graph[i]) {
+            if (i < j) edges.push([i, j]);
+          }
+        }
+
+        for (const [i, j] of edges) {
+          if (Math.random() < p) {
+            graph[i].delete(j);
+            graph[j].delete(i);
+            let l;
+            do {
+              l = Math.floor(Math.random() * n);
+            } while (l === i || graph[i].has(l));
+            graph[i].add(l);
+            graph[l].add(i);
+          }
+        }
+      }
+
+      function drawGraph(p) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const visited = new Set();
+        for (let i = 0; i < n; i++) {
+          for (const j of graph[i]) {
+            const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+            if (visited.has(key)) continue;
+            visited.add(key);
+
+            const isLocal = Math.min(Math.abs(i - j), n - Math.abs(i - j)) <= k / 2;
+            ctx.strokeStyle = isLocal ? '#666' : '#e74c3c';
+            ctx.lineWidth = isLocal ? 1 : 2;
+            ctx.beginPath();
+            ctx.moveTo(positions[i].x, positions[i].y);
+            ctx.lineTo(positions[j].x, positions[j].y);
+            ctx.stroke();
+          }
+        }
+
+        for (let i = 0; i < n; i++) {
+          ctx.beginPath();
+          ctx.arc(positions[i].x, positions[i].y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#2c3e50';
+          ctx.fill();
+        }
+      }
+
+      function bfs(start, end) {
+        if (start === end) return 0;
+        const queue = [{ node: start, dist: 0 }];
+        const visited = new Set([start]);
+        while (queue.length) {
+          const { node, dist } = queue.shift();
+          for (const neighbor of graph[node]) {
+            if (neighbor === end) return dist + 1;
+            if (!visited.has(neighbor)) {
+              visited.add(neighbor);
+              queue.push({ node: neighbor, dist: dist + 1 });
+            }
+          }
+        }
+        return -1;
+      }
+
+      function computeMetrics() {
+        let C_sum = 0;
+        for (let i = 0; i < n; i++) {
+          const neighbors = Array.from(graph[i]);
+          const ki = neighbors.length;
+          if (ki < 2) continue;
+          let e = 0;
+          for (let a = 0; a < neighbors.length; a++) {
+            for (let b = a + 1; b < neighbors.length; b++) {
+              if (graph[neighbors[a]].has(neighbors[b])) e++;
+            }
+          }
+          C_sum += (2 * e) / (ki * (ki - 1));
+        }
+        const C = C_sum / n;
+
+        let totalDist = 0, valid = 0;
+        const samples = 80;
+        for (let s = 0; s < samples; s++) {
+          const i = Math.floor(Math.random() * n);
+          let j;
+          do { j = Math.floor(Math.random() * n); } while (j === i);
+          const d = bfs(i, j);
+          if (d !== -1) {
+            totalDist += d;
+            valid++;
+          }
+        }
+        const L = valid > 0 ? (totalDist / valid).toFixed(2) : '∞';
+        return { L, C: C.toFixed(3) };
+      }
+
+      const slider = document.getElementById('p-slider');
+      const pValue = document.getElementById('p-value');
+      const LDisplay = document.getElementById('L-value');
+      const CDisplay = document.getElementById('C-value');
+
+      let currentP = 0;
+
+      function updateAll() {
+        currentP = parseFloat(slider.value);
+        pValue.textContent = currentP.toFixed(2);
+        rewireGraph(currentP);
+        drawGraph(currentP);
+        const { L, C } = computeMetrics();
+        LDisplay.textContent = L;
+        CDisplay.textContent = C;
+      }
+
+      // Initialize
+      resizeCanvas();
+      initializeLattice();
+      updateAll();
+
+      slider.addEventListener('input', updateAll);
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        drawGraph(currentP);
+      });
     });
-  }
-
-  function initializeLattice() {
-    graph = Array(n).fill().map(() => new Set());
-    for (let i = 0; i < n; i++) {
-      for (let d = 1; d <= k / 2; d++) {
-        graph[i].add((i + d) % n);
-        graph[i].add((i - d + n) % n);
-      }
-    }
-  }
-
-  function rewireGraph(p) {
-    initializeLattice();
-    const edges = [];
-    for (let i = 0; i < n; i++) {
-      for (const j of graph[i]) {
-        if (i < j) edges.push([i, j]);
-      }
-    }
-
-    for (const [i, j] of edges) {
-      if (Math.random() < p) {
-        graph[i].delete(j);
-        graph[j].delete(i);
-        let l;
-        do {
-          l = Math.floor(Math.random() * n);
-        } while (l === i || graph[i].has(l));
-        graph[i].add(l);
-        graph[l].add(i);
-      }
-    }
-  }
-
-  function drawGraph(p) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw edges
-    const visited = new Set();
-    for (let i = 0; i < n; i++) {
-      for (const j of graph[i]) {
-        const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
-        if (visited.has(key)) continue;
-        visited.add(key);
-
-        const isLocal = Math.min(Math.abs(i - j), n - Math.abs(i - j)) <= k / 2;
-        ctx.strokeStyle = isLocal ? '#666' : '#e74c3c'; // gray for local, red for shortcuts
-        ctx.lineWidth = isLocal ? 1 : 2;
-        ctx.beginPath();
-        ctx.moveTo(positions[i].x, positions[i].y);
-        ctx.lineTo(positions[j].x, positions[j].y);
-        ctx.stroke();
-      }
-    }
-
-    // Draw nodes
-    for (let i = 0; i < n; i++) {
-      ctx.beginPath();
-      ctx.arc(positions[i].x, positions[i].y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#2c3e50';
-      ctx.fill();
-    }
-  }
-
-  function bfs(start, end) {
-    if (start === end) return 0;
-    const queue = [{ node: start, dist: 0 }];
-    const visited = new Set([start]);
-    while (queue.length) {
-      const { node, dist } = queue.shift();
-      for (const neighbor of graph[node]) {
-        if (neighbor === end) return dist + 1;
-        if (!visited.has(neighbor)) {
-          visited.add(neighbor);
-          queue.push({ node: neighbor, dist: dist + 1 });
-        }
-      }
-    }
-    return -1;
-  }
-
-  function computeMetrics() {
-    let C_sum = 0;
-    for (let i = 0; i < n; i++) {
-      const neighbors = Array.from(graph[i]);
-      const ki = neighbors.length;
-      if (ki < 2) continue;
-      let e = 0;
-      for (let a = 0; a < neighbors.length; a++) {
-        for (let b = a + 1; b < neighbors.length; b++) {
-          if (graph[neighbors[a]].has(neighbors[b])) e++;
-        }
-      }
-      C_sum += (2 * e) / (ki * (ki - 1));
-    }
-    const C = C_sum / n;
-
-    let totalDist = 0, valid = 0;
-    const samples = 80;
-    for (let s = 0; s < samples; s++) {
-      const i = Math.floor(Math.random() * n);
-      let j;
-      do { j = Math.floor(Math.random() * n); } while (j === i);
-      const d = bfs(i, j);
-      if (d !== -1) {
-        totalDist += d;
-        valid++;
-      }
-    }
-    const L = valid > 0 ? (totalDist / valid).toFixed(2) : '∞';
-    return { L, C: C.toFixed(3) };
-  }
-
-  const slider = document.getElementById('p-slider');
-  const pValue = document.getElementById('p-value');
-  const LDisplay = document.getElementById('L-value');
-  const CDisplay = document.getElementById('C-value');
-
-  function updateAll() {
-    const p = parseFloat(slider.value);
-    pValue.textContent = p.toFixed(2);
-    rewireGraph(p);
-    drawGraph(p);
-    const { L, C } = computeMetrics();
-    LDisplay.textContent = L;
-    CDisplay.textContent = C;
-  }
-
-  // Initialize
-  initializeLattice();
-  drawGraph(0);
-  updateAll();
-
-  slider.addEventListener('input', updateAll);
-});
-</script>
+  </script>
 </body>
 </html>
