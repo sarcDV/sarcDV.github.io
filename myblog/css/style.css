@@ -119,3 +119,82 @@ footer {
   color: #777;
   font-size: 0.9rem;
 }
+
+/* Menu toggle button (visible only on mobile) */
+#menu-toggle {
+  display: none; /* Hidden by default, shown only on mobile */
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  background: #007acc;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Sidebar improvements for mobile */
+#sidebar {
+  width: 250px;
+  background: #f8f9fa;
+  padding: 1.5rem 1rem;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 999;
+  transition: transform 0.3s ease;
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+  #menu-toggle {
+    display: block; /* Show toggle button on mobile */
+  }
+
+  #sidebar {
+    transform: translateX(-100%);
+  }
+
+  #sidebar.active {
+    transform: translateX(0);
+    box-shadow: 2px 0 15px rgba(0,0,0,0.2); /* Enhanced shadow when open */
+  }
+
+  #content {
+    margin-left: 0;
+    padding: 1.2rem;
+    padding-top: 4rem; /* Add padding to account for fixed toggle button */
+  }
+
+  /* Optional: Add overlay when menu is open */
+  body.menu-open::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    pointer-events: none;
+  }
+
+  /* Prevent background scroll when menu is open */
+  body.menu-open {
+    overflow: hidden;
+  }
+}
+
+/* Ensure content doesn't get too narrow on very small screens */
+@media (max-width: 480px) {
+  #content {
+    padding: 1rem;
+    padding-top: 4rem;
+  }
+}
