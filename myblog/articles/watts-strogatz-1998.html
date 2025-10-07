@@ -16,17 +16,15 @@
     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
 </head>
-<body>
-    <button id="menu-toggle" aria-label="Toggle navigation" style="display:none; font-size:1.2rem; padding:0.5rem; background:#007acc; color:white; border:none; position:fixed; top:10px; left:10px; z-index:1000;">
-    ☰
-    </button>
+<button id="menu-toggle" aria-label="Toggle navigation" style="font-size:1.2rem; padding:0.5rem; background:#007acc; color:white; border:none; position:fixed; top:10px; left:10px; z-index:1000;">
+  ☰
+</button>
   <nav id="sidebar">
     <img src="../images/output.png" height="128" alt="My Blog Logo" />
     <ul>
       <li><a href="../index.html">Home</a></li>
         <hr />
       <li><h4>Articles</h4></li>
-      <li><a href="articles/watts-strogatz-1998.html">Watts–Strogatz Model (1998)</a></li>
       <li><a  href="https://sarcdv.github.io//projects/Posts/trendvotecritic.html">I numeri che non contano</a></li>
       <li><a  href="https://sarcdv.github.io//projects/Posts/geninmed.html">Gen AI in Medicine</a></li>
       <!-- Add more articles here -->
@@ -365,27 +363,45 @@
   </script>
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-    const body = document.body;
+  const toggle = document.getElementById('menu-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const body = document.body;
 
-    if (toggle && sidebar) {
-      toggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        body.classList.toggle('menu-open');
-      });
+  if (toggle && sidebar) {
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent event bubbling
+      sidebar.classList.toggle('active');
+      body.classList.toggle('menu-open');
+    });
 
-      // Close menu when clicking outside (optional but recommended)
-      document.addEventListener('click', (e) => {
-        if (sidebar.classList.contains('active') &&
-            !sidebar.contains(e.target) &&
-            e.target !== toggle) {
-          sidebar.classList.remove('active');
-          body.classList.remove('menu-open');
-        }
-      });
-    }
-  });
+    // Close menu when clicking on a sidebar link (optional but helpful)
+    sidebar.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') {
+        sidebar.classList.remove('active');
+        body.classList.remove('menu-open');
+      }
+    });
+
+    // Close menu when clicking outside (for mobile)
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 767 && 
+          sidebar.classList.contains('active') &&
+          !sidebar.contains(e.target) &&
+          e.target !== toggle) {
+        sidebar.classList.remove('active');
+        body.classList.remove('menu-open');
+      }
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+        body.classList.remove('menu-open');
+      }
+    });
+  }
+});
 </script>
 </body>
 </html>
