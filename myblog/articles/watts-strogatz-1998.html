@@ -17,7 +17,9 @@
   </script>
 </head>
 <body>
-
+    <button id="menu-toggle" aria-label="Toggle navigation" style="display:none; font-size:1.2rem; padding:0.5rem; background:#007acc; color:white; border:none; position:fixed; top:10px; left:10px; z-index:1000;">
+    ☰
+    </button>
   <nav id="sidebar">
     <img src="../images/output.png" height="128" alt="My Blog Logo" />
     <ul>
@@ -361,5 +363,29 @@
       });
     });
   </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+
+    if (toggle && sidebar) {
+      toggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        body.classList.toggle('menu-open');
+      });
+
+      // Close menu when clicking outside (optional but recommended)
+      document.addEventListener('click', (e) => {
+        if (sidebar.classList.contains('active') &&
+            !sidebar.contains(e.target) &&
+            e.target !== toggle) {
+          sidebar.classList.remove('active');
+          body.classList.remove('menu-open');
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
