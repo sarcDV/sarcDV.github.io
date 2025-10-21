@@ -57,7 +57,7 @@
     let isUserInteracting = false;
 
     function updateCarousel() {
-        carousel.style.transform = `translateX(-${currentSlide * 33.333}%)`;
+        carousel.style.transform = `translateX(-${currentSlide * 100 / 3}%)`;
         dots.forEach((dot, index) => {
             dot.classList.toggle('active', index === currentSlide);
         });
