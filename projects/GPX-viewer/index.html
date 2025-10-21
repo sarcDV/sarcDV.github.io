@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Track & Location Viewer</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        #panel {
+            padding: 15px;
+            background: #f0f0f0;
+            border-bottom: 2px solid #ccc;
+        }
+        
+        #map {
+            flex: 1;
+            width: 100%;
+        }
+        
+        .input-group {
+            margin-bottom: 10px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        textarea, input[type="file"], button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #005a87;
+        }
+        
+        #status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+    </style>
+</head>
+<body>
+    <div id="panel">
+        <h2>GPS Track & Location Viewer</h2>
+        
+        <div class="input-group">
+            <label for="gpxInput">Upload GPX File:</label>
+            <input type="file" id="gpxInput" accept=".gpx,.xml" />
+        </div>
+        
+        <div class="input-group">
+            <label for="coordInput">Or Paste Coordinates (lat,lng; lat,lng; ...):</label>
+            <textarea id="coordInput" rows="3" placeholder="40.7128,-74.0060; 40.7282,-74.0776; 40.7589,-73.9851"></textarea>
+        </div>
+        
+        <button id="drawCoords">Draw Coordinates</button>
+        <button id="clearMap">Clear Map</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- toGeoJSON -->
+    <script src="https://unpkg.com/@tmcw/togeojson@4.5.0/dist/togeojson.umd.js"></script>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - initializing map...');
+            
+            // Initialize map with error handling
+            let map;
+            try {
+                map = L.map('map').setView([40.7128, -74.0060], 10);
+                console.log('Map initialized successfully');
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                
+                // Add a default marker to verify map is working
+                L.marker([40.7128, -74.0060])
+                    .addTo(map)
+                    .bindPopup('Map is working!')
+                    .openPopup();
+                    
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                document.getElementById('map').innerHTML = 
+                    '<div style="padding: 20px; text-align: center; color: red;">Error loading map: ' + error.message + '</div>';
+                return;
+            }
+
+            let currentLayers = [];
+
+            function clearPreviousLayers() {
+                currentLayers.forEach(layer => {
+                    if (layer && map.hasLayer(layer)) {
+                        map.removeLayer(layer);
+                    }
+                });
+                currentLayers = [];
+            }
+
+            function showStatus(message, type = 'info') {
+                const statusEl = document.getElementById('status');
+                statusEl.textContent = message;
+                statusEl.className = type;
+                statusEl.style.display = 'block';
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusEl.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            // GPX Upload
+            document.getElementById('gpxInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (!file.name.toLowerCase().endsWith('.gpx')) {
+                    showStatus('Please select a GPX file (.gpx)', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const xml = new DOMParser().parseFromString(evt.target.result, 'text/xml');
+                        
+                        // Check for XML parsing errors
+                        const parseError = xml.getElementsByTagName('parsererror');
+                        if (parseError.length > 0) {
+                            throw new Error('Invalid XML format in GPX file');
+                        }
+
+                        // Convert GPX to GeoJSON
+                        const geojson = toGeoJSON.gpx(xml);
+                        
+                        if (!geojson.features || geojson.features.length === 0) {
+                            showStatus('No track or waypoint data found in GPX file', 'error');
+                            return;
+                        }
+
+                        clearPreviousLayers();
+                        
+                        const layer = L.geoJSON(geojson, {
+                            style: { color: 'blue', weight: 4, opacity: 0.7 },
+                            pointToLayer: function(feature, latlng) {
+                                return L.circleMarker(latlng, {
+                                    radius: 6,
+                                    fillColor: 'red',
+                                    color: '#000',
+                                    weight: 1,
+                                    opacity: 1,
+                                    fillOpacity: 0.8
+                                });
+                            }
+                        }).addTo(map);
+                        
+                        currentLayers.push(layer);
+                        map.fitBounds(layer.getBounds());
+                        showStatus(`Successfully loaded GPX file with ${geojson.features.length} features`, 'success');
+                        
+                    } catch (err) {
+                        console.error('Error parsing GPX:', err);
+                        showStatus('Error parsing GPX file: ' + err.message, 'error');
+                    }
+                };
+                
+                reader.onerror = function() {
+                    showStatus('Error reading file', 'error');
+                };
+                
+                reader.readAsText(file);
+            });
+
+            // Coordinate Drawing
+            document.getElementById('drawCoords').addEventListener('click', function() {
+                const raw = document.getElementById('coordInput').value.trim();
+                if (!raw) {
+                    showStatus('Please enter coordinates in the format: lat,lng; lat,lng; ...', 'error');
+                    return;
+                }
+
+                try {
+                    const points = [];
+                    const coordPairs = raw.split(';').filter(pair => pair.trim() !== '');
+                    
+                    coordPairs.forEach((pair, index) => {
+                        const cleanPair = pair.trim();
+                        const coords = cleanPair.split(',').map(coord => coord.trim());
+                        
+                        if (coords.length !== 2) {
+                            throw new Error(`Invalid coordinate format at position ${index + 1}: "${cleanPair}". Use format: lat,lng`);
+                        }
+                        
+                        const lat = parseFloat(coords[0]);
+                        const lng = parseFloat(coords[1]);
+                        
+                        if (isNaN(lat) || isNaN(lng)) {
+                            throw new Error(`Invalid numbers at position ${index + 1}: "${cleanPair}"`);
+                        }
+                        
+                        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                            throw new Error(`Coordinates out of range at position ${index + 1}: ${lat}, ${lng}`);
+                        }
+                        
+                        points.push([lat, lng]);
+                    });
+
+                    if (points.length === 0) {
+                        throw new Error('No valid coordinates found');
+                    }
+
+                    clearPreviousLayers();
+                    
+                    let layer;
+                    if (points.length === 1) {
+                        // Single point
+                        layer = L.marker(points[0]).addTo(map);
+                        map.setView(points[0], 13);
+                        layer.bindPopup(`Coordinate: ${points[0][0]}, ${points[0][1]}`).openPopup();
+                    } else {
+                        // Multiple points - create polyline
+                        layer = L.polyline(points, { 
+                            color: 'red', 
+                            weight: 4, 
+                            opacity: 0.7 
+                        }).addTo(map);
+                        
+                        // Add markers for start and end points
+                        L.marker(points[0]).addTo(map)
+                            .bindPopup('Start point')
+                            .openPopup();
+                            
+                        L.marker(points[points.length - 1]).addTo(map)
+                            .bindPopup('End point');
+                            
+                        map.fitBounds(layer.getBounds());
+                    }
+                    
+                    currentLayers.push(layer);
+                    showStatus(`Successfully drawn ${points.length} coordinate(s)`, 'success');
+                    
+                } catch (err) {
+                    console.error('Error parsing coordinates:', err);
+                    showStatus('Error: ' + err.message, 'error');
+                }
+            });
+
+            // Clear Map
+            document.getElementById('clearMap').addEventListener('click', function() {
+                clearPreviousLayers();
+                showStatus('Map cleared', 'success');
+            });
+
+            console.log('All event listeners attached successfully');
+        });
+    </script>
+</body>
+</html>
