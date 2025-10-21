@@ -328,13 +328,19 @@
         }
 
         .carousel {
+            touch-action: pan-y;
+        }
+
+        .carousel {
             display: flex;
             transition: transform 0.5s ease-in-out;
             width: 300%;
+            will-change: transform; 
         }
 
         .carousel-item {
             flex: 0 0 33.333%;
+            flex-shrink: 0;
             padding: 0 10px;
         }
 
