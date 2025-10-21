@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clair Clinique - The Future of Skincare is Here</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Clair Clinique</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#media" class="nav-link">Media</a></li>
+                <li><a href="#solutions" class="nav-link">Solutions</a></li>
+                <li><a href="#technology" class="nav-link">Technology</a></li>
+                <li><a href="#team" class="nav-link">Team</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section - Split Layout -->
+    <section id="home" class="hero">
+        <div class="hero-split">
+            <div class="hero-left">
+                <div class="hero-content">
+                    <h1 class="hero-title">Clair Clinique</h1>
+                    <p class="hero-subtitle">The future of skincare is here. Real-time personalized serums and creams powered by AI that adapts to your unique skin needs.</p>
+                    <div class="hero-buttons">
+                        <a href="#contact" class="btn btn-primary"><i class="fas fa-play-circle"></i> Start Your Journey</a>
+                        <a href="#media" class="btn btn-secondary"><i class="fas fa-video"></i> Watch Demo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="hero-image-container">
+                    <!-- <img src="https://placehold.co/500x400/1e293b/6366f1?text=AI+Skincare" alt="AI Skincare Technology" class="hero-img"> -->
+                    <img src="images/ai_skincare.png" alt="AI Skincare Technology" class="hero-img">
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Stats Section - New -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Satisfaction with Science-Driven Formulations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10k+</div>
+                    <div class="stat-label">Personalized Beauty Formulas Created</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">AI Monitoring for Optimal Results</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Innovative Technologies Under Patent Application</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Media Carousel Section -->
+    <section id="media" class="media-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Experience Our Technology</h2>
+                <p class="section-subtitle">Explore our latest videos, demonstrations, and customer testimonials</p>
+            </div>
+            <div class="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-item">
+                        <div class="media-card">
+                            <div class="media-thumbnail">
+                                <video preload="metadata" muted playsinline>
+                                    <source src="videos/video_veo_mirko.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="media-play-overlay">
+                                    <div class="play-button">
+                                        <i class="fas fa-play"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media-info">
+                                <h3>How Our Technology Works</h3>
+                                <!-- <p>See our cutting-edge technology in action as it analyzes skin and creates personalized formulations.</p> -->
+                                 <p>Our multispectral imaging acquisitions are the cornerstone of our technology. 
+                                    This advanced process captures spectral reflectance at the pixel level, 
+                                    enabling us to estimate melanin levels, hemoglobin concentration, and hydration. 
+                                    This data is essential for effectively mapping pigmentation irregularities and vascularity, 
+                                    allowing us to address specific skin concerns.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="media-card">
+                            <div class="media-thumbnail">
+                                <img src="images/mirko_image.jpeg" alt="Customer Story">
+                                <!-- <div class="media-play-overlay">
+                                    <div class="play-button">
+                                        <i class="fas fa-play"></i>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <div class="media-info">
+                                <h3>When Science Meets Cosmetology</h3>
+                                <p>We combine cutting-edge research with practical cosmetology to provide personalized skincare that transforms lives. Our data-driven approach ensures every customer benefits from advanced technology, enhancing both appearance and confidence.
+                                </p>
+                                <p>Each formulation is carefully crafted to address specific skin concerns, grounded in comprehensive data analysis and a deep understanding of skin biology. Celebrate with us the fusion of scientific innovation and beauty.
+                                </p>
+                                <!-- <p>Hear from Sarah, who transformed her skin in just 4 weeks with our personalized approach.</p> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="media-card">
+                            <div class="media-thumbnail">
+                                <video preload="metadata" muted playsinline>
+                                    <source src="videos/video_mirko_promo.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="media-play-overlay">
+                                    <div class="play-button">
+                                        <i class="fas fa-play"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media-info">
+                                <h3>Innovative Solutions in Action</h3>
+                                <p>Our products are revolutionizing skincare, turning beauty routines into personalized experiences rooted in science. 
+                                    Don't miss the opportunity to see our groundbreaking initiatives in action!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-controls">
+                    <div class="carousel-btn prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="carousel-btn next">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="carousel-dots">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem-Solution Section - Alternating Layout -->
+    <section id="solutions" class="problem-solution">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Problem & Our Solution</h2>
+                <p class="section-subtitle">Why traditional skincare fails and how we're different</p>
+            </div>
+            <div class="alternating-grid">
+                <div class="alternating-item">
+                    <div class="content">
+                        <h3>The <span class="highlight-text">Generic Skincare</span> Problem</h3>
+                        <p>Traditional skincare products are designed for the "average" person, but there's no such thing as average skin. Your skin is influenced by your unique genetics, environment, lifestyle, and health conditions.</p>
+                        <p>This one-size-fits-all approach often leads to ineffective results, wasted money, and sometimes even skin irritation or damage.</p>
+                    </div>
+                    <div class="image">
+                        <!-- <img src="https://placehold.co/500x400/1e293b/8b5cf6?text=Generic+Skincare" alt="Generic Skincare"> -->
+                        <img src="images/generic_skincare_1.png" alt="Generic Skincare">
+
+                    </div>
+                </div>
+                <div class="alternating-item">
+                    <div class="content">
+                        <h3>Simphonie: <span class="highlight-text">Our AI-Powered Personalization</span></h3>
+                        <p>We use advanced AI algorithms that analyze hundreds of data points about your skin, including texture, hydration levels, pigmentation, and environmental factors.</p>
+                        <p>Our system creates truly personalized formulations that adapt to your skin's changing needs, ensuring optimal results every time.</p>
+                    </div>
+                    <div class="image">
+                        <img src="images/simphonie.png" alt="AI Personalization">
+                    </div>
+                </div>
+                <div class="alternating-item">
+                    <div class="content">
+                        <h3>Opera: <span class="highlight-text">Real-Time Adaptation</span> Technology</h3>
+                        <p>Unlike static products, our system continuously learns and adapts. As your environment changes, your lifestyle evolves, or your skin responds to treatment, we adjust your formulations accordingly.</p>
+                        <p>This ensures you always receive the most effective skincare for your current needs.</p>
+                        <p>A Robotic system fully integrated with our software ecosystem Simphonie that is composed by an input module and a robotic module for automatic skincare product preparation.</p>
+                    </div>
+                    <div class="image">
+                        <img src="images/opera_qwen_2.png" alt="Opera Robotic System">
+                    </div>
+                </div>
+                <div class="alternating-item">
+                    <div class="content">
+                        <h3>Adagio: <span class="highlight-text">Mobile</span> App</h3>
+                        <p>Our mobile app provides a seamless experience, allowing you to manage your skincare routine on the go.</p>
+                        <p>Receive personalized product recommendations, track your skin's progress, and get real-time updates on your formulations.</p>
+                    </div>
+                    <div class="image">
+                        <img src="images/test_adagio.gif" alt="Adagio Mobile App">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Technology Timeline -->
+    <section id="technology" class="technology">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Technology Journey</h2>
+                <p class="section-subtitle">From concept to cutting-edge innovation</p>
+            </div>
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Research & Development</h3>
+                        <p>Our team of scientists and AI experts began developing the foundational algorithms and skin analysis technology.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Prototype Testing</h3>
+                        <p>We conducted extensive testing with diverse skin types and conditions to refine our AI models and ensure accuracy.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Robotic Integration</h3>
+                        <p>Development of our proprietary robotic system for precise, automated formulation and production of personalized skincare.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Market Launch</h3>
+                        <p>Official launch of Clair Clinique with our complete ecosystem: Simphonie AI, Opera robotic system, and Adagio mobile app.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section - Masonry Grid -->
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Expert Team</h2>
+                <p class="section-subtitle">World-class scientists, researchers, and innovators</p>
+            </div>
+            <div class="masonry-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <!-- <img src="https://placehold.co/400x250/1e293b/6366f1?text=Dr.+Mirko+Rocci" alt="Dr. Mirko Rocci" class="member-img"> -->
+                        <img src="images/mirko_nobg.png" alt="Dr. Mirko Rocci" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Dr. Mirko Rocci, CTO</h3>
+                        <p class="member-title">Condensed Matter Physicist</p>
+                        <p class="member-bio">Italian condensed matter physicist specializing in nanoscience, superconducting spintronics, and 2D materials.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <!-- <img src="https://placehold.co/400x250/1e293b/8b5cf6?text=Prof.+Mattia+Capulli" alt="Prof. Mattia Capulli" class="member-img"> -->
+                        <img src="images/mattia_nobg.png" alt="Prof. Mattia Capulli" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Prof. Mattia Capulli, Scientific Advisor</h3>
+                        <p class="member-title">Associate Professor of Human Embryology</p>
+                        <p class="member-bio">Expert in human embryology and co-founder of Dante Genomics CORP with extensive experience in biotechnology.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <!-- <img src="https://placehold.co/400x250/1e293b/ec4899?text=Dr.+Alessandro+Sciarra" alt="Dr. Alessandro Sciarra" class="member-img"> -->
+                        <img src="images/alex_nobg2.png" alt="Dr. Alessandro Sciarra" class="member-img">
+                    
+                    </div>
+                    <div class="member-info">
+                        <h3>Dr. Alessandro Sciarra, Lead AI Solutions Architect</h3>
+                        <p class="member-title">Applied Physicist, AI Scientist</p>
+                        <p class="member-bio">Specializes in cybersecurity, data science, and medical imaging with emphasis on AI and machine learning applications.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <!-- <img src="https://placehold.co/400x250/1e293b/10b981?text=Mrs+Isabella+Capannolo" alt="Mrs Isabella Capannolo" class="member-img"> -->
+                        <img src="images/isabella_nobg.png" alt="Mrs Isabella Capannolo" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Mrs Isabella Capannolo, CEO</h3>
+                        <p class="member-title">Biotechnologist, Sales Leader</p>
+                        <p class="member-bio">Former Regional Sales Leader at Dante Genomics with extensive experience in managing high-skilled professionals.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <!-- <img src="https://placehold.co/400x250/1e293b/f59e0b?text=Mr+Lorenzo+Di+Marzio" alt="Mr Lorenzo Di Marzio" class="member-img"> -->
+                        <img src="images/lorenzo_nobg.png" alt="Mr Lorenzo Di Marzio" class="member-img">
+                    </div>
+                    <div class="member-info">
+                        <h3>Mr. Lorenzo di Marzio, Legal Advisor</h3>
+                        <p class="member-title">Lawyer</p>
+                        <p class="member-bio">Legal expert with over 30 years of experience in bankruptcy law, administrative law, and contract law.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get In Touch</h2>
+                <p class="section-subtitle">Start protecting your skin today!</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-card">
+                        <h3>Contact us</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:info@clairclinique.com">info@clairclinique.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <h3>Location</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>L'Aquila, Italy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Clair Clinique</h3>
+                    <p>Your natural beauty, enhanced by AI and tailored for you</p>
+                </div>
+                <div class="footer-links">
+                    Find us on:<br>
+                    <!-- <a href="mailto:info@clairclinique.com">info@clairclinique.com</a><br> -->
+                    <a href="https://www.linkedin.com/company/clair-clinique/posts/?feedView=all" target="_blank" rel="noopener" style="margin-right: 1rem;"><i class="fab fa-linkedin"></i> LinkedIn</a><br>
+                    <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Instagram</a><br>
+                    <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener"><i class="fab fa-twitter"></i> Twitter</a><br>
+                    <a href="https://facebook.com/yourhandle" target="_blank" rel="noopener"><i class="fab fa-facebook"></i> Facebook</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Clair Clinique. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
