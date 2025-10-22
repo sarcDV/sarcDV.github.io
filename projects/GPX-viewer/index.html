@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Track & Location Viewer</title>
+    <title>GPS Track & Location Viewer with Offline Maps</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet.draw CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    
+    <!-- Chart.js for elevation profile -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         * {
@@ -31,6 +37,7 @@
         #map {
             flex: 1;
             width: 100%;
+            transition: margin-bottom 0.3s ease;
         }
         
         .input-group {
@@ -43,7 +50,7 @@
             font-weight: bold;
         }
         
-        textarea, input[type="file"], button {
+        textarea, input[type="file"], button, select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -64,6 +71,11 @@
             background: #005a87;
         }
         
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
         #status {
             margin-top: 10px;
             padding: 8px;
@@ -82,11 +94,183 @@
             color: #2e7d32;
             border: 1px solid #c8e6c9;
         }
+        
+        /* Elevation Profile Styles */
+        #elevationPanel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #ccc;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-height: 40vh;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+        
+        #elevationToggle {
+            background: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        #elevationToggle:hover {
+            background: #218838;
+        }
+        
+        .elevation-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #007cba;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        #elevationChart {
+            width: 100%;
+            height: 200px;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-button:hover {
+            background: #c82333;
+        }
+        
+        .elevation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-right: 40px;
+        }
+        
+        /* Control buttons */
+        .control-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        #selectArea {
+            background: #ffc107;
+            color: black;
+        }
+        
+        #selectArea:hover {
+            background: #e0a800;
+        }
+        
+        #downloadArea {
+            background: #17a2b8;
+        }
+        
+        #downloadArea:hover {
+            background: #138496;
+        }
+        
+        #clearSelection {
+            background: #6c757d;
+        }
+        
+        #clearSelection:hover {
+            background: #5a6268;
+        }
+        
+        .download-options {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #28a745;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .offline-status {
+            padding: 5px 10px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .map-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .map-type-btn {
+            flex: 1;
+            padding: 8px;
+        }
+        
+        .active-map-type {
+            background: #0056b3;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div id="panel">
-        <h2>GPS Track & Location Viewer</h2>
+        <h2>GPS Track & Location Viewer with Offline Maps</h2>
+        
+        <div class="map-type-selector">
+            <button id="onlineMap" class="map-type-btn active-map-type">Online Map</button>
+            <button id="offlineMap" class="map-type-btn" disabled>Offline Map</button>
+        </div>
         
         <div class="input-group">
             <label for="gpxInput">Upload GPX File:</label>
@@ -98,39 +282,140 @@
             <textarea id="coordInput" rows="3" placeholder="40.7128,-74.0060; 40.7282,-74.0776; 40.7589,-73.9851"></textarea>
         </div>
         
-        <button id="drawCoords">Draw Coordinates</button>
-        <button id="clearMap">Clear Map</button>
+        <div class="control-buttons">
+            <button id="drawCoords">Draw Coordinates</button>
+            <button id="clearMap">Clear Map</button>
+        </div>
+        
+        <div class="control-buttons">
+            <button id="selectArea">Select Area for Offline</button>
+            <button id="downloadArea" disabled>Download Area</button>
+        </div>
+        
+        <button id="clearSelection" style="display: none;">Clear Selection</button>
+        
+        <div class="download-options" id="downloadOptions">
+            <label for="zoomLevels">Zoom Levels to Download:</label>
+            <select id="zoomLevels">
+                <option value="10-11">Basic (10-11)</option>
+                <option value="10-12">Standard (10-12)</option>
+                <option value="10-13">Detailed (10-13)</option>
+            </select>
+            <button id="startDownload">Start Download</button>
+            <div class="progress-bar" id="downloadProgress">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <button id="elevationToggle" style="display: none;">Show Elevation Profile</button>
         
         <div id="status"></div>
+        <div class="offline-status" id="offlineStatus"></div>
     </div>
 
     <div id="map"></div>
 
+    <!-- Elevation Profile Panel -->
+    <div id="elevationPanel">
+        <div class="elevation-header">
+            <h3>Elevation Profile</h3>
+        </div>
+        <button class="close-button" id="closeElevation">×</button>
+        <div id="elevationStats" class="elevation-stats"></div>
+        <canvas id="elevationChart"></canvas>
+    </div>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Leaflet.draw -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     
     <!-- toGeoJSON -->
     <script src="https://unpkg.com/@tmcw/togeojson@4.5.0/dist/togeojson.umd.js"></script>
 
     <script>
+        // Global variables
+        let map;
+        let currentLayers = [];
+        let currentElevationData = null;
+        let elevationChart = null;
+        let drawnItems = new L.FeatureGroup();
+        let drawControl;
+        let selectedArea = null;
+        let onlineTileLayer;
+        let offlineTileLayer;
+        let isUsingOfflineMaps = false;
+        let storedTiles = {};
+
+        // Function to close elevation panel
+        function closeElevationPanel() {
+            document.getElementById('elevationPanel').style.display = 'none';
+            document.getElementById('map').style.marginBottom = '0';
+        }
+
+        // Function to open elevation panel
+        function openElevationPanel() {
+            document.getElementById('elevationPanel').style.display = 'block';
+            document.getElementById('map').style.marginBottom = '40vh';
+        }
+
+        // Custom tile layer for offline maps
+        const OfflineTileLayer = L.TileLayer.extend({
+            createTile: function (coords, done) {
+                const tile = document.createElement('img');
+                const key = `${coords.z}/${coords.x}/${coords.y}`;
+                
+                // Check if tile is stored locally
+                if (storedTiles[key]) {
+                    tile.src = storedTiles[key];
+                    done(null, tile);
+                } else {
+                    // Show error tile for missing offline tiles
+                    tile.onerror = function () {
+                        tile.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMjggMTc2VjEyOE0xMjggOTZIMTI4LjEiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+';
+                        done(null, tile);
+                    };
+                    tile.src = `https://{s}.tile.openstreetmap.org/${coords.z}/${coords.x}/${coords.y}.png`;
+                    tile.onload = function () {
+                        done(null, tile);
+                    };
+                }
+                return tile;
+            }
+        });
+
         // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded - initializing map...');
             
+            // Load stored tiles from localStorage
+            loadStoredTiles();
+            
             // Initialize map with error handling
-            let map;
             try {
                 map = L.map('map').setView([40.7128, -74.0060], 10);
                 console.log('Map initialized successfully');
                 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors'
+                // Add online tile layer
+                onlineTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 18
                 }).addTo(map);
+                
+                // Create offline tile layer (not added to map initially)
+                offlineTileLayer = new OfflineTileLayer('', {
+                    attribution: '&copy; OpenStreetMap contributors (Offline)',
+                    maxZoom: 18
+                });
+                
+                // Add drawn items to map
+                map.addLayer(drawnItems);
                 
                 // Add a default marker to verify map is working
                 L.marker([40.7128, -74.0060])
                     .addTo(map)
-                    .bindPopup('Map is working!')
+                    .bindPopup('Map is working!<br>Use the rectangle tool to select areas for offline use.')
                     .openPopup();
                     
             } catch (error) {
@@ -140,7 +425,42 @@
                 return;
             }
 
-            let currentLayers = [];
+            // Initialize draw control
+            drawControl = new L.Control.Draw({
+                draw: {
+                    polygon: false,
+                    polyline: false,
+                    circle: false,
+                    circlemarker: false,
+                    marker: false,
+                    rectangle: {
+                        shapeOptions: {
+                            color: '#ffc107',
+                            weight: 2,
+                            fillOpacity: 0.2
+                        }
+                    }
+                },
+                edit: {
+                    featureGroup: drawnItems
+                }
+            });
+
+            // Add close button event listener
+            document.getElementById('closeElevation').addEventListener('click', closeElevationPanel);
+
+            function loadStoredTiles() {
+                const stored = localStorage.getItem('offlineMapTiles');
+                if (stored) {
+                    storedTiles = JSON.parse(stored);
+                    updateOfflineStatus();
+                }
+            }
+
+            function saveStoredTiles() {
+                localStorage.setItem('offlineMapTiles', JSON.stringify(storedTiles));
+                updateOfflineStatus();
+            }
 
             function clearPreviousLayers() {
                 currentLayers.forEach(layer => {
@@ -149,6 +469,9 @@
                     }
                 });
                 currentLayers = [];
+                currentElevationData = null;
+                document.getElementById('elevationToggle').style.display = 'none';
+                closeElevationPanel();
             }
 
             function showStatus(message, type = 'info') {
@@ -157,7 +480,6 @@
                 statusEl.className = type;
                 statusEl.style.display = 'block';
                 
-                // Auto-hide success messages after 5 seconds
                 if (type === 'success') {
                     setTimeout(() => {
                         statusEl.style.display = 'none';
@@ -165,7 +487,335 @@
                 }
             }
 
-            // GPX Upload
+            function updateOfflineStatus() {
+                const statusEl = document.getElementById('offlineStatus');
+                const tileCount = Object.keys(storedTiles).length;
+                const offlineBtn = document.getElementById('offlineMap');
+                
+                if (tileCount > 0) {
+                    statusEl.textContent = `Offline maps available: ${tileCount} tiles stored`;
+                    statusEl.style.display = 'block';
+                    offlineBtn.disabled = false;
+                } else {
+                    statusEl.style.display = 'none';
+                    offlineBtn.disabled = true;
+                }
+            }
+
+            function switchToOnlineMaps() {
+                if (isUsingOfflineMaps) {
+                    map.removeLayer(offlineTileLayer);
+                    onlineTileLayer.addTo(map);
+                    isUsingOfflineMaps = false;
+                    document.getElementById('onlineMap').classList.add('active-map-type');
+                    document.getElementById('offlineMap').classList.remove('active-map-type');
+                    showStatus('Switched to online maps', 'success');
+                }
+            }
+
+            function switchToOfflineMaps() {
+                if (!isUsingOfflineMaps && Object.keys(storedTiles).length > 0) {
+                    map.removeLayer(onlineTileLayer);
+                    offlineTileLayer.addTo(map);
+                    isUsingOfflineMaps = true;
+                    document.getElementById('offlineMap').classList.add('active-map-type');
+                    document.getElementById('onlineMap').classList.remove('active-map-type');
+                    showStatus('Switched to offline maps', 'success');
+                }
+            }
+
+            // Map events for drawing
+            map.on(L.Draw.Event.CREATED, function (e) {
+                const type = e.layerType;
+                const layer = e.layer;
+
+                if (type === 'rectangle') {
+                    // Clear previous selection
+                    drawnItems.clearLayers();
+                    
+                    // Add new rectangle to the map
+                    drawnItems.addLayer(layer);
+                    selectedArea = layer;
+                    
+                    // Enable download button and show options
+                    document.getElementById('downloadArea').disabled = false;
+                    document.getElementById('downloadOptions').style.display = 'block';
+                    document.getElementById('clearSelection').style.display = 'block';
+                    
+                    const bounds = layer.getBounds();
+                    const area = calculateArea(bounds);
+                    showStatus(`Area selected: ${area.toFixed(2)} km². Choose zoom levels and click 'Start Download'.`, 'success');
+                }
+            });
+
+            function calculateArea(bounds) {
+                const latDiff = bounds.getNorth() - bounds.getSouth();
+                const lngDiff = bounds.getEast() - bounds.getWest();
+                // Rough calculation - for more precise area, use geodesic calculations
+                return (latDiff * 111) * (lngDiff * 111 * Math.cos((bounds.getNorth() + bounds.getSouth()) * Math.PI / 360));
+            }
+
+            function downloadArea() {
+                if (!selectedArea) {
+                    showStatus('Please select an area first', 'error');
+                    return;
+                }
+
+                const bounds = selectedArea.getBounds();
+                const zoomRange = document.getElementById('zoomLevels').value;
+                const [minZoom, maxZoom] = zoomRange.split('-').map(Number);
+                
+                const progressBar = document.getElementById('downloadProgress');
+                const progressFill = document.getElementById('progressFill');
+                
+                progressBar.style.display = 'block';
+                progressFill.style.width = '0%';
+                
+                showStatus('Starting area download... This may take a while.', 'success');
+                
+                // Calculate total tiles for progress tracking
+                let totalTiles = 0;
+                let tilesToDownload = [];
+                
+                for (let z = minZoom; z <= maxZoom; z++) {
+                    const northEast = map.project(bounds.getNorthEast(), z);
+                    const southWest = map.project(bounds.getSouthWest(), z);
+                    
+                    const minX = Math.floor(southWest.x / 256);
+                    const maxX = Math.floor(northEast.x / 256);
+                    const minY = Math.floor(southWest.y / 256);
+                    const maxY = Math.floor(northEast.y / 256);
+                    
+                    for (let x = minX; x <= maxX; x++) {
+                        for (let y = minY; y <= maxY; y++) {
+                            const key = `${z}/${x}/${y}`;
+                            if (!storedTiles[key]) {
+                                tilesToDownload.push({z, x, y, key});
+                            }
+                            totalTiles++;
+                        }
+                    }
+                }
+                
+                let downloadedTiles = 0;
+                const totalToDownload = tilesToDownload.length;
+                
+                if (totalToDownload === 0) {
+                    showStatus('All tiles for this area are already downloaded!', 'success');
+                    progressBar.style.display = 'none';
+                    return;
+                }
+                
+                function downloadNextTile() {
+                    if (tilesToDownload.length === 0) {
+                        // All tiles downloaded
+                        saveStoredTiles();
+                        showStatus(`Download complete! ${downloadedTiles} tiles saved for offline use.`, 'success');
+                        progressBar.style.display = 'none';
+                        return;
+                    }
+                    
+                    const tile = tilesToDownload.shift();
+                    const url = `https://tile.openstreetmap.org/${tile.z}/${tile.x}/${tile.y}.png`;
+                    
+                    fetch(url)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const reader = new FileReader();
+                            reader.onload = function() {
+                                storedTiles[tile.key] = reader.result;
+                                downloadedTiles++;
+                                const percent = Math.round((downloadedTiles / totalToDownload) * 100);
+                                progressFill.style.width = percent + '%';
+                                
+                                // Download next tile after a short delay to be nice to the server
+                                setTimeout(downloadNextTile, 50);
+                            };
+                            reader.readAsDataURL(blob);
+                        })
+                        .catch(error => {
+                            console.error('Failed to download tile:', tile, error);
+                            // Continue with next tile even if this one fails
+                            setTimeout(downloadNextTile, 50);
+                        });
+                }
+                
+                // Start downloading tiles
+                downloadNextTile();
+            }
+
+            // Rest of the functions (extractElevationData, calculateDistance, etc.) remain the same
+            function extractElevationData(geojson) {
+                const elevationData = [];
+                
+                geojson.features.forEach(feature => {
+                    if (feature.geometry.type === 'LineString') {
+                        const coordinates = feature.geometry.coordinates;
+                        let cumulativeDistance = 0;
+                        let previousPoint = null;
+                        
+                        coordinates.forEach((coord, index) => {
+                            const [lng, lat, ele] = coord;
+                            const distance = previousPoint ? 
+                                calculateDistance(previousPoint.lat, previousPoint.lng, lat, lng) : 0;
+                            cumulativeDistance += distance;
+                            
+                            elevationData.push({
+                                distance: cumulativeDistance,
+                                elevation: ele || 0,
+                                latitude: lat,
+                                longitude: lng,
+                                pointIndex: index
+                            });
+                            
+                            previousPoint = { lat, lng };
+                        });
+                    }
+                });
+                
+                return elevationData;
+            }
+
+            function calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Earth's radius in kilometers
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = 
+                    Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                return R * c;
+            }
+
+            function calculateElevationStats(elevationData) {
+                if (!elevationData.length) return null;
+                
+                const elevations = elevationData.map(d => d.elevation);
+                const distances = elevationData.map(d => d.distance);
+                
+                const stats = {
+                    min: Math.min(...elevations),
+                    max: Math.max(...elevations),
+                    gain: 0,
+                    loss: 0,
+                    totalDistance: distances[distances.length - 1],
+                    avgElevation: elevations.reduce((a, b) => a + b, 0) / elevations.length
+                };
+                
+                for (let i = 1; i < elevations.length; i++) {
+                    const diff = elevations[i] - elevations[i - 1];
+                    if (diff > 0) {
+                        stats.gain += diff;
+                    } else {
+                        stats.loss += Math.abs(diff);
+                    }
+                }
+                
+                return stats;
+            }
+
+            function createElevationChart(elevationData, stats) {
+                const ctx = document.getElementById('elevationChart').getContext('2d');
+                
+                if (elevationChart) {
+                    elevationChart.destroy();
+                }
+                
+                const distances = elevationData.map(d => d.distance);
+                const elevations = elevationData.map(d => d.elevation);
+                
+                elevationChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: distances.map(d => d.toFixed(2) + ' km'),
+                        datasets: [{
+                            label: 'Elevation (meters)',
+                            data: elevations,
+                            borderColor: '#007cba',
+                            backgroundColor: 'rgba(0, 124, 186, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Distance (km)' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Elevation (m)' },
+                                beginAtZero: false
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Elevation: ${context.parsed.y.toFixed(1)}m, Distance: ${distances[context.dataIndex].toFixed(2)}km`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function showElevationStats(stats) {
+                const statsHtml = `
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.totalDistance.toFixed(2)}</div>
+                        <div class="stat-label">Total Distance (km)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.min.toFixed(0)}</div>
+                        <div class="stat-label">Min Elevation (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.max.toFixed(0)}</div>
+                        <div class="stat-label">Max Elevation (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.gain.toFixed(0)}</div>
+                        <div class="stat-label">Elevation Gain (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.loss.toFixed(0)}</div>
+                        <div class="stat-label">Elevation Loss (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${stats.avgElevation.toFixed(0)}</div>
+                        <div class="stat-label">Avg Elevation (m)</div>
+                    </div>
+                `;
+                
+                document.getElementById('elevationStats').innerHTML = statsHtml;
+            }
+
+            // Event Listeners
+            document.getElementById('selectArea').addEventListener('click', function() {
+                map.addControl(drawControl);
+                new L.Draw.Rectangle(map, drawControl.options.rectangle).enable();
+                showStatus('Click and drag on the map to select an area', 'success');
+            });
+
+            document.getElementById('clearSelection').addEventListener('click', function() {
+                drawnItems.clearLayers();
+                selectedArea = null;
+                document.getElementById('downloadArea').disabled = true;
+                document.getElementById('downloadOptions').style.display = 'none';
+                document.getElementById('clearSelection').style.display = 'none';
+                showStatus('Selection cleared', 'success');
+            });
+
+            document.getElementById('startDownload').addEventListener('click', downloadArea);
+            document.getElementById('onlineMap').addEventListener('click', switchToOnlineMaps);
+            document.getElementById('offlineMap').addEventListener('click', switchToOfflineMaps);
+
+            // GPX Upload and other event listeners remain the same...
             document.getElementById('gpxInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -180,13 +830,11 @@
                     try {
                         const xml = new DOMParser().parseFromString(evt.target.result, 'text/xml');
                         
-                        // Check for XML parsing errors
                         const parseError = xml.getElementsByTagName('parsererror');
                         if (parseError.length > 0) {
                             throw new Error('Invalid XML format in GPX file');
                         }
 
-                        // Convert GPX to GeoJSON
                         const geojson = toGeoJSON.gpx(xml);
                         
                         if (!geojson.features || geojson.features.length === 0) {
@@ -212,7 +860,17 @@
                         
                         currentLayers.push(layer);
                         map.fitBounds(layer.getBounds());
-                        showStatus(`Successfully loaded GPX file with ${geojson.features.length} features`, 'success');
+                        
+                        currentElevationData = extractElevationData(geojson);
+                        if (currentElevationData.length > 0) {
+                            const stats = calculateElevationStats(currentElevationData);
+                            showElevationStats(stats);
+                            createElevationChart(currentElevationData, stats);
+                            document.getElementById('elevationToggle').style.display = 'block';
+                            showStatus(`Successfully loaded GPX with ${geojson.features.length} features and elevation data`, 'success');
+                        } else {
+                            showStatus(`Successfully loaded GPX with ${geojson.features.length} features (no elevation data)`, 'success');
+                        }
                         
                     } catch (err) {
                         console.error('Error parsing GPX:', err);
@@ -227,7 +885,6 @@
                 reader.readAsText(file);
             });
 
-            // Coordinate Drawing
             document.getElementById('drawCoords').addEventListener('click', function() {
                 const raw = document.getElementById('coordInput').value.trim();
                 if (!raw) {
@@ -269,19 +926,16 @@
                     
                     let layer;
                     if (points.length === 1) {
-                        // Single point
                         layer = L.marker(points[0]).addTo(map);
                         map.setView(points[0], 13);
                         layer.bindPopup(`Coordinate: ${points[0][0]}, ${points[0][1]}`).openPopup();
                     } else {
-                        // Multiple points - create polyline
                         layer = L.polyline(points, { 
                             color: 'red', 
                             weight: 4, 
                             opacity: 0.7 
                         }).addTo(map);
                         
-                        // Add markers for start and end points
                         L.marker(points[0]).addTo(map)
                             .bindPopup('Start point')
                             .openPopup();
@@ -301,10 +955,18 @@
                 }
             });
 
-            // Clear Map
             document.getElementById('clearMap').addEventListener('click', function() {
                 clearPreviousLayers();
+                drawnItems.clearLayers();
+                selectedArea = null;
+                document.getElementById('downloadArea').disabled = true;
+                document.getElementById('downloadOptions').style.display = 'none';
+                document.getElementById('clearSelection').style.display = 'none';
                 showStatus('Map cleared', 'success');
+            });
+
+            document.getElementById('elevationToggle').addEventListener('click', function() {
+                openElevationPanel();
             });
 
             console.log('All event listeners attached successfully');
