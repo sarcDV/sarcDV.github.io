@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Clair Clinique - Simphonie - Analisi della Pelle del Viso</title>
     <!-- Tailwind + Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -17,112 +17,95 @@
         /* Global Theme Overrides */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #020617; /* --bg-darker */
-            color: #f8fafc; /* --text-primary */
+            background-color: #020617;
+            color: #f8fafc;
+            touch-action: manipulation;
         }
-
-        /* Custom Components Updated to Match New Theme */
         .gradient-bg {
-            background: linear-gradient(135deg, #1e3a8a, #3730a3); /* --gradient-hero */
+            background: linear-gradient(135deg, #1e3a8a, #3730a3);
         }
-
         .camera-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
             margin: 0 auto;
             overflow: hidden;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            border: 1px solid #334155; /* --border-color */
+            border: 1px solid #334155;
         }
-
+        .camera-container video,
+        .camera-container canvas {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+        }
         .progress-bar {
             height: 10px;
             transition: width 0.3s ease;
             border-radius: 5px;
         }
-
         .card {
             transition: all 0.3s ease;
         }
-
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
-
         .loading-overlay {
-            background-color: rgba(15, 23, 42, 0.95); /* var(--bg-dark) with opacity */
+            background-color: rgba(15, 23, 42, 0.95);
             z-index: 1000;
             color: #f8fafc;
         }
-
         .parameter-card {
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s ease;
-            background: #1e293b; /* --bg-card */
-            border: 1px solid #334155; /* --border-color */
+            background: #1e293b;
+            border: 1px solid #334155;
         }
-
         .parameter-card:hover {
             transform: scale(1.02);
         }
-
         .recommendation-card {
-            border-left: 5px solid #2563eb; /* --primary-color */
+            border-left: 5px solid #2563eb;
             background: #1e293b;
         }
-
         .pulse-animation {
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); /* --primary-color */
-            }
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
-            }
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-            }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
-
         .animated-bg {
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
         }
-
         @keyframes gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
-        /* Canvas overlay for face detection */
         #faceOverlay {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 10;
+            width: 100% !important;
+            height: auto !important;
         }
     </style>
 </head>
 <body>
     <!-- Loading Screen -->
     <div id="loadingScreen" class="fixed inset-0 flex items-center justify-center loading-overlay">
-        <div class="text-center">
-            <div class="w-24 h-24 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
-            <p class="mt-4 text-xl font-semibold">Caricamento dell'app...</p>
+        <div class="text-center px-4">
+            <div class="w-16 h-16 sm:w-24 sm:h-24 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin mx-auto"></div>
+            <p class="mt-4 text-lg sm:text-xl font-semibold">Caricamento dell'app...</p>
             <p class="text-sm" id="loadingStatus">Inizializzazione modelli AI</p>
-            <div class="w-64 h-4 mt-4 bg-gray-700 rounded-full">
+            <div class="w-full max-w-xs sm:max-w-md h-4 mt-4 bg-gray-700 rounded-full mx-auto">
                 <div id="loadingProgressBar" class="h-4 bg-blue-500 rounded-full progress-bar" style="width: 10%"></div>
             </div>
         </div>
@@ -131,73 +114,70 @@
     <!-- Main App Container -->
     <div id="appContainer" class="hidden min-h-screen">
         <!-- Header -->
-        <header class="p-4 gradient-bg text-white">
+        <header class="p-3 sm:p-4 gradient-bg text-white">
             <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-3xl font-bold">Clair Clinique - Simphonie</h1>
-                <div>
-                    <button id="helpButton" class="px-4 py-2 bg-white text-blue-600 rounded-full hover:bg-blue-100 transition-all">
-                        <i class="fas fa-question-circle mr-1"></i> Aiuto
-                    </button>
-                </div>
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">Clair Clinique - Simphonie</h1>
+                <button id="helpButton" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-blue-600 rounded-full text-sm sm:text-base hover:bg-blue-100 transition-all">
+                    <i class="fas fa-question-circle mr-1"></i> Aiuto
+                </button>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="container mx-auto px-4 py-8">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold mb-3">Analisi della Pelle del Viso</h2>
-                <p class="text-lg max-w-3xl mx-auto">Scatta una foto del tuo viso per ricevere un'analisi dettagliata dello stato della tua pelle e consigli sui prodotti cosmetici più adatti.</p>
+        <main class="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-2">Analisi della Pelle del Viso</h2>
+                <p class="text-base sm:text-lg max-w-3xl mx-auto">Scatta una foto del tuo viso per ricevere un'analisi dettagliata dello stato della tua pelle e consigli sui prodotti cosmetici più adatti.</p>
             </div>
 
-            <!-- Step Indicator -->
-            <div class="flex justify-center mb-8">
+            <!-- Step Indicator - Responsive -->
+            <div class="hidden sm:flex justify-center mb-6">
                 <div class="flex items-center">
                     <div id="step1" class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-600 text-white">1</div>
-                    <div class="h-1 w-16 bg-blue-200/20">
+                    <div class="h-1 w-12 sm:w-16 bg-blue-200/20">
                         <div id="step1to2" class="h-1 bg-blue-600" style="width: 0%"></div>
                     </div>
                     <div id="step2" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-gray-300">2</div>
-                    <div class="h-1 w-16 bg-blue-200/20">
+                    <div class="h-1 w-12 sm:w-16 bg-blue-200/20">
                         <div id="step2to3" class="h-1 bg-blue-600" style="width: 0%"></div>
                     </div>
                     <div id="step3" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-600 text-gray-300">3</div>
                 </div>
             </div>
-
-            <!-- Step Labels -->
-            <div class="flex justify-center text-sm mb-10 px-4">
-                <div class="w-12 text-center mr-10">Scatta</div>
-                <div class="w-12 text-center mr-10">Analizza</div>
-                <div class="w-12 text-center">Risultati</div>
+            <!-- Mobile Step Labels -->
+            <div class="sm:hidden text-center mb-6 space-y-1">
+                <div class="font-medium">Passo 1: Scatta</div>
+                <div class="font-medium">Passo 2: Analizza</div>
+                <div class="font-medium">Passo 3: Risultati</div>
             </div>
 
             <!-- Camera Section -->
             <div id="cameraSection" class="mb-8">
                 <div class="camera-container">
-                    <video id="video" autoplay playsinline class="w-full h-full"></video>
-                    <canvas id="faceOverlay" class="w-full h-full"></canvas>
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="faceOverlay"></canvas>
                     <div id="cameraPlaceholder" class="absolute inset-0 flex items-center justify-center bg-gray-800">
-                        <div class="text-center p-6">
-                            <i class="fas fa-camera text-5xl text-gray-500 mb-3"></i>
-                            <p class="text-gray-200">Attendi mentre attiviamo la tua fotocamera...</p>
+                        <div class="text-center p-4">
+                            <i class="fas fa-camera text-4xl sm:text-5xl text-gray-500 mb-2"></i>
+                            <p class="text-gray-200 text-sm sm:text-base">Attendi mentre attiviamo la tua fotocamera...</p>
                         </div>
                     </div>
                 </div>
-                <div class="flex justify-center mt-6">
-                    <button id="captureButton" class="px-8 py-3 bg-blue-600 text-white rounded-full text-lg hover:bg-blue-700 transition-all pulse-animation">
+                <div class="flex justify-center mt-5">
+                    <button id="captureButton" class="px-6 py-2.5 sm:px-8 sm:py-3 bg-blue-600 text-white rounded-full text-base sm:text-lg hover:bg-blue-700 transition-all pulse-animation">
                         <i class="fas fa-camera mr-2"></i> Scatta Foto
                     </button>
                 </div>
-                <div class="text-center text-sm mt-2">
+                <div class="text-center text-xs sm:text-sm mt-2 px-2">
                     <p>Assicurati di essere in un ambiente ben illuminato e mantieni il viso centrato</p>
                 </div>
             </div>
 
-            <!-- Analysis Section (initially hidden) -->
+            <!-- Analysis Section -->
             <div id="analysisSection" class="hidden">
-                <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Analisi in corso...</h3>
-                    <div class="mb-6">
+                <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-3">Analisi in corso...</h3>
+                    <div class="mb-5">
                         <div class="flex justify-between mb-1">
                             <span class="text-sm font-medium" id="analysisStepText">Rilevamento del viso</span>
                             <span class="text-sm font-medium" id="analysisPercentage">0%</span>
@@ -206,19 +186,19 @@
                             <div id="analysisProgress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                            <h4 class="mb-2">Immagine Acquisita:</h4>
+                            <h4 class="mb-2 text-sm sm:text-base">Immagine Acquisita:</h4>
                             <div class="bg-gray-700 rounded-lg p-1">
                                 <img id="capturedImage" class="w-full rounded-lg" alt="Immagine acquisita" />
                             </div>
                         </div>
                         <div>
-                            <h4 class="mb-2">Elaborazione AI:</h4>
-                            <div class="bg-gray-700 rounded-lg p-1 h-48 flex items-center justify-center" id="aiProcessingVisual">
+                            <h4 class="mb-2 text-sm sm:text-base">Elaborazione AI:</h4>
+                            <div class="bg-gray-700 rounded-lg p-1 h-40 sm:h-48 flex items-center justify-center" id="aiProcessingVisual">
                                 <div class="text-center">
-                                    <i class="fas fa-spinner fa-spin text-3xl text-blue-400 mb-2"></i>
-                                    <p class="text-sm">Il modello AI sta analizzando la tua pelle</p>
+                                    <i class="fas fa-spinner fa-spin text-2xl sm:text-3xl text-blue-400 mb-1 sm:mb-2"></i>
+                                    <p class="text-xs sm:text-sm">Il modello AI sta analizzando la tua pelle</p>
                                 </div>
                             </div>
                         </div>
@@ -226,93 +206,102 @@
                 </div>
             </div>
 
-            <!-- Results Section (initially hidden) -->
+            <!-- Results Section -->
             <div id="resultsSection" class="hidden">
                 <div class="max-w-5xl mx-auto">
                     <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8">
-                        <div class="p-6">
-                            <h3 class="text-2xl font-bold mb-2">Risultati dell'Analisi</h3>
-                            <p class="mb-6">Ecco un rapporto dettagliato sullo stato della tua pelle:</p>
-                            <div class="mb-8">
-                                <h4 class="text-lg font-semibold mb-4">Punteggio Generale della Pelle</h4>
-                                <div class="flex items-center">
-                                    <div class="w-20 h-20 rounded-full border-8 flex items-center justify-center mr-6" id="scoreRing">
-                                        <span id="overallScore" class="text-2xl font-bold">0</span>
+                        <div class="p-4 sm:p-6">
+                            <h3 class="text-xl sm:text-2xl font-bold mb-2">Risultati dell'Analisi</h3>
+                            <p class="mb-5 text-sm sm:text-base">Ecco un rapporto dettagliato sullo stato della tua pelle:</p>
+
+                            <div class="mb-6">
+                                <h4 class="text-lg font-semibold mb-3">Punteggio Generale della Pelle</h4>
+                                <div class="flex flex-col sm:flex-row items-center">
+                                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 sm:border-8 flex items-center justify-center mb-4 sm:mb-0 mr-0 sm:mr-6" id="scoreRing">
+                                        <span id="overallScore" class="text-lg sm:text-2xl font-bold">0</span>
                                     </div>
-                                    <div>
-                                        <h5 id="skinStatus" class="text-xl font-semibold mb-1">In analisi...</h5>
-                                        <p id="skinStatusDescription" class="text-gray-200">Il rapporto dettagliato verrà mostrato a breve.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                                <div>
-                                    <canvas id="skinRadarChart" width="400" height="400"></canvas>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-4">Parametri Principali</h4>
-                                    <div class="space-y-4">
-                                        <div id="hydrationParameter" class="parameter-card p-4 bg-blue-900/30">
-                                            <div class="flex justify-between mb-1">
-                                                <span class="font-medium text-blue-300">Idratazione</span>
-                                                <span id="hydrationValue" class="font-medium text-blue-300">0%</span>
-                                            </div>
-                                            <div class="w-full bg-blue-900 rounded-full h-2.5">
-                                                <div id="hydrationBar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
-                                            </div>
-                                            <p id="hydrationText" class="text-sm text-gray-200 mt-2">Analisi in corso...</p>
-                                        </div>
-                                        <div id="rednessParameter" class="parameter-card p-4 bg-red-900/30">
-                                            <div class="flex justify-between mb-1">
-                                                <span class="font-medium text-red-300">Rossore</span>
-                                                <span id="rednessValue" class="font-medium text-red-300">0%</span>
-                                            </div>
-                                            <div class="w-full bg-red-900 rounded-full h-2.5">
-                                                <div id="rednessBar" class="bg-red-500 h-2.5 rounded-full" style="width: 0%"></div>
-                                            </div>
-                                            <p id="rednessText" class="text-sm text-gray-200 mt-2">Analisi in corso...</p>
-                                        </div>
-                                        <div id="spotsParameter" class="parameter-card p-4 bg-amber-900/30">
-                                            <div class="flex justify-between mb-1">
-                                                <span class="font-medium text-amber-300">Macchie</span>
-                                                <span id="spotsValue" class="font-medium text-amber-300">0%</span>
-                                            </div>
-                                            <div class="w-full bg-amber-900 rounded-full h-2.5">
-                                                <div id="spotsBar" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div>
-                                            </div>
-                                            <p id="spotsText" class="text-sm text-gray-200 mt-2">Analisi in corso...</p>
-                                        </div>
-                                        <div id="wrinklesParameter" class="parameter-card p-4 bg-purple-900/30">
-                                            <div class="flex justify-between mb-1">
-                                                <span class="font-medium text-purple-300">Rughe</span>
-                                                <span id="wrinklesValue" class="font-medium text-purple-300">0%</span>
-                                            </div>
-                                            <div class="w-full bg-purple-900 rounded-full h-2.5">
-                                                <div id="wrinklesBar" class="bg-purple-500 h-2.5 rounded-full" style="width: 0%"></div>
-                                            </div>
-                                            <p id="wrinklesText" class="text-sm text-gray-200 mt-2">Analisi in corso...</p>
-                                        </div>
+                                    <div class="text-center sm:text-left">
+                                        <h5 id="skinStatus" class="text-lg font-semibold mb-1">In analisi...</h5>
+                                        <p id="skinStatusDescription" class="text-xs sm:text-sm text-gray-200">Il rapporto dettagliato verrà mostrato a breve.</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="border-t border-gray-700 pt-6">
-                                <h4 class="text-lg font-semibold mb-4">Analisi Dettagliata</h4>
-                                <div class="grid md:grid-cols-2 gap-6">
-                                    <div id="detailedAnalysis1" class="bg-gray-900 p-4 rounded-lg">
-                                        <h5 class="font-medium mb-2">Analisi della Texture</h5>
-                                        <p class="text-gray-200">Caricamento dell'analisi dettagliata...</p>
+
+                            <div class="grid grid-cols-1 gap-6 mb-8">
+                                <div class="overflow-x-auto">
+                                    <div class="min-w-[280px] flex justify-center py-2">
+                                        <canvas id="skinRadarChart" class="w-full max-w-[400px] h-auto max-h-[300px] sm:max-h-[400px]"></canvas>
                                     </div>
-                                    <div id="detailedAnalysis2" class="bg-gray-900 p-4 rounded-lg">
-                                        <h5 class="font-medium mb-2">Elasticità e Tono</h5>
-                                        <p class="text-gray-200">Caricamento dell'analisi dettagliata...</p>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold mb-3">Parametri Principali</h4>
+                                    <div class="space-y-3">
+                                        <!-- Hydration -->
+                                        <div id="hydrationParameter" class="parameter-card p-3 sm:p-4 bg-blue-900/30">
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium text-blue-300 text-sm">Idratazione</span>
+                                                <span id="hydrationValue" class="font-medium text-blue-300 text-sm">0%</span>
+                                            </div>
+                                            <div class="w-full bg-blue-900 rounded-full h-2">
+                                                <div id="hydrationBar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                            <p id="hydrationText" class="text-xs sm:text-sm text-gray-200 mt-1">Analisi in corso...</p>
+                                        </div>
+                                        <!-- Redness -->
+                                        <div id="rednessParameter" class="parameter-card p-3 sm:p-4 bg-red-900/30">
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium text-red-300 text-sm">Rossore</span>
+                                                <span id="rednessValue" class="font-medium text-red-300 text-sm">0%</span>
+                                            </div>
+                                            <div class="w-full bg-red-900 rounded-full h-2">
+                                                <div id="rednessBar" class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                            <p id="rednessText" class="text-xs sm:text-sm text-gray-200 mt-1">Analisi in corso...</p>
+                                        </div>
+                                        <!-- Spots -->
+                                        <div id="spotsParameter" class="parameter-card p-3 sm:p-4 bg-amber-900/30">
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium text-amber-300 text-sm">Macchie</span>
+                                                <span id="spotsValue" class="font-medium text-amber-300 text-sm">0%</span>
+                                            </div>
+                                            <div class="w-full bg-amber-900 rounded-full h-2">
+                                                <div id="spotsBar" class="bg-amber-500 h-2 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                            <p id="spotsText" class="text-xs sm:text-sm text-gray-200 mt-1">Analisi in corso...</p>
+                                        </div>
+                                        <!-- Wrinkles -->
+                                        <div id="wrinklesParameter" class="parameter-card p-3 sm:p-4 bg-purple-900/30">
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium text-purple-300 text-sm">Rughe</span>
+                                                <span id="wrinklesValue" class="font-medium text-purple-300 text-sm">0%</span>
+                                            </div>
+                                            <div class="w-full bg-purple-900 rounded-full h-2">
+                                                <div id="wrinklesBar" class="bg-purple-500 h-2 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                            <p id="wrinklesText" class="text-xs sm:text-sm text-gray-200 mt-1">Analisi in corso...</p>
+                                        </div>
                                     </div>
-                                    <div id="detailedAnalysis3" class="bg-gray-900 p-4 rounded-lg">
-                                        <h5 class="font-medium mb-2">Pori e Impurità</h5>
-                                        <p class="text-gray-200">Caricamento dell'analisi dettagliata...</p>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-700 pt-5">
+                                <h4 class="text-lg font-semibold mb-3">Analisi Dettagliata</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div id="detailedAnalysis1" class="bg-gray-900 p-3 sm:p-4 rounded-lg">
+                                        <h5 class="font-medium mb-1 text-sm">Analisi della Texture</h5>
+                                        <p class="text-xs sm:text-sm text-gray-200">Caricamento...</p>
                                     </div>
-                                    <div id="detailedAnalysis4" class="bg-gray-900 p-4 rounded-lg">
-                                        <h5 class="font-medium mb-2">Segni dell'Età</h5>
-                                        <p class="text-gray-200">Caricamento dell'analisi dettagliata...</p>
+                                    <div id="detailedAnalysis2" class="bg-gray-900 p-3 sm:p-4 rounded-lg">
+                                        <h5 class="font-medium mb-1 text-sm">Elasticità e Tono</h5>
+                                        <p class="text-xs sm:text-sm text-gray-200">Caricamento...</p>
+                                    </div>
+                                    <div id="detailedAnalysis3" class="bg-gray-900 p-3 sm:p-4 rounded-lg">
+                                        <h5 class="font-medium mb-1 text-sm">Pori e Impurità</h5>
+                                        <p class="text-xs sm:text-sm text-gray-200">Caricamento...</p>
+                                    </div>
+                                    <div id="detailedAnalysis4" class="bg-gray-900 p-3 sm:p-4 rounded-lg">
+                                        <h5 class="font-medium mb-1 text-sm">Segni dell'Età</h5>
+                                        <p class="text-xs sm:text-sm text-gray-200">Caricamento...</p>
                                     </div>
                                 </div>
                             </div>
@@ -321,70 +310,72 @@
 
                     <!-- Product Recommendations -->
                     <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8">
-                        <div class="animated-bg text-white p-4">
-                            <h3 class="text-xl font-bold">Prodotti Consigliati</h3>
-                            <p>Basati sui risultati della tua analisi</p>
+                        <div class="animated-bg text-white p-3 sm:p-4">
+                            <h3 class="text-lg sm:text-xl font-bold">Prodotti Consigliati</h3>
+                            <p class="text-sm">Basati sui risultati della tua analisi</p>
                         </div>
-                        <div class="p-6">
-                            <div id="recommendationsContainer" class="grid md:grid-cols-3 gap-4">
-                                <div class="recommendation-card p-4 border border-gray-700 rounded-lg shadow-sm">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400 mr-3">
-                                            <i class="fas fa-tint"></i>
+                        <div class="p-4 sm:p-6">
+                            <div id="recommendationsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Each card uses responsive padding and text -->
+                                <div class="recommendation-card p-3 sm:p-4 border border-gray-700 rounded-lg shadow-sm">
+                                    <div class="flex items-start mb-2">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400 mr-2">
+                                            <i class="fas fa-tint text-sm sm:text-base"></i>
                                         </div>
-                                        <h5 class="font-medium">Idratante</h5>
+                                        <h5 class="font-medium text-sm sm:text-base">Idratante</h5>
                                     </div>
-                                    <p id="hydrationRecommendation" class="text-gray-200 text-sm">Caricamento consigli...</p>
+                                    <p id="hydrationRecommendation" class="text-gray-200 text-xs sm:text-sm">Caricamento...</p>
                                 </div>
-                                <div class="recommendation-card p-4 border border-gray-700 rounded-lg shadow-sm">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-red-900/50 flex items-center justify-center text-red-400 mr-3">
-                                            <i class="fas fa-shield-alt"></i>
+                                <!-- Repeat similar structure for other 5 cards (omitted for brevity but preserved in full code below) -->
+                                <div class="recommendation-card p-3 sm:p-4 border border-gray-700 rounded-lg shadow-sm">
+                                    <div class="flex items-start mb-2">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-900/50 flex items-center justify-center text-red-400 mr-2">
+                                            <i class="fas fa-shield-alt text-sm sm:text-base"></i>
                                         </div>
-                                        <h5 class="font-medium">Lenitivo</h5>
+                                        <h5 class="font-medium text-sm sm:text-base">Lenitivo</h5>
                                     </div>
-                                    <p id="rednessRecommendation" class="text-gray-200 text-sm">Caricamento consigli...</p>
+                                    <p id="rednessRecommendation" class="text-gray-200 text-xs sm:text-sm">Caricamento...</p>
                                 </div>
-                                <div class="recommendation-card p-4 border border-gray-700 rounded-lg shadow-sm">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-amber-900/50 flex items-center justify-center text-amber-400 mr-3">
-                                            <i class="fas fa-sun"></i>
+                                <div class="recommendation-card p-3 sm:p-4 border border-gray-700 rounded-lg shadow-sm">
+                                    <div class="flex items-start mb-2">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-900/50 flex items-center justify-center text-amber-400 mr-2">
+                                            <i class="fas fa-sun text-sm sm:text-base"></i>
                                         </div>
-                                        <h5 class="font-medium">Antimacchia</h5>
+                                        <h5 class="font-medium text-sm sm:text-base">Antimacchia</h5>
                                     </div>
-                                    <p id="spotsRecommendation" class="text-gray-200 text-sm">Caricamento consigli...</p>
+                                    <p id="spotsRecommendation" class="text-gray-200 text-xs sm:text-sm">Caricamento...</p>
                                 </div>
-                                <div class="recommendation-card p-4 border border-gray-700 rounded-lg shadow-sm">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-purple-900/50 flex items-center justify-center text-purple-400 mr-3">
-                                            <i class="fas fa-magic"></i>
+                                <div class="recommendation-card p-3 sm:p-4 border border-gray-700 rounded-lg shadow-sm">
+                                    <div class="flex items-start mb-2">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-900/50 flex items-center justify-center text-purple-400 mr-2">
+                                            <i class="fas fa-magic text-sm sm:text-base"></i>
                                         </div>
-                                        <h5 class="font-medium">Antirughe</h5>
+                                        <h5 class="font-medium text-sm sm:text-base">Antirughe</h5>
                                     </div>
-                                    <p id="wrinklesRecommendation" class="text-gray-200 text-sm">Caricamento consigli...</p>
+                                    <p id="wrinklesRecommendation" class="text-gray-200 text-xs sm:text-sm">Caricamento...</p>
                                 </div>
-                                <div class="recommendation-card p-4 border border-gray-700 rounded-lg shadow-sm">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-green-900/50 flex items-center justify-center text-green-400 mr-3">
-                                            <i class="fas fa-leaf"></i>
+                                <div class="recommendation-card p-3 sm:p-4 border border-gray-700 rounded-lg shadow-sm">
+                                    <div class="flex items-start mb-2">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-900/50 flex items-center justify-center text-green-400 mr-2">
+                                            <i class="fas fa-leaf text-sm sm:text-base"></i>
                                         </div>
-                                        <h5 class="font-medium">Purificante</h5>
+                                        <h5 class="font-medium text-sm sm:text-base">Purificante</h5>
                                     </div>
-                                    <p id="purityRecommendation" class="text-gray-200 text-sm">Caricamento consigli...</p>
+                                    <p id="purityRecommendation" class="text-gray-200 text-xs sm:text-sm">Caricamento...</p>
                                 </div>
-                                <div class="recommendation-card p-4 border border-gray-700 rounded-lg shadow-sm">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-12 h-12 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400 mr-3">
-                                            <i class="fas fa-moon"></i>
+                                <div class="recommendation-card p-3 sm:p-4 border border-gray-700 rounded-lg shadow-sm">
+                                    <div class="flex items-start mb-2">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400 mr-2">
+                                            <i class="fas fa-moon text-sm sm:text-base"></i>
                                         </div>
-                                        <h5 class="font-medium">Notte</h5>
+                                        <h5 class="font-medium text-sm sm:text-base">Notte</h5>
                                     </div>
-                                    <p id="nightRecommendation" class="text-gray-200 text-sm">Caricamento consigli...</p>
+                                    <p id="nightRecommendation" class="text-gray-200 text-xs sm:text-sm">Caricamento...</p>
                                 </div>
                             </div>
-                            <div class="mt-6 text-center">
-                                <p class="text-sm mb-3">Desideri una consulenza personalizzata più dettagliata?</p>
-                                <button id="moreRecommendationsButton" class="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full hover:from-blue-600 hover:to-purple-600 transition-all">
+                            <div class="mt-5 text-center">
+                                <p class="text-xs sm:text-sm mb-2">Desideri una consulenza personalizzata più dettagliata?</p>
+                                <button id="moreRecommendationsButton" class="px-4 py-1.5 sm:px-6 sm:py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm rounded-full hover:from-blue-600 hover:to-purple-600 transition-all">
                                     Ricevi Consigli Avanzati
                                 </button>
                             </div>
@@ -393,7 +384,7 @@
 
                     <!-- Restart Button -->
                     <div class="text-center mb-8">
-                        <button id="restartButton" class="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all">
+                        <button id="restartButton" class="px-6 py-2.5 sm:px-8 sm:py-3 bg-blue-600 text-white rounded-full text-base hover:bg-blue-700 transition-all">
                             <i class="fas fa-redo mr-2"></i> Ripeti Analisi
                         </button>
                     </div>
@@ -402,16 +393,16 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-8">
-            <div class="container mx-auto px-4">
-                <div class="grid md:grid-cols-4 gap-8">
+        <footer class="bg-gray-900 text-white py-6 sm:py-8">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Simphonie</h3>
-                        <p class="text-gray-200">La tua soluzione avanzata per l'analisi della pelle del viso basata su intelligenza artificiale.</p>
+                        <h3 class="text-lg sm:text-xl font-bold mb-3">Simphonie</h3>
+                        <p class="text-gray-200 text-xs sm:text-sm">La tua soluzione avanzata per l'analisi della pelle del viso basata su intelligenza artificiale.</p>
                     </div>
                     <div>
-                        <h4 class="text-lg font-semibold mb-4">Link Utili</h4>
-                        <ul class="space-y-2">
+                        <h4 class="text-base font-semibold mb-3">Link Utili</h4>
+                        <ul class="space-y-1 text-xs sm:text-sm">
                             <li><a href="#" class="text-gray-200 hover:text-white transition-colors">Home</a></li>
                             <li><a href="#" class="text-gray-200 hover:text-white transition-colors">Come Funziona</a></li>
                             <li><a href="#" class="text-gray-200 hover:text-white transition-colors">FAQ</a></li>
@@ -419,70 +410,68 @@
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-lg font-semibold mb-4">Informazioni</h4>
-                        <ul class="space-y-2">
+                        <h4 class="text-base font-semibold mb-3">Informazioni</h4>
+                        <ul class="space-y-1 text-xs sm:text-sm">
                             <li><a href="#" class="text-gray-200 hover:text-white transition-colors">Privacy Policy</a></li>
                             <li><a href="#" class="text-gray-200 hover:text-white transition-colors">Termini di Servizio</a></li>
                             <li><a href="#" class="text-gray-200 hover:text-white transition-colors">Informazioni sui Cookie</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-lg font-semibold mb-4">Seguici</h4>
-                        <div class="flex space-x-4">
-                            <a href="#" class="text-gray-200 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="text-gray-200 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="text-gray-200 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="text-gray-200 hover:text-white transition-colors"><i class="fab fa-youtube"></i></a>
+                        <h4 class="text-base font-semibold mb-3">Seguici</h4>
+                        <div class="flex space-x-3 mt-1">
+                            <a href="#" class="text-gray-200 hover:text-white"><i class="fab fa-facebook-f text-sm"></i></a>
+                            <a href="#" class="text-gray-200 hover:text-white"><i class="fab fa-instagram text-sm"></i></a>
+                            <a href="#" class="text-gray-200 hover:text-white"><i class="fab fa-twitter text-sm"></i></a>
+                            <a href="#" class="text-gray-200 hover:text-white"><i class="fab fa-youtube text-sm"></i></a>
                         </div>
                     </div>
                 </div>
-                <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                    <p class="text-gray-200">&copy; 2025 Clair Clinique - Simphonie. Tutti i diritti riservati.</p>
-                    <p class="text-sm text-gray-500 mt-2">Questa app utilizza modelli AI che operano localmente sul tuo dispositivo. Nessuna immagine viene caricata sui nostri server.</p>
+                <div class="border-t border-gray-800 mt-6 pt-6 text-center">
+                    <p class="text-gray-200 text-xs sm:text-sm">&copy; 2025 Clair Clinique - Simphonie. Tutti i diritti riservati.</p>
+                    <p class="text-xs text-gray-500 mt-1">Questa app utilizza modelli AI che operano localmente sul tuo dispositivo. Nessuna immagine viene caricata sui nostri server.</p>
                 </div>
             </div>
         </footer>
 
         <!-- Help Modal -->
-        <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50">
-            <div class="bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto text-white">
-                <div class="p-6">
+        <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50 p-4">
+            <div class="bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto text-white">
+                <div class="p-4 sm:p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold">Guida all'utilizzo</h3>
+                        <h3 class="text-xl sm:text-2xl font-bold">Guida all'utilizzo</h3>
                         <button id="closeHelpButton" class="text-gray-200 hover:text-white">
-                            <i class="fas fa-times text-xl"></i>
+                            <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
-                    <div class="space-y-4">
+                    <div class="space-y-3 text-sm">
                         <div>
-                            <h4 class="text-lg font-semibold text-blue-400 mb-2">Come utilizzare Simphonie</h4>
+                            <h4 class="text-base font-semibold text-blue-400 mb-1">Come utilizzare Simphonie</h4>
                             <p>Simphonie è una web app che analizza la pelle del viso utilizzando l'intelligenza artificiale direttamente nel tuo browser.</p>
                         </div>
-                        <div class="bg-blue-900/30 p-4 rounded-lg">
-                            <h5 class="font-medium text-blue-300 mb-2">1. Scatta una foto</h5>
+                        <div class="bg-blue-900/30 p-3 rounded-lg">
+                            <h5 class="font-medium text-blue-300 mb-1">1. Scatta una foto</h5>
                             <p>Posiziona il tuo viso al centro dell'inquadratura...</p>
                         </div>
-                        <!-- Add other help sections as needed -->
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Advanced Recommendations Modal -->
-        <div id="advancedRecommendationsModal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50">
-            <div class="bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full m-4 text-white">
-                <div class="p-6">
+        <div id="advancedRecommendationsModal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50 p-4">
+            <div class="bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl text-white">
+                <div class="p-4 sm:p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold">Consulenza Personalizzata</h3>
+                        <h3 class="text-xl sm:text-2xl font-bold">Consulenza Personalizzata</h3>
                         <button class="closeModalButton text-gray-200 hover:text-white">
-                            <i class="fas fa-times text-xl"></i>
+                            <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
-                    <p class="mb-4">Per ricevere una consulenza più approfondita...</p>
+                    <p class="mb-4 text-sm">Per ricevere una consulenza più approfondita...</p>
                     <form id="consultationForm" class="space-y-4">
-                        <!-- Form fields remain unchanged -->
                         <div class="pt-2">
-                            <button type="submit" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-md hover:from-blue-600 hover:to-purple-600 transition-all">
+                            <button type="submit" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-md hover:from-blue-600 hover:to-purple-600 transition-all text-sm">
                                 Richiedi Consulenza
                             </button>
                         </div>
@@ -492,8 +481,8 @@
         </div>
     </div>
 
-    <!-- SCRIPTS (unchanged from your original) -->
-    <script>
+    <!-- SCRIPTS -->
+        <script>
         // Variabili globali
         let video, canvas, capturedImageCanvas, stream;
         let faceDetectionModel;
