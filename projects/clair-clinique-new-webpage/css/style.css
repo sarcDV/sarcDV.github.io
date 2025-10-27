@@ -344,6 +344,14 @@
             padding: 0 10px;
         }
 
+        /* Mobile: Always show play button on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .media-card .media-play-overlay {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+
         .media-card {
             background: var(--bg-card);
             border-radius: 20px;
