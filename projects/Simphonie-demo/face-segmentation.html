@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Face Segmentation - MediaPipe</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --dark-bg: #121212;
+            --dark-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .card {
+            background-color: var(--dark-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #output_canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .results-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .segmentation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .segmentation-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .result-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .result-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-box h3 {
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            border: 2px solid;
+            aspect-ratio: 4/5;
+        }
+
+        .analysis-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+
+        .canvas-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            background: #000;
+            aspect-ratio: 4/5;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--primary);
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            text-align: center;
+            background: rgba(33, 150, 243, 0.2);
+            border-left: 4px solid #2196f3;
+        }
+
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4caf50;
+        }
+
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border-left-color: #f44336;
+        }
+
+        .acquisition-label {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .instructions {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .spectrum-thermal { border-color: #ff4444; }
+        .spectrum-uv { border-color: #9c27b0; }
+        .spectrum-blue { border-color: #2196f3; }
+        .spectrum-original { border-color: #4caf50; }
+        .spectrum-eyes { border-color: #FFD700; }
+        .spectrum-mouth { border-color: #FF4500; }
+        .spectrum-skin { border-color: #4CAF50; }
+        .spectrum-segmentation { border-color: #4db6ac; }
+
+        .upload-section {
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced MediaPipe Face Segmentation</h1>
+            <p style="color: var(--text-secondary);">Real-time facial analysis with 468 landmark detection</p>
+        </header>
+
+        <div class="card">
+            <h2 style="text-align: center; margin-bottom: 20px;">Live Face Detection</h2>
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="output_canvas" class="output_canvas"></canvas>
+            </div>
+            
+            <div class="controls">
+                <button id="capture-btn" class="btn btn-primary" disabled>
+                    📸 Capture & Segment
+                </button>
+                <button id="download-btn" class="btn btn-secondary">
+                    💾 Download All
+                </button>
+            </div>
+            
+            <!-- Image Upload Section -->
+            <!--
+            <div class="upload-section">
+                <p style="color: var(--text-secondary); margin-bottom: 8px;">Or upload an image:</p>
+                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                <button id="upload-btn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;">
+                    📤 Upload Image
+                </button>
+            </div>
+            -->
+            
+            <div class="instructions">
+                <p><strong>How to use:</strong></p>
+                <p>1. Allow camera access when prompted OR upload an image</p>
+                <p>2. MediaPipe will detect your face with 468 landmarks</p>
+                <p>3. Click "Capture & Segment" for precise facial analysis</p>
+                <p>4. View extracted facial regions below</p>
+            </div>
+            
+            <div id="status" class="status">
+                Loading MediaPipe Face Mesh...
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="text-align: center; margin-bottom: 20px;">Spectral Analysis Results</h2>
+            <div class="results-grid">
+                <div class="result-box">
+                    <h3>🔬 Original Face</h3>
+                    <div class="canvas-container spectrum-original">
+                        <canvas id="original-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="original-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">VISIBLE SPECTRUM</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>🔥 Thermal Imaging</h3>
+                    <div class="canvas-container spectrum-thermal">
+                        <canvas id="thermal-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="thermal-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">INFRARED SPECTRUM</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>☀️ UV Analysis</h3>
+                    <div class="canvas-container spectrum-uv">
+                        <canvas id="uv-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="uv-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">ULTRAVIOLET SPECTRUM</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>💙 Blue Light</h3>
+                    <div class="canvas-container spectrum-blue">
+                        <canvas id="blue-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="blue-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">BLUE LIGHT SPECTRUM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="text-align: center; margin-bottom: 20px;">MediaPipe Facial Regions</h2>
+            <div class="segmentation-grid">
+                <div class="result-box">
+                    <h3>👀 Left Eye</h3>
+                    <div class="canvas-container spectrum-eyes">
+                        <canvas id="left-eye-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="left-eye-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">CROPPED REGION</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>👀 Right Eye</h3>
+                    <div class="canvas-container spectrum-eyes">
+                        <canvas id="right-eye-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="right-eye-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">CROPPED REGION</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>👄 Mouth</h3>
+                    <div class="canvas-container spectrum-mouth">
+                        <canvas id="mouth-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="mouth-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">CROPPED REGION</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>👤 Face</h3>
+                    <div class="canvas-container spectrum-skin">
+                        <canvas id="face-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="face-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">CROPPED REGION</div>
+                    </div>
+                </div>
+                
+                <div class="result-box">
+                    <h3>🧴 Skin Only</h3>
+                    <div class="canvas-container spectrum-skin">
+                        <canvas id="skin-canvas" class="analysis-canvas"></canvas>
+                        <div class="canvas-placeholder" id="skin-placeholder">
+                            Click "Capture & Segment"
+                        </div>
+                        <div class="acquisition-label">SKIN MASK</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Define essential MediaPipe face mesh connections
+        const FACEMESH_RIGHT_EYE = [[33,7],[7,163],[163,144],[144,145],[145,153],[153,154],[154,155],
+          [155,133],[133,173],[173,157],[157,158],[158,159],[159,160],[160,161],[161,246],[246,33]];
+
+        const FACEMESH_LEFT_EYE = [[263,249],[249,390],[390,373],[373,374],[374,380],[380,381],[381,382],
+          [382,362],[362,398],[398,384],[384,385],[385,386],[386,387],[387,388],[388,466],[466,263]];
+
+        const FACEMESH_LIPS = [[61,146],[146,91],[91,181],[181,84],[84,17],[17,314],[314,405],[405,320],
+          [320,308],[308,291],[291,375],[375,321],[321,402],[402,318],[318,319],[319,320],
+          [78,95],[95,88],[88,178],[178,87],[87,14],[14,317],[317,402],[402,318],[318,324],
+          [324,308],[78,191],[191,80],[80,81],[81,82],[82,13],[13,312],[312,311],[311,310],[310,415]];
+
+        const FACEMESH_FACE_OVAL = [[10,338],[338,297],[297,332],[332,284],[284,251],[251,389],[389,356],
+          [356,454],[454,323],[323,361],[361,288],[288,397],[397,365],[365,379],[379,378],[378,400],
+          [400,377],[377,152],[152,148],[148,176],[176,149],[149,150],[150,136],[136,172],[172,58],
+          [58,132],[132,93],[93,234],[234,127],[127,162],[162,21],[21,54],[54,103],[103,67],[67,109],[109,10]];
+
+        const FACEMESH_TESSELATION = [];
+
+        // DOM elements
+        const video = document.getElementById('video');
+        const outputCanvas = document.getElementById('output_canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const statusEl = document.getElementById('status');
+        const imageUpload = document.getElementById('image-upload');
+        const uploadBtn = document.getElementById('upload-btn');
+        
+        // Canvas elements
+        const originalCanvas = document.getElementById('original-canvas');
+        const thermalCanvas = document.getElementById('thermal-canvas');
+        const uvCanvas = document.getElementById('uv-canvas');
+        const blueCanvas = document.getElementById('blue-canvas');
+        const leftEyeCanvas = document.getElementById('left-eye-canvas');
+        const rightEyeCanvas = document.getElementById('right-eye-canvas');
+        const mouthCanvas = document.getElementById('mouth-canvas');
+        const faceCanvas = document.getElementById('face-canvas');
+        const skinCanvas = document.getElementById('skin-canvas'); // New skin canvas
+        
+        // Placeholders
+        const placeholders = [
+            'original-placeholder', 'thermal-placeholder', 'uv-placeholder', 'blue-placeholder',
+            'left-eye-placeholder', 'right-eye-placeholder', 'mouth-placeholder', 'face-placeholder',
+            'skin-placeholder' // Added skin placeholder
+        ].map(id => document.getElementById(id));
+
+        // MediaPipe variables
+        let faceMesh = null;
+        let camera = null;
+        let currentLandmarks = null;
+        let currentImage = null; // Holds uploaded image
+
+        // Landmark indices for cropping
+        const LEFT_EYE_INDICES = [33, 7, 163, 144, 145, 153, 154, 155, 133];
+        const RIGHT_EYE_INDICES = [362, 382, 381, 380, 374, 373, 390, 249, 263];
+        const MOUTH_INDICES = [61, 146, 91, 181, 84, 17, 314, 405, 320, 308];
+        const FACE_INDICES = [10, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377];
+
+        // Initialize MediaPipe Face Mesh
+        async function initMediaPipe() {
+            try {
+                updateStatus('Loading MediaPipe Face Mesh model...', 'info');
+                
+                faceMesh = new FaceMesh({
+                    locateFile: (file) => {
+                        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+                    }
+                });
+
+                faceMesh.setOptions({
+                    maxNumFaces: 1,
+                    refineLandmarks: true,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                faceMesh.onResults(onResults);
+
+                // Initialize camera
+                camera = new Camera(video, {
+                    onFrame: async () => {
+                        if (!currentImage) { // Only process video if no image uploaded
+                            await faceMesh.send({ image: video });
+                        }
+                    },
+                    width: 640,
+                    height: 480
+                });
+
+                await camera.start();
+                updateStatus('MediaPipe Face Mesh active! Detecting 468 facial landmarks...', 'success');
+                captureBtn.disabled = false;
+
+            } catch (error) {
+                console.error('MediaPipe initialization error:', error);
+                updateStatus('Error loading MediaPipe: ' + error.message, 'error');
+            }
+        }
+
+        // Handle MediaPipe results
+        function onResults(results) {
+            const source = currentImage || video;
+            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
+            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            
+            const canvasCtx = outputCanvas.getContext('2d');
+            outputCanvas.width = sourceWidth;
+            outputCanvas.height = sourceHeight;
+            
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, outputCanvas.width, outputCanvas.height);
+            canvasCtx.drawImage(source, 0, 0, outputCanvas.width, outputCanvas.height);
+            
+            if (results.multiFaceLandmarks) {
+                for (const landmarks of results.multiFaceLandmarks) {
+                    currentLandmarks = landmarks;
+                    
+                    // Draw face mesh with different colors for different features
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_TESSELATION, 
+                                 { color: '#C0C0C070', lineWidth: 1 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, 
+                                 { color: '#FF3030', lineWidth: 2 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYEBROW, 
+                                 { color: '#FF3030', lineWidth: 2 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, 
+                                 { color: '#30FF30', lineWidth: 2 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYEBROW, 
+                                 { color: '#30FF30', lineWidth: 2 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, 
+                                 { color: '#E0E0E0', lineWidth: 3 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_LIPS, 
+                                 { color: '#E0E0E0', lineWidth: 2 });
+                    
+                    // Draw landmarks as points
+                    drawLandmarks(canvasCtx, landmarks, {
+                        color: '#FFD700',
+                        lineWidth: 1,
+                        radius: 1
+                    });
+                }
+            }
+            canvasCtx.restore();
+        }
+
+        // Handle image upload
+        function handleImageUpload() {
+            const file = imageUpload.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Disable camera if it's running
+                    if (camera) {
+                        camera.stop();
+                    }
+                    
+                    // Set the uploaded image as current source
+                    currentImage = img;
+                    
+                    // Draw image to output canvas
+                    outputCanvas.width = img.width;
+                    outputCanvas.height = img.height;
+                    const ctx = outputCanvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    
+                    // Process with MediaPipe
+                    processImageWithMediaPipe(img);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Process uploaded image with MediaPipe
+        async function processImageWithMediaPipe(img) {
+            try {
+                // Create a temporary canvas to send to MediaPipe
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = img.width;
+                tempCanvas.height = img.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.drawImage(img, 0, 0);
+                
+                // Send to MediaPipe
+                const results = await faceMesh.send({ image: tempCanvas });
+                onResults(results);
+            } catch (error) {
+                console.error('Error processing uploaded image:', error);
+                updateStatus('Error processing image: ' + error.message, 'error');
+            }
+        }
+
+        // Capture and process with MediaPipe landmarks
+        function captureAndSegment() {
+            if (!currentLandmarks) {
+                updateStatus('No face detected! Please ensure your face is visible.', 'error');
+                return;
+            }
+
+            hideAllPlaceholders();
+            
+            // Get face bounding box from landmarks
+            const bbox = getFaceBoundingBox(currentLandmarks);
+            
+            // Process all analyses
+            processOriginal(bbox);
+            processThermal(bbox);
+            processUV(bbox);
+            processBlueLight(bbox);
+            processRegions();
+            processSkinOnly(bbox); // Added skin processing
+            
+            updateStatus('MediaPipe segmentation complete! 468 landmarks processed.', 'success');
+        }
+
+        function hideAllPlaceholders() {
+            placeholders.forEach(placeholder => placeholder.style.display = 'none');
+        }
+
+        function getFaceBoundingBox(landmarks) {
+            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
+            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            
+            landmarks.forEach(landmark => {
+                const x = landmark.x * sourceWidth;
+                const y = landmark.y * sourceHeight;
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
+            });
+            
+            const padding = 20;
+            const width = maxX - minX + padding * 2;
+            const height = maxY - minY + padding * 2;
+            const x = Math.max(0, minX - padding);
+            const y = Math.max(0, minY - padding);
+            
+            return { x, y, width, height, faceWidth: width, faceHeight: height };
+        }
+
+        function processOriginal(bbox) {
+            const ctx = originalCanvas.getContext('2d');
+            drawBoundingBoxToCanvas(ctx, bbox);
+        }
+
+        function processThermal(bbox) {
+            const ctx = thermalCanvas.getContext('2d');
+            drawBoundingBoxToCanvas(ctx, bbox);
+            applyThermalEffect(ctx, bbox.faceWidth, bbox.faceHeight);
+        }
+
+        function processUV(bbox) {
+            const ctx = uvCanvas.getContext('2d');
+            drawBoundingBoxToCanvas(ctx, bbox);
+            applyUVEffect(ctx, bbox.faceWidth, bbox.faceHeight);
+        }
+
+        function processBlueLight(bbox) {
+            const ctx = blueCanvas.getContext('2d');
+            drawBoundingBoxToCanvas(ctx, bbox);
+            applyBlueLightEffect(ctx, bbox.faceWidth, bbox.faceHeight);
+        }
+
+        function drawBoundingBoxToCanvas(ctx, bbox) {
+            const { x, y, width, height, faceWidth, faceHeight } = bbox;
+            ctx.canvas.width = faceWidth;
+            ctx.canvas.height = faceHeight;
+            
+            const source = currentImage || video;
+            ctx.drawImage(source, x, y, width, height, 0, 0, faceWidth, faceHeight);
+        }
+
+        function processRegions() {
+            const leftEyeBounds = getRegionBounds(LEFT_EYE_INDICES);
+            const rightEyeBounds = getRegionBounds(RIGHT_EYE_INDICES);
+            const mouthBounds = getRegionBounds(MOUTH_INDICES);
+            const faceBounds = getRegionBounds(FACE_INDICES);
+            
+            drawCroppedRegion(leftEyeCanvas, leftEyeBounds);
+            drawCroppedRegion(rightEyeCanvas, rightEyeBounds);
+            drawCroppedRegion(mouthCanvas, mouthBounds);
+            drawCroppedRegion(faceCanvas, faceBounds);
+        }
+
+        function getRegionBounds(indices) {
+            if (!currentLandmarks) return null;
+            
+            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
+            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            
+            for (const i of indices) {
+                const lm = currentLandmarks[i];
+                if (lm) {
+                    const x = lm.x * sourceWidth;
+                    const y = lm.y * sourceHeight;
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+            
+            if (minX === Infinity) return null;
+            
+            const regionWidth = maxX - minX;
+            const regionHeight = maxY - minY;
+            const padding = Math.max(regionWidth * 0.25, regionHeight * 0.25, 20);
+            
+            return {
+                x: Math.max(0, minX - padding),
+                y: Math.max(0, minY - padding),
+                width: regionWidth + padding * 2,
+                height: regionHeight + padding * 2
+            };
+        }
+
+        function drawCroppedRegion(canvas, region) {
+            if (!region) return;
+            
+            const ctx = canvas.getContext('2d');
+            const canvasSize = 200;
+            canvas.width = canvasSize;
+            canvas.height = canvasSize;
+            
+            const regionAspectRatio = region.width / region.height;
+            const canvasAspectRatio = 1;
+            
+            let drawWidth, drawHeight, offsetX, offsetY;
+            
+            if (regionAspectRatio > canvasAspectRatio) {
+                drawWidth = canvasSize;
+                drawHeight = canvasSize / regionAspectRatio;
+                offsetX = 0;
+                offsetY = (canvasSize - drawHeight) / 2;
+            } else {
+                drawHeight = canvasSize;
+                drawWidth = canvasSize * regionAspectRatio;
+                offsetX = (canvasSize - drawWidth) / 2;
+                offsetY = 0;
+            }
+            
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvasSize, canvasSize);
+            
+            const source = currentImage || video;
+            ctx.drawImage(
+                source,
+                region.x, region.y, region.width, region.height,
+                offsetX, offsetY, drawWidth, drawHeight
+            );
+        }
+
+        // ✅ SKIN-ONLY PROCESSING FUNCTIONS
+        function processSkinOnly(bbox) {
+            const { faceWidth, faceHeight } = bbox;
+            const ctx = skinCanvas.getContext('2d');
+            ctx.canvas.width = faceWidth;
+            ctx.canvas.height = faceHeight;
+            
+            // Get the source image
+            const source = currentImage || video;
+            
+            // Draw the original cropped face
+            ctx.drawImage(source, bbox.x, bbox.y, bbox.width, bbox.height, 0, 0, faceWidth, faceHeight);
+            
+            // Create skin mask by starting with face and removing eyes/mouth
+            const skinMask = createSkinMask(bbox);
+            
+            // Apply the mask
+            const imageData = ctx.getImageData(0, 0, faceWidth, faceHeight);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const pixelIndex = i / 4;
+                if (!skinMask[pixelIndex]) {
+                    // Make non-skin areas black
+                    data[i] = 0;     // R
+                    data[i + 1] = 0; // G  
+                    data[i + 2] = 0; // B
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function createSkinMask(bbox) {
+            const { faceWidth, faceHeight } = bbox;
+            const mask = new Array(faceWidth * faceHeight).fill(false);
+            
+            // First, mark the entire face area as potential skin
+            const faceBounds = getRegionBounds(FACE_INDICES);
+            if (!faceBounds) return mask;
+            
+            // Convert face bounds to cropped coordinates
+            const faceMinX = Math.max(0, faceBounds.x - bbox.x);
+            const faceMinY = Math.max(0, faceBounds.y - bbox.y);
+            const faceMaxX = Math.min(faceWidth, faceMinX + faceBounds.width);
+            const faceMaxY = Math.min(faceHeight, faceMinY + faceBounds.height);
+            
+            // Fill the face area
+            for (let y = Math.floor(faceMinY); y < Math.ceil(faceMaxY); y++) {
+                for (let x = Math.floor(faceMinX); x < Math.ceil(faceMaxX); x++) {
+                    if (x >= 0 && x < faceWidth && y >= 0 && y < faceHeight) {
+                        mask[y * faceWidth + x] = true;
+                    }
+                }
+            }
+            
+            // Now remove eye regions
+            removeRegionFromMask(LEFT_EYE_INDICES, mask, bbox);
+            removeRegionFromMask(RIGHT_EYE_INDICES, mask, bbox);
+            
+            // Remove mouth region
+            removeRegionFromMask(MOUTH_INDICES, mask, bbox);
+            
+            return mask;
+        }
+
+        function removeRegionFromMask(landmarkIndices, mask, bbox) {
+            const { faceWidth, faceHeight } = bbox;
+            const regionBounds = getRegionBoundsForMask(landmarkIndices, bbox);
+            if (!regionBounds) return;
+            
+            // Convert to cropped coordinates
+            const minX = Math.max(0, Math.floor(regionBounds.x - bbox.x));
+            const minY = Math.max(0, Math.floor(regionBounds.y - bbox.y));
+            const maxX = Math.min(faceWidth, Math.ceil(minX + regionBounds.width));
+            const maxY = Math.min(faceHeight, Math.ceil(minY + regionBounds.height));
+            
+            // Remove this region from mask
+            for (let y = minY; y < maxY; y++) {
+                for (let x = minX; x < maxX; x++) {
+                    if (x >= 0 && x < faceWidth && y >= 0 && y < faceHeight) {
+                        mask[y * faceWidth + x] = false;
+                    }
+                }
+            }
+        }
+
+        function getRegionBoundsForMask(indices, bbox) {
+            if (!currentLandmarks) return null;
+            
+            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
+            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            
+            for (const i of indices) {
+                const lm = currentLandmarks[i];
+                if (lm) {
+                    const x = lm.x * sourceWidth;
+                    const y = lm.y * sourceHeight;
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+            
+            if (minX === Infinity) return null;
+            
+            // Use smaller padding for removal (we want to be precise)
+            const regionWidth = maxX - minX;
+            const regionHeight = maxY - minY;
+            const padding = Math.max(regionWidth * 0.15, regionHeight * 0.15, 10);
+            
+            return {
+                x: Math.max(0, minX - padding),
+                y: Math.max(0, minY - padding),
+                width: regionWidth + padding * 2,
+                height: regionHeight + padding * 2
+            };
+        }
+
+        // Existing effect functions
+        function applyThermalEffect(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i + 1], b = data[i + 2];
+                const intensity = (r + g + b) / 3;
+                if (intensity > 200) { data[i] = 255; data[i + 1] = 255 - (intensity - 200) * 2; data[i + 2] = 0; }
+                else if (intensity > 150) { data[i] = 255; data[i + 1] = 165; data[i + 2] = 0; }
+                else if (intensity > 100) { data[i] = 128; data[i + 1] = 0; data[i + 2] = 128; }
+                else { data[i] = 0; data[i + 1] = 0; data[i + 2] = 255 - intensity; }
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function applyUVEffect(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i + 1], b = data[i + 2];
+                const intensity = (r + g + b) / 3;
+                const uvIntensity = Math.max(0, (intensity - 100) * 2);
+                data[i] = Math.min(255, 100 + uvIntensity * 0.5);
+                data[i + 1] = Math.min(255, 50 + uvIntensity * 0.3);
+                data[i + 2] = Math.min(255, 150 + uvIntensity);
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function applyBlueLightEffect(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i + 1], b = data[i + 2];
+                data[i] = Math.min(255, r * 0.3);
+                data[i + 1] = Math.min(255, g * 0.7);
+                data[i + 2] = Math.min(255, b * 1.5 + 50);
+                const blueIntensity = data[i + 2];
+                data[i] = Math.max(0, data[i] - (255 - blueIntensity) * 0.1);
+                data[i + 1] = Math.max(0, data[i + 1] - (255 - blueIntensity) * 0.1);
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // Download function
+        function downloadAll() {
+            const canvases = [
+                { canvas: originalCanvas, name: 'original' },
+                { canvas: thermalCanvas, name: 'thermal' },
+                { canvas: uvCanvas, name: 'uv' },
+                { canvas: blueCanvas, name: 'blue-light' },
+                { canvas: leftEyeCanvas, name: 'left-eye' },
+                { canvas: rightEyeCanvas, name: 'right-eye' },
+                { canvas: mouthCanvas, name: 'mouth' },
+                { canvas: faceCanvas, name: 'face' },
+                { canvas: skinCanvas, name: 'skin-only' } // Added skin canvas
+            ];
+            
+            let downloaded = 0;
+            canvases.forEach(({ canvas, name }) => {
+                if (canvas.width > 0) {
+                    const link = document.createElement('a');
+                    link.download = `face-${name}-${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    downloaded++;
+                }
+            });
+            
+            updateStatus(downloaded > 0 ? `Downloaded ${downloaded} images!` : 'No images to download', 
+                        downloaded > 0 ? 'success' : 'error');
+        }
+
+        function updateStatus(message, type = 'info') {
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+        }
+
+        // Event listeners
+        captureBtn.addEventListener('click', captureAndSegment);
+        downloadBtn.addEventListener('click', downloadAll);
+        uploadBtn.addEventListener('click', () => imageUpload.click());
+        imageUpload.addEventListener('change', handleImageUpload);
+
+        // Initialize MediaPipe when page loads
+        window.addEventListener('load', initMediaPipe);
+    </script>
+</body>
+</html>
