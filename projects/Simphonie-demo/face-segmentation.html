@@ -239,11 +239,6 @@
         .spectrum-mouth { border-color: #FF4500; }
         .spectrum-skin { border-color: #4CAF50; }
         .spectrum-segmentation { border-color: #4db6ac; }
-
-        .upload-section {
-            margin-top: 15px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -269,19 +264,9 @@
                 </button>
             </div>
             
-            <!-- Image Upload Section -->
-            <div class="upload-section">
-                <p style="color: var(--text-secondary); margin-bottom: 8px;">Or upload an image:</p>
-                <input type="file" id="image-upload" accept="image/*" style="display: none;">
-                <button id="upload-btn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;">
-                    📤 Upload Image
-                </button>
-            </div>
-            
-            
             <div class="instructions">
                 <p><strong>How to use:</strong></p>
-                <p>1. Allow camera access when prompted OR upload an image</p>
+                <p>1. Allow camera access when prompted</p>
                 <p>2. MediaPipe will detect your face with 468 landmarks</p>
                 <p>3. Click "Capture & Segment" for precise facial analysis</p>
                 <p>4. View extracted facial regions below</p>
@@ -428,8 +413,6 @@
         const captureBtn = document.getElementById('capture-btn');
         const downloadBtn = document.getElementById('download-btn');
         const statusEl = document.getElementById('status');
-        const imageUpload = document.getElementById('image-upload');
-        const uploadBtn = document.getElementById('upload-btn');
         
         // Canvas elements
         const originalCanvas = document.getElementById('original-canvas');
@@ -453,7 +436,6 @@
         let faceMesh = null;
         let camera = null;
         let currentLandmarks = null;
-        let currentImage = null; // Holds uploaded image
 
         // Landmark indices for cropping
         const LEFT_EYE_INDICES = [33, 7, 163, 144, 145, 153, 154, 155, 133];
@@ -484,9 +466,7 @@
                 // Initialize camera
                 camera = new Camera(video, {
                     onFrame: async () => {
-                        if (!currentImage) { // Only process video if no image uploaded
-                            await faceMesh.send({ image: video });
-                        }
+                        await faceMesh.send({ image: video });
                     },
                     width: 640,
                     height: 480
@@ -504,9 +484,8 @@
 
         // Handle MediaPipe results
         function onResults(results) {
-            const source = currentImage || video;
-            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
-            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            const sourceWidth = video.videoWidth;
+            const sourceHeight = video.videoHeight;
             
             const canvasCtx = outputCanvas.getContext('2d');
             outputCanvas.width = sourceWidth;
@@ -514,7 +493,7 @@
             
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, outputCanvas.width, outputCanvas.height);
-            canvasCtx.drawImage(source, 0, 0, outputCanvas.width, outputCanvas.height);
+            canvasCtx.drawImage(video, 0, 0, outputCanvas.width, outputCanvas.height);
             
             if (results.multiFaceLandmarks) {
                 for (const landmarks of results.multiFaceLandmarks) {
@@ -547,56 +526,6 @@
             canvasCtx.restore();
         }
 
-        // Handle image upload
-        function handleImageUpload() {
-            const file = imageUpload.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    // Disable camera if it's running
-                    if (camera) {
-                        camera.stop();
-                    }
-                    
-                    // Set the uploaded image as current source
-                    currentImage = img;
-                    
-                    // Draw image to output canvas
-                    outputCanvas.width = img.width;
-                    outputCanvas.height = img.height;
-                    const ctx = outputCanvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, img.width, img.height);
-                    
-                    // Process with MediaPipe
-                    processImageWithMediaPipe(img);
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Process uploaded image with MediaPipe
-        async function processImageWithMediaPipe(img) {
-            try {
-                // Create a temporary canvas to send to MediaPipe
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = img.width;
-                tempCanvas.height = img.height;
-                const tempCtx = tempCanvas.getContext('2d');
-                tempCtx.drawImage(img, 0, 0);
-                
-                // Send to MediaPipe
-                const results = await faceMesh.send({ image: tempCanvas });
-                onResults(results);
-            } catch (error) {
-                console.error('Error processing uploaded image:', error);
-                updateStatus('Error processing image: ' + error.message, 'error');
-            }
-        }
-
         // Capture and process with MediaPipe landmarks
         function captureAndSegment() {
             if (!currentLandmarks) {
@@ -625,8 +554,8 @@
         }
 
         function getFaceBoundingBox(landmarks) {
-            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
-            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            const sourceWidth = video.videoWidth;
+            const sourceHeight = video.videoHeight;
             
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             
@@ -676,8 +605,7 @@
             ctx.canvas.width = faceWidth;
             ctx.canvas.height = faceHeight;
             
-            const source = currentImage || video;
-            ctx.drawImage(source, x, y, width, height, 0, 0, faceWidth, faceHeight);
+            ctx.drawImage(video, x, y, width, height, 0, 0, faceWidth, faceHeight);
         }
 
         function processRegions() {
@@ -695,8 +623,8 @@
         function getRegionBounds(indices) {
             if (!currentLandmarks) return null;
             
-            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
-            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            const sourceWidth = video.videoWidth;
+            const sourceHeight = video.videoHeight;
             
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             
@@ -754,9 +682,8 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvasSize, canvasSize);
             
-            const source = currentImage || video;
             ctx.drawImage(
-                source,
+                video,
                 region.x, region.y, region.width, region.height,
                 offsetX, offsetY, drawWidth, drawHeight
             );
@@ -769,11 +696,8 @@
             ctx.canvas.width = faceWidth;
             ctx.canvas.height = faceHeight;
             
-            // Get the source image
-            const source = currentImage || video;
-            
             // Draw the original cropped face
-            ctx.drawImage(source, bbox.x, bbox.y, bbox.width, bbox.height, 0, 0, faceWidth, faceHeight);
+            ctx.drawImage(video, bbox.x, bbox.y, bbox.width, bbox.height, 0, 0, faceWidth, faceHeight);
             
             // Create skin mask by starting with face and removing eyes/mouth
             const skinMask = createSkinMask(bbox);
@@ -852,8 +776,8 @@
         function getRegionBoundsForMask(indices, bbox) {
             if (!currentLandmarks) return null;
             
-            const sourceWidth = currentImage ? currentImage.width : video.videoWidth;
-            const sourceHeight = currentImage ? currentImage.height : video.videoHeight;
+            const sourceWidth = video.videoWidth;
+            const sourceHeight = video.videoHeight;
             
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             
@@ -965,8 +889,6 @@
         // Event listeners
         captureBtn.addEventListener('click', captureAndSegment);
         downloadBtn.addEventListener('click', downloadAll);
-        uploadBtn.addEventListener('click', () => imageUpload.click());
-        imageUpload.addEventListener('change', handleImageUpload);
 
         // Initialize MediaPipe when page loads
         window.addEventListener('load', initMediaPipe);
