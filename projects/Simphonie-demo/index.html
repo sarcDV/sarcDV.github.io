@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Clair Clinique - Simphonie - Analisi della Pelle del Viso</title>
+    <title>Clair Clinique - Symphonie - Analisi della Pelle del Viso</title>
     <!-- Tailwind + Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
@@ -27,16 +27,20 @@
         .camera-container {
             position: relative;
             width: 100%;
+            max-width: 400px; /* Adjust as needed */
             margin: 0 auto;
             overflow: hidden;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             border: 1px solid #334155;
+            aspect-ratio: 4 / 3;
         }
+
         .camera-container video,
         .camera-container canvas {
-            width: 100% !important;
-            height: auto !important;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
         .progress-bar {
@@ -96,6 +100,18 @@
             width: 100% !important;
             height: auto !important;
         }
+        
+        /* Ensure mobile-friendly tap targets */
+        .mobile-touch-target {
+            min-height: 48px;
+            min-width: 48px;
+            padding: 12px 16px;
+        }
+        #skinRadarChart {
+            max-width: 100%;
+            height: auto;
+        }
+
     </style>
 </head>
 <body>
@@ -116,7 +132,7 @@
         <!-- Header -->
         <header class="p-3 sm:p-4 gradient-bg text-white">
             <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">Clair Clinique - Simphonie</h1>
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold">Clair Clinique - Symphonie</h1>
                 <button id="helpButton" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-blue-600 rounded-full text-sm sm:text-base hover:bg-blue-100 transition-all">
                     <i class="fas fa-question-circle mr-1"></i> Aiuto
                 </button>
@@ -164,7 +180,7 @@
                     </div>
                 </div>
                 <div class="flex justify-center mt-5">
-                    <button id="captureButton" class="px-6 py-2.5 sm:px-8 sm:py-3 bg-blue-600 text-white rounded-full text-base sm:text-lg hover:bg-blue-700 transition-all pulse-animation">
+                    <button id="captureButton" class="mobile-touch-target px-6 py-3 bg-blue-600 text-white rounded-full text-base font-medium hover:bg-blue-700 transition-all pulse-animation">
                         <i class="fas fa-camera mr-2"></i> Scatta Foto
                     </button>
                 </div>
@@ -228,9 +244,10 @@
                             </div>
 
                             <div class="grid grid-cols-1 gap-6 mb-8">
-                                <div class="overflow-x-auto">
-                                    <div class="min-w-[280px] flex justify-center py-2">
-                                        <canvas id="skinRadarChart" class="w-full max-w-[400px] h-auto max-h-[300px] sm:max-h-[400px]"></canvas>
+                                <!-- Radar Chart Container -->
+                                <div class="flex justify-center py-4">
+                                    <div class="w-full max-w-[220px] sm:max-w-[240px] md:max-w-[260px] h-auto">
+                                        <canvas id="skinRadarChart"></canvas>
                                     </div>
                                 </div>
                                 <div>
@@ -397,7 +414,7 @@
             <div class="container mx-auto px-3 sm:px-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     <div>
-                        <h3 class="text-lg sm:text-xl font-bold mb-3">Simphonie</h3>
+                        <h3 class="text-lg sm:text-xl font-bold mb-3">Symphonie</h3>
                         <p class="text-gray-200 text-xs sm:text-sm">La tua soluzione avanzata per l'analisi della pelle del viso basata su intelligenza artificiale.</p>
                     </div>
                     <div>
@@ -428,7 +445,7 @@
                     </div>
                 </div>
                 <div class="border-t border-gray-800 mt-6 pt-6 text-center">
-                    <p class="text-gray-200 text-xs sm:text-sm">&copy; 2025 Clair Clinique - Simphonie. Tutti i diritti riservati.</p>
+                    <p class="text-gray-200 text-xs sm:text-sm">&copy; 2025 Clair Clinique - Symphonie. Tutti i diritti riservati.</p>
                     <p class="text-xs text-gray-500 mt-1">Questa app utilizza modelli AI che operano localmente sul tuo dispositivo. Nessuna immagine viene caricata sui nostri server.</p>
                 </div>
             </div>
@@ -446,12 +463,16 @@
                     </div>
                     <div class="space-y-3 text-sm">
                         <div>
-                            <h4 class="text-base font-semibold text-blue-400 mb-1">Come utilizzare Simphonie</h4>
-                            <p>Simphonie è una web app che analizza la pelle del viso utilizzando l'intelligenza artificiale direttamente nel tuo browser.</p>
+                            <h4 class="text-base font-semibold text-blue-400 mb-1">Come utilizzare Symphonie</h4>
+                            <p>Symphonie è una web app che analizza la pelle del viso utilizzando l'intelligenza artificiale direttamente nel tuo browser.</p>
                         </div>
                         <div class="bg-blue-900/30 p-3 rounded-lg">
                             <h5 class="font-medium text-blue-300 mb-1">1. Scatta una foto</h5>
                             <p>Posiziona il tuo viso al centro dell'inquadratura...</p>
+                            <h5 class="font-medium text-blue-300 mb-1">2. Analisi AI</h5>
+                            <p>Symphonie utilizza l'intelligenza artificiale per analizzare la tua pelle e fornire raccomandazioni personalizzate.</p>
+                            <h5 class="font-medium text-blue-300 mb-1">3. Visualizza i risultati</h5>
+                            <p>Una volta completata l'analisi, puoi visualizzare i risultati e le raccomandazioni direttamente nell'app.</p>
                         </div>
                     </div>
                 </div>
@@ -556,8 +577,8 @@
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
                     },
                     audio: false
                 });
@@ -585,57 +606,50 @@
             }
         }
         
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+
         // Funzione per il rilevamento continuo del viso
         async function detectFaceLoop() {
             const faceOverlay = document.getElementById('faceOverlay');
             const ctx = faceOverlay.getContext('2d');
-            
+
             async function detect() {
-                if (video.readyState === 4) {
-                    // Cancella il canvas prima di disegnare
-                    ctx.clearRect(0, 0, faceOverlay.width, faceOverlay.height);
-                    
-                    // Esegui il rilevamento del viso
-                    const predictions = await faceDetectionModel.estimateFaces(video, false);
-                    
-                    if (predictions.length > 0) {
-                        // Disegna un contorno attorno al viso rilevato
-                        predictions.forEach(prediction => {
-                            const start = prediction.topLeft;
-                            const end = prediction.bottomRight;
-                            const size = [end[0] - start[0], end[1] - start[1]];
-                            
-                            // Disegna un rettangolo arrotondato attorno al viso
-                            ctx.strokeStyle = '#4CAF50';
-                            ctx.lineWidth = 3;
-                            ctx.beginPath();
-                            ctx.roundRect(start[0], start[1], size[0], size[1], 10);
-                            ctx.stroke();
-                            
-                            // Disegna punti di riferimento per gli occhi
-                            const landmarks = prediction.landmarks;
-                            landmarks.forEach((landmark, i) => {
-                                ctx.fillStyle = '#FF5722';
-                                ctx.beginPath();
-                                ctx.arc(landmark[0], landmark[1], 4, 0, 2 * Math.PI);
-                                ctx.fill();
-                            });
-                            
-                            // Aggiungi un testo per indicare che il viso è stato rilevato
-                            ctx.fillStyle = '#4CAF50';
-                            ctx.font = '16px Arial';
-                            ctx.fillText('Viso rilevato', start[0], start[1] - 10);
-                        });
-                    }
+                if (video.readyState !== 4) {
+                requestAnimationFrame(detect);
+                return;
                 }
-                
-                // Continua il loop di rilevamento
+
+                // Resize canvas only if video dimensions changed (rare, but safe)
+                if (faceOverlay.width !== video.videoWidth || faceOverlay.height !== video.videoHeight) {
+                faceOverlay.width = video.videoWidth;
+                faceOverlay.height = video.videoHeight;
+                }
+
+                ctx.clearRect(0, 0, faceOverlay.width, faceOverlay.height);
+
+                const predictions = await faceDetectionModel.estimateFaces(video, false);
+                if (predictions.length > 0) {
+                predictions.forEach(prediction => {
+                    const [x1, y1] = prediction.topLeft;
+                    const [x2, y2] = prediction.bottomRight;
+                    ctx.strokeStyle = '#4CAF50';
+                    ctx.lineWidth = 2; // thinner on mobile
+                    ctx.beginPath();
+                    ctx.roundRect(x1, y1, x2 - x1, y2 - y1, 8);
+                    ctx.stroke();
+                });
+                }
+
                 requestAnimationFrame(detect);
             }
-            
             detect();
         }
-        
+
         // Funzione per acquisire l'immagine
         function captureImage() {
             // Crea un canvas per catturare l'immagine
@@ -882,6 +896,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 10,
+                            left: 5,
+                            right: 5
+                        }
+                    },
                     scales: {
                         r: {
                             angleLines: {
@@ -918,11 +940,18 @@
             });
         }
         
+
+
         // Gestore eventi per il pulsante di acquisizione immagine
         document.getElementById('captureButton').addEventListener('click', captureImage);
         
         // Gestore eventi per il pulsante di riavvio
         document.getElementById('restartButton').addEventListener('click', () => {
+            // stopCamera();
+            if (radarChart) {
+                radarChart.destroy();
+                radarChart = null;
+            }
             // Resetta le sezioni
             document.getElementById('resultsSection').classList.add('hidden');
             document.getElementById('cameraSection').classList.remove('hidden');
