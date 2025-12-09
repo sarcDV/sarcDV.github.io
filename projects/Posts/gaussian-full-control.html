@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>3D Gaussian Diffusion Explorer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      overflow: hidden;
+      touch-action: none;
+    }
+    #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    #info {
+      position: absolute;
+      bottom: 12px; left: 12px; right: 12px;
+      max-width: 420px;
+      background: rgba(255,255,255,0.85);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+      backdrop-filter: blur(5px);
+    }
+    .dg { z-index: 10 !important; }
+  </style>
+</head>
+<body>
+  <div id="canvas"></div>
+  <div id="info">
+    <strong>Physical Analogy:</strong> Two dye drops diffuse in water. Random molecular motion spreads them into 3D Gaussian clouds. Ellipsoids = 1σ concentration surfaces (~68% of mass inside).
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.1/build/three.module.js",
+      "dat.gui": "https://unpkg.com/dat.gui@0.7.9/build/dat.gui.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GUI } from 'dat.gui';
+
+    // Mobile optimization
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const MAX_POINTS = isMobile ? 600 : 5200;
+    const POINT_SIZE = isMobile ? 0.08 : 0.05;
+
+    // Scene
+    const container = document.getElementById('canvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f2f5);
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 14);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 6;
+    controls.maxDistance = 25;
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 8, 5);
+    scene.add(dirLight);
+
+    // Parameters (fully exposed sigmas)
+    const params = {
+      // Group 1
+      g1: {
+        x: -2.5, y: 0, z: 0,
+        sx: 0.4, sy: 0.4, sz: 0.6
+      },
+      // Group 2
+      g2: {
+        x: 2.5, y: 0, z: 0,
+        sx: 0.4, sy: 0.7, sz: 0.4
+      },
+      numPoints: isMobile ? 500 : 1000,
+      showPoints: true,
+      showSurfaces: true,
+      animate: true,
+      speed: 0.8
+    };
+
+    // Scene objects
+    let points1 = null, points2 = null;
+    let surface1 = null, surface2 = null;
+
+    // Gaussian random number (Box-Muller)
+    function randn() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    // Point cloud
+    function createPointCloud(mean, sigma, color, count) {
+      const arr = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        arr[i * 3] = mean[0] + sigma[0] * randn();
+        arr[i * 3 + 1] = mean[1] + sigma[1] * randn();
+        arr[i * 3 + 2] = mean[2] + sigma[2] * randn();
+      }
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+      const mat = new THREE.PointsMaterial({
+        color: color,
+        size: POINT_SIZE,
+        transparent: true,
+        opacity: 0.65
+      });
+      return new THREE.Points(geom, mat);
+    }
+
+    // Ellipsoid (1σ surface)
+    function createEllipsoid(mean, sigma, color) {
+      const geom = new THREE.SphereGeometry(1, 32, 24);
+      const mat = new THREE.MeshStandardMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.26,
+        roughness: 0.9,
+        metalness: 0.1
+      });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.scale.set(sigma[0], sigma[1], sigma[2]);
+      mesh.position.set(mean[0], mean[1], mean[2]);
+      return mesh;
+    }
+
+    // Clock for animation
+    const clock = new THREE.Clock();
+
+    // Regenerate scene
+    function regenerate() {
+      [points1, points2, surface1, surface2].forEach(obj => obj && scene.remove(obj));
+
+      let timeScale = 1.0;
+      if (params.animate) {
+        const t = clock.getElapsedTime();
+        timeScale = 0.3 + 1.7 * (0.5 + 0.5 * Math.sin(t * params.speed));
+      }
+
+      const mean1 = [params.g1.x, params.g1.y, params.g1.z];
+      const sigma1 = [params.g1.sx * timeScale, params.g1.sy * timeScale, params.g1.sz * timeScale];
+
+      const mean2 = [params.g2.x, params.g2.y, params.g2.z];
+      const sigma2 = [params.g2.sx * timeScale, params.g2.sy * timeScale, params.g2.sz * timeScale];
+
+      if (params.showPoints) {
+        points1 = createPointCloud(mean1, sigma1, 0xff5555, params.numPoints);
+        points2 = createPointCloud(mean2, sigma2, 0x5577ff, params.numPoints);
+        scene.add(points1, points2);
+      }
+
+      if (params.showSurfaces) {
+        surface1 = createEllipsoid(mean1, sigma1, 0xff9999);
+        surface2 = createEllipsoid(mean2, sigma2, 0x99bbff);
+        scene.add(surface1, surface2);
+      }
+    }
+
+    // GUI
+    const gui = new GUI({ width: isMobile ? 280 : 340 });
+
+    const animFolder = gui.addFolder('🎬 Animation');
+    animFolder.add(params, 'animate').name('Enable animation');
+    animFolder.add(params, 'speed', 0.2, 2.0).step(0.1).name('Speed');
+    animFolder.open();
+
+    gui.add(params, 'numPoints', 200, MAX_POINTS, 50).name('Points per group');
+    gui.add(params, 'showPoints').name('Show point clouds');
+    gui.add(params, 'showSurfaces').name('Show isosurfaces');
+
+    const g1 = gui.addFolder('🔴 Group 1');
+    g1.add(params.g1, 'x', -5, 5).name('Mean X');
+    g1.add(params.g1, 'y', -5, 5).name('Mean Y');
+    g1.add(params.g1, 'z', -5, 5).name('Mean Z');
+    g1.add(params.g1, 'sx', 0.1, 2.0).name('σ X');
+    g1.add(params.g1, 'sy', 0.1, 2.0).name('σ Y');
+    g1.add(params.g1, 'sz', 0.1, 2.0).name('σ Z');
+    g1.open();
+
+    const g2 = gui.addFolder('🔵 Group 2');
+    g2.add(params.g2, 'x', -5, 5).name('Mean X');
+    g2.add(params.g2, 'y', -5, 5).name('Mean Y');
+    g2.add(params.g2, 'z', -5, 5).name('Mean Z');
+    g2.add(params.g2, 'sx', 0.1, 2.0).name('σ X');
+    g2.add(params.g2, 'sy', 0.1, 2.0).name('σ Y');
+    g2.add(params.g2, 'sz', 0.1, 2.0).name('σ Z');
+    g2.open();
+
+    // Initial render
+    regenerate();
+
+    // Resize handling
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      if (params.animate) regenerate();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
