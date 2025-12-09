@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Exponential Waiting Time Paradox</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f9fafb;
+      padding: 12px;
+      overflow: hidden;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #1e293b;
+    }
+    #explanation {
+      background: #e0f2fe;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    canvas {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      width: 100%; /* Ensure full width */
+    }
+    #road-canvas { height: 120px; display: block; }
+    #hist-canvas { height: 240px; display: block; } /* ← TALLER, FULL WIDTH */
+    .stats {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 12px;
+    }
+    .highlight { 
+      background: #fef3c7; 
+      padding: 0 4px; 
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 180px;
+    }
+    label {
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #334155;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    .value {
+      text-align: right;
+      font-size: 13px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚌 The Waiting Time Paradox</h1>
+    
+    <div id="explanation">
+      Buses arrive randomly (average every <span id="interval-display">10</span> min).<br>
+      You arrive at a random time. <span class="highlight">Your average wait is still ~<span id="paradox-interval">10</span> min</span> — not half! Why?<br>
+      Because longer waits are more likely when arriving at a random time. This simulation shows your wait times (histogram) versus the theoretical distribution (red curve). Adjust the bus interval and simulation speed below. <br>Enjoy waiting! 
+      🚏  This is the memoryless property of the exponential distribution.
+    </div>
+
+    <div class="stats">
+      <div>Bus interval (mean): <span id="mean-interval">10.0</span> min</div>
+      <div>Your average wait: <span id="avg-wait">—</span> min (<span id="sample-count">0</span> samples)</div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="interval">Average bus interval (minutes)</label>
+        <input type="range" id="interval" min="2" max="30" step="1" value="10">
+        <div class="value"><span id="interval-val">10</span> min</div>
+      </div>
+      <div class="control-group">
+        <label for="speed">Simulation speed</label>
+        <input type="range" id="speed" min="1" max="10" step="1" value="4">
+        <div class="value"><span id="speed-val">4</span>x</div>
+      </div>
+    </div>
+
+    <canvas id="road-canvas" height="120"></canvas>
+    <canvas id="hist-canvas" height="240"></canvas> <!-- Taller histogram -->
+  </div>
+
+  <script>
+    const roadCanvas = document.getElementById('road-canvas');
+    const histCanvas = document.getElementById('hist-canvas');
+    const ctxRoad = roadCanvas.getContext('2d');
+    const ctxHist = histCanvas.getContext('2d');
+    
+    const intervalSlider = document.getElementById('interval');
+    const speedSlider = document.getElementById('speed');
+
+    let params = {
+      meanInterval: Number(intervalSlider.value),
+      speed: Number(speedSlider.value)
+    };
+
+    function updateUIFromParams() {
+      document.getElementById('interval-val').textContent = params.meanInterval;
+      document.getElementById('speed-val').textContent = params.speed;
+      document.getElementById('mean-interval').textContent = params.meanInterval.toFixed(1);
+      document.getElementById('interval-display').textContent = params.meanInterval;
+      document.getElementById('paradox-interval').textContent = params.meanInterval;
+    }
+    updateUIFromParams();
+
+    let buses = [];
+    let passengers = [];
+    let waitTimes = [];
+    let nextBusTime = 0;
+    let lastPassengerTime = -2;
+    let simTime = 0;
+    const MAX_SAMPLES = 500;
+
+    function exponential(lambda) {
+      return -lambda * Math.log(Math.random());
+    }
+
+    function resizeCanvas() {
+      const width = Math.min(800, window.innerWidth - 24);
+      roadCanvas.width = width;
+      roadCanvas.height = 120;
+      histCanvas.width = width;
+      histCanvas.height = 240; // Taller canvas
+    }
+
+    intervalSlider.addEventListener('input', (e) => {
+      params.meanInterval = Number(e.target.value);
+      updateUIFromParams();
+    });
+    
+    speedSlider.addEventListener('input', (e) => {
+      params.speed = Number(e.target.value);
+      updateUIFromParams();
+    });
+
+    function update() {
+      const dt = 0.1 * (params.speed / 4);
+      simTime += dt;
+
+      if (simTime - lastPassengerTime > 2 && Math.random() < 0.2) {
+        passengers.push({ waitStart: simTime });
+        lastPassengerTime = simTime;
+      }
+
+      if (simTime >= nextBusTime) {
+        buses.push({ x: roadCanvas.width + 30, arrived: false });
+        nextBusTime = simTime + exponential(params.meanInterval);
+      }
+
+      for (let i = buses.length - 1; i >= 0; i--) {
+        const bus = buses[i];
+        if (!bus.arrived) {
+          bus.x -= 1.5 * params.speed;
+          if (bus.x < 80) {
+            bus.arrived = true;
+            for (const p of passengers) {
+              const wait = simTime - p.waitStart;
+              waitTimes.push(wait);
+              if (waitTimes.length > MAX_SAMPLES) waitTimes.shift();
+            }
+            passengers = [];
+          }
+        }
+        if (bus.x < -50) {
+          buses.splice(i, 1);
+        }
+      }
+
+      if (waitTimes.length > 0) {
+        const avg = waitTimes.reduce((a, b) => a + b, 0) / waitTimes.length;
+        document.getElementById('avg-wait').textContent = avg.toFixed(1);
+        document.getElementById('sample-count').textContent = waitTimes.length;
+      } else {
+        document.getElementById('avg-wait').textContent = '—';
+        document.getElementById('sample-count').textContent = '0';
+      }
+    }
+
+    function renderRoad() {
+      const w = roadCanvas.width;
+      const h = roadCanvas.height;
+      ctxRoad.clearRect(0, 0, w, h);
+
+      ctxRoad.fillStyle = '#555';
+      ctxRoad.fillRect(0, h/2 - 10, w, 20);
+
+      ctxRoad.fillStyle = '#222';
+      ctxRoad.fillRect(60, h/2 - 25, 20, 50);
+
+      ctxRoad.fillStyle = '#e11d48';
+      for (const bus of buses) {
+        ctxRoad.fillRect(bus.x - 25, h/2 - 15, 50, 30);
+        ctxRoad.fillStyle = '#fff';
+        ctxRoad.font = '12px sans-serif';
+        ctxRoad.textAlign = 'center';
+        ctxRoad.fillText('🚌', bus.x, h/2 + 5);
+        ctxRoad.fillStyle = '#e11d48';
+      }
+
+      ctxRoad.fillStyle = '#0ea5e9';
+      for (const p of passengers) {
+        ctxRoad.beginPath();
+        ctxRoad.arc(70, h/2 - 35, 8, 0, Math.PI * 2);
+        ctxRoad.fill();
+      }
+
+      ctxRoad.fillStyle = '#333';
+      ctxRoad.font = '12px sans-serif';
+      ctxRoad.fillText('Bus Stop', 50, h/2 + 40);
+    }
+
+    function renderHistogram() {
+      const w = histCanvas.width;
+      const h = histCanvas.height; // 240px
+      ctxHist.clearRect(0, 0, w, h);
+
+      if (waitTimes.length === 0) {
+        ctxHist.fillStyle = '#64748b';
+        ctxHist.font = '14px sans-serif';
+        ctxHist.textAlign = 'center';
+        ctxHist.fillText('Waiting for passenger data...', w / 2, h / 2);
+        return;
+      }
+
+      const lambda = params.meanInterval;
+      const maxWait = Math.max(lambda * 3, Math.max(...waitTimes));
+      const binCount = Math.min(25, Math.floor(w / 20));
+      const bins = new Array(binCount).fill(0);
+
+      for (const wait of waitTimes) {
+        const bin = Math.min(Math.floor((wait / maxWait) * binCount), binCount - 1);
+        bins[bin]++;
+      }
+
+      const maxFreq = Math.max(...bins);
+
+      // Margins: leave room for labels
+      const topMargin = 30;
+      const bottomMargin = 40;
+      const leftMargin = 50;
+      const rightMargin = 20;
+      const plotWidth = w - leftMargin - rightMargin;
+      const plotHeight = h - topMargin - bottomMargin;
+
+      // Draw histogram bars
+      ctxHist.fillStyle = 'rgba(59, 130, 246, 0.75)';
+      const binWidth = plotWidth / binCount;
+      for (let i = 0; i < binCount; i++) {
+        const height = maxFreq ? (bins[i] / maxFreq) * plotHeight : 0;
+        ctxHist.fillRect(
+          leftMargin + i * binWidth + 1,
+          h - bottomMargin - height,
+          binWidth - 2,
+          height
+        );
+      }
+
+      // Theoretical curve
+      ctxHist.strokeStyle = '#e11d48';
+      ctxHist.lineWidth = 2;
+      ctxHist.beginPath();
+      const curvePoints = 200;
+      for (let i = 0; i <= curvePoints; i++) {
+        const t = (i / curvePoints) * maxWait;
+        const pdf = (1 / lambda) * Math.exp(-t / lambda);
+        const x = leftMargin + (t / maxWait) * plotWidth;
+        const y = h - bottomMargin - (pdf * lambda * 0.92) * plotHeight;
+        if (i === 0) ctxHist.moveTo(x, y);
+        else ctxHist.lineTo(x, y);
+      }
+      ctxHist.stroke();
+
+      // === X-AXIS TICKS (bottom) ===
+      ctxHist.fillStyle = '#333';
+      ctxHist.font = '12px sans-serif';
+      ctxHist.textAlign = 'center';
+      const xTickCount = Math.min(6, Math.max(3, Math.ceil(maxWait / 5)));
+      for (let i = 0; i <= xTickCount; i++) {
+        const t = (i / xTickCount) * maxWait;
+        const x = leftMargin + (i / xTickCount) * plotWidth;
+        ctxHist.fillText(t.toFixed(0), x, h - 8);
+      }
+      ctxHist.fillText('Waiting time (min)', w / 2, h - 2);
+
+      // === Y-AXIS TICKS (left) ===
+      ctxHist.textAlign = 'right';
+      const yTickCount = 4;
+      for (let i = 0; i <= yTickCount; i++) {
+        const freq = (i / yTickCount) * maxFreq;
+        const y = h - bottomMargin - (i / yTickCount) * plotHeight;
+        ctxHist.fillText(Math.round(freq), leftMargin - 8, y + 4);
+      }
+
+      // Y-axis label
+      ctxHist.save();
+      ctxHist.translate(15, h / 2);
+      ctxHist.rotate(-Math.PI / 2);
+      ctxHist.textAlign = 'center';
+      ctxHist.fillText('Frequency', 0, 0);
+      ctxHist.restore();
+
+      // Legend
+      ctxHist.textAlign = 'left';
+      ctxHist.fillStyle = '#333';
+      ctxHist.fillText('Observed', leftMargin + 10, topMargin - 10);
+      ctxHist.fillStyle = '#e11d48';
+      ctxHist.fillText('• Theory', leftMargin + 10, topMargin + 8);
+    }
+
+    function frame() {
+      update();
+      renderRoad();
+      renderHistogram();
+      requestAnimationFrame(frame);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    nextBusTime = exponential(params.meanInterval);
+    frame();
+  </script>
+</body>
+</html>
