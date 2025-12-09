@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Poisson Clumpiness: Why Randomness Isn't Uniform</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f9fafb;
+      padding: 12px;
+      overflow: hidden;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #1e293b;
+    }
+    #explanation {
+      background: #f0fdf4;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    canvas {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      width: 100%;
+      display: block;
+    }
+    #grid-canvas { height: 240px; }
+    #hist-canvas { height: 200px; }
+    .stats {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 12px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 180px;
+    }
+    label {
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #334155;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    .value {
+      text-align: right;
+      font-size: 13px;
+      color: #64748b;
+    }
+    .highlight { 
+      background: #dcfce7; 
+      padding: 0 4px; 
+      border-radius: 4px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📍 Poisson Clumpiness: Why Randomness Isn't Uniform</h1>
+    
+    <div id="explanation">
+      Events (e.g., scooters, emails) occur randomly at rate <span id="dynamic-lambda">2.0</span>/sec.<br>
+      Even though they’re <span class="highlight">independent and random</span>, they form <span class="highlight">clusters</span>!<br>
+      This is the <strong>Poisson distribution</strong> — the law of rare events.
+    </div>
+
+    <!-- NEW: Contextual hint for Uniform mode -->
+    <div id="mode-hint" style="display: none; background: #fef3c7; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; color: #9a3412;">
+      ℹ️ Poisson theory is hidden in Uniform mode — it only applies to truly random (Poisson) events.
+    </div>
+
+    <div class="stats">
+      <div>Current λ (rate): <span id="current-lambda">2.0</span></div>
+      <div>Cells with 0 events: <span id="zero-cells">—</span> | Total events: <span id="total-events">0</span></div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="lambda">Event rate (λ)</label>
+        <input type="range" id="lambda" min="0.1" max="5" step="0.1" value="2.0">
+        <div class="value"><span id="lambda-display">2.0</span>/sec</div>
+      </div>
+      <div class="control-group">
+        <label for="mode">Mode</label>
+        <select id="mode">
+          <option value="poisson">Poisson (Real Random)</option>
+          <option value="uniform">Uniform (Fake Random)</option>
+        </select>
+      </div>
+    </div>
+
+    <canvas id="grid-canvas" height="240"></canvas>
+    <canvas id="hist-canvas" height="200"></canvas>
+  </div>
+
+  <script>
+    // ---------- CANVASES ----------
+    const gridCanvas = document.getElementById('grid-canvas');
+    const histCanvas = document.getElementById('hist-canvas');
+    const ctxGrid = gridCanvas.getContext('2d');
+    const ctxHist = histCanvas.getContext('2d');
+
+    // ---------- PARAMETERS ----------
+    const COLS = 60;
+    const ROWS = 40;
+    let params = {
+      lambda: 2.0,
+      mode: 'poisson'
+    };
+
+    // ---------- STATE ----------
+    let grid = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+    let totalEvents = 0;
+    let lastEventTime = Date.now();
+
+    // ---------- DOM ----------
+    const lambdaSlider = document.getElementById('lambda');
+    const modeSelect = document.getElementById('mode');
+    const dynamicLambdaEl = document.getElementById('dynamic-lambda');
+    const lambdaDisplay = document.getElementById('lambda-display');
+    const currentLambdaEl = document.getElementById('current-lambda');
+    const totalEventsEl = document.getElementById('total-events');
+    const zeroCellsEl = document.getElementById('zero-cells');
+
+    // Sync UI from params
+    function updateUIFromParams() {
+      dynamicLambdaEl.textContent = params.lambda.toFixed(1);
+      lambdaDisplay.textContent = params.lambda.toFixed(1);
+      currentLambdaEl.textContent = params.lambda.toFixed(1);
+    }
+    updateUIFromParams();
+
+    // ---------- EVENTS ----------
+    lambdaSlider.addEventListener('input', (e) => {
+      params.lambda = parseFloat(e.target.value);
+      updateUIFromParams();
+    });
+
+    // Initialize mode hint
+    document.getElementById('mode-hint').style.display = 'none';
+
+    modeSelect.addEventListener('change', (e) => {
+      params.mode = e.target.value;
+      grid = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+      totalEvents = 0;
+      lastEventTime = Date.now();
+      
+      // Show hint only in Uniform mode
+      const hintEl = document.getElementById('mode-hint');
+      if (params.mode === 'uniform') {
+        hintEl.style.display = 'block';
+      } else {
+        hintEl.style.display = 'none';
+      }
+    });
+
+    // ---------- SIMULATION ----------
+    function addRandomEvent() {
+      if (params.mode === 'poisson') {
+        const x = Math.floor(Math.random() * COLS);
+        const y = Math.floor(Math.random() * ROWS);
+        grid[y][x]++;
+        totalEvents++;
+      } else {
+        const idx = totalEvents % (COLS * ROWS);
+        const x = idx % COLS;
+        const y = Math.floor(idx / COLS);
+        grid[y][x]++;
+        totalEvents++;
+      }
+    }
+
+    // ---------- RENDER ----------
+    function renderGrid() {
+      const w = gridCanvas.width;
+      const h = gridCanvas.height;
+      const cellW = w / COLS;
+      const cellH = h / ROWS;
+
+      ctxGrid.clearRect(0, 0, w, h);
+
+      // Find max count for color scaling (cap at 10 for visibility)
+      const maxCount = Math.max(1, Math.min(10, Math.max(...grid.flat())));
+
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const count = Math.min(grid[y][x], 10);
+          // Green: more events = darker
+          const green = Math.floor(220 - (count / maxCount) * 180);
+          ctxGrid.fillStyle = `rgb(0, ${green}, 0)`;
+          ctxGrid.fillRect(x * cellW, y * cellH, cellW, cellH);
+          ctxGrid.strokeStyle = '#f1f5f9';
+          ctxGrid.strokeRect(x * cellW, y * cellH, cellW, cellH);
+        }
+      }
+
+      const zeroCells = grid.flat().filter(c => c === 0).length;
+      zeroCellsEl.textContent = zeroCells;
+      totalEventsEl.textContent = totalEvents;
+    }
+
+    function renderHistogram() {
+      const w = histCanvas.width;
+      const h = histCanvas.height;
+      ctxHist.clearRect(0, 0, w, h);
+
+      if (totalEvents === 0) {
+        ctxHist.fillStyle = '#64748b';
+        ctxHist.font = '14px sans-serif';
+        ctxHist.textAlign = 'center';
+        ctxHist.fillText('Waiting for events...', w / 2, h / 2);
+        return;
+      }
+
+      const counts = grid.flat();
+      const maxK = Math.min(12, Math.max(5, Math.max(...counts)));
+      const freq = new Array(maxK + 1).fill(0);
+      for (const c of counts) {
+        if (c <= maxK) freq[c]++;
+      }
+
+      // Margins
+      const leftMargin = 55;
+      const bottomMargin = 45;
+      const plotWidth = w - leftMargin - 20;
+      const plotHeight = h - 30 - bottomMargin;
+
+      // Observed bars
+      const barWidth = plotWidth / (maxK + 1);
+      ctxHist.fillStyle = 'rgba(34, 197, 94, 0.8)';
+      ctxHist.font = '11px sans-serif';
+      ctxHist.textAlign = 'center';
+      for (let k = 0; k <= maxK; k++) {
+        const prop = freq[k] / (COLS * ROWS);
+        const height = prop * plotHeight;
+        const x = leftMargin + k * barWidth;
+        ctxHist.fillRect(x + 2, h - bottomMargin - height, barWidth - 4, height);
+        ctxHist.fillStyle = '#333';
+        ctxHist.fillText(k, x + barWidth / 2, h - 5);
+        ctxHist.fillStyle = 'rgba(34, 197, 94, 0.8)';
+      }
+
+      // Poisson theory (only in Poisson mode)
+      if (params.mode === 'poisson') {
+        ctxHist.strokeStyle = '#dc2626';
+        ctxHist.fillStyle = '#dc2626';
+        for (let k = 0; k <= maxK; k++) {
+          // P(k) = λ^k e^{-λ} / k!
+          let logP = k * Math.log(params.lambda) - params.lambda - logFactorial(k);
+          let p = Math.exp(logP);
+          if (!isFinite(p) || p < 1e-6) p = 0;
+          const x = leftMargin + k * barWidth + barWidth / 2;
+          const y = h - bottomMargin - p * plotHeight;
+          // Draw dot
+          ctxHist.beginPath();
+          ctxHist.arc(x, y, 4, 0, Math.PI * 2);
+          ctxHist.fill();
+        }
+      }
+
+      // Labels
+      ctxHist.fillStyle = '#333';
+      ctxHist.font = '12px sans-serif';
+      ctxHist.textAlign = 'center';
+      ctxHist.fillText('Events per cell', w / 2, h - 2);
+      ctxHist.save();
+      ctxHist.translate(15, h / 2);
+      ctxHist.rotate(-Math.PI / 2);
+      ctxHist.fillText('Proportion of cells', 0, 0);
+      ctxHist.restore();
+
+      // Legend
+      ctxHist.textAlign = 'left';
+      ctxHist.fillStyle = 'rgba(34, 197, 94, 0.8)';
+      ctxHist.fillRect(leftMargin + 10, 15, 12, 12);
+      ctxHist.fillStyle = '#333';
+      ctxHist.fillText('Observed', leftMargin + 30, 25);
+      if (params.mode === 'poisson') {
+        ctxHist.fillStyle = '#dc2626';
+        ctxHist.fillRect(leftMargin + 10, 35, 12, 12);
+        ctxHist.fillText('Poisson theory', leftMargin + 30, 45);
+      } else {
+        ctxHist.fillText('Uniform (even spread)', leftMargin + 30, 45);
+      }
+    }
+
+    // Cache log factorials
+    const logFact = [0];
+    function logFactorial(n) {
+      while (logFact.length <= n) {
+        logFact.push(logFact[logFact.length - 1] + Math.log(logFact.length));
+      }
+      return logFact[n];
+    }
+
+    // ---------- MAIN LOOP ----------
+    function frame() {
+      const now = Date.now();
+      const dt = (now - lastEventTime) / 1000; // seconds since last check
+
+      // Expected events in this dt
+      const expected = params.lambda * dt;
+      if (expected >= 1 || Math.random() < expected) {
+        addRandomEvent();
+        lastEventTime = now;
+      }
+
+      renderGrid();
+      renderHistogram();
+      requestAnimationFrame(frame);
+    }
+
+    // ---------- INIT ----------
+    function resizeCanvas() {
+      const width = Math.min(800, window.innerWidth - 24);
+      gridCanvas.width = width;
+      gridCanvas.height = 240;
+      histCanvas.width = width;
+      histCanvas.height = 200;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    frame();
+  </script>
+</body>
+</html>
