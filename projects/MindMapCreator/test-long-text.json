@@ -1,0 +1,15 @@
+{
+  "very_long_property_name_that_will_cause_overflow": "This is a very long value that will definitely cause overflow in the node box and should be truncated with ellipsis",
+  "another_long_property": {
+    "nested_property_with_long_name": "Another long text value that should be properly handled by our truncation function",
+    "short": "Short value"
+  },
+  "moderately_sized_key": "Moderate length text value",
+  "array_property": [
+    "First item with a very long description that exceeds the box width",
+    "Second item with even longer text that definitely needs truncation",
+    {
+      "key_in_array_item": "Value in array object that is also quite long"
+    }
+  ]
+}
