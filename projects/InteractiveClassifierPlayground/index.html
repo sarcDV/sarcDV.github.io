@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Classifier Playground</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 1rem 2rem;
+      background: #121212;
+      color: #e0e0e0;
+    }
+    h1 { margin-top: 0; }
+    .hint { color: #aaa; margin-bottom: 1rem; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .control-group {
+      background: #1e1e1e;
+      padding: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    label { font-size: 0.8rem; font-weight: 600; }
+    input, select, button {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background: #181818;
+      color: #e0e0e0;
+    }
+    button:hover:not(:disabled) { background: #333; }
+    button:disabled { opacity: 0.6; }
+
+    .classifier-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      max-width: 600px;
+    }
+    .classifier-toggles label {
+      font-weight: 500;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    #plot-container {
+      position: relative;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 0.5rem;
+      overflow-x: auto;
+    }
+    #plot {
+      display: block;
+      margin: 0 auto;
+    }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: auto;
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Interactive Classifier Playground</h1>
+<p class="hint">Click to add points. Shift‑click to remove nearest point. Everything runs locally via Pyodide.</p>
+
+<div class="controls">
+
+  <div class="control-group">
+    <label>Dataset</label>
+    <select id="dataset">
+      <option value="moons">Moons</option>
+      <option value="circles">Circles</option>
+      <option value="linear">Linearly separable</option>
+    </select>
+
+    <label>Noise</label>
+    <input id="noise" type="number" step="0.05" min="0" max="1" value="0.3" />
+
+    <label>Test size</label>
+    <input id="test-size" type="number" step="0.05" min="0.1" max="0.9" value="0.4" />
+
+    <label>Random seed</label>
+    <input id="seed" type="number" value="42" />
+
+    <button id="generate-btn">Generate synthetic dataset</button>
+    <button id="reset-btn">Reset dataset</button>
+  </div>
+
+  <div class="control-group">
+    <label>Classifiers</label>
+    <div class="classifier-toggles">
+      <label><input type="checkbox" id="clf-knn" checked /> KNN</label>
+      <label><input type="checkbox" id="clf-linear-svm" checked /> Linear SVM</label>
+      <label><input type="checkbox" id="clf-rbf-svm" checked /> RBF SVM</label>
+      <label><input type="checkbox" id="clf-gp" checked /> Gaussian Process</label>
+      <label><input type="checkbox" id="clf-tree" checked /> Decision Tree</label>
+      <label><input type="checkbox" id="clf-rf" checked /> Random Forest</label>
+      <label><input type="checkbox" id="clf-mlp" checked /> Neural Net</label>
+      <label><input type="checkbox" id="clf-ada" checked /> AdaBoost</label>
+      <label><input type="checkbox" id="clf-nb" checked /> Naive Bayes</label>
+      <label><input type="checkbox" id="clf-qda" checked /> QDA</label>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label>Hyperparameters</label>
+    <div class="row">
+      <div>
+        <label>KNN k</label>
+        <input id="knn-k" type="number" min="1" max="50" value="3" />
+      </div>
+      <div>
+        <label>Linear SVM C</label>
+        <input id="linear-C" type="number" step="0.01" min="0.001" value="0.025" />
+      </div>
+      <div>
+        <label>RBF SVM C</label>
+        <input id="rbf-C" type="number" step="0.1" min="0.1" value="1" />
+      </div>
+      <div>
+        <label>RBF gamma</label>
+        <input id="rbf-gamma" type="number" step="0.1" min="0.01" value="2" />
+      </div>
+      <div>
+        <label>Tree depth</label>
+        <input id="tree-depth" type="number" min="1" max="50" value="5" />
+      </div>
+      <div>
+        <label>RF depth</label>
+        <input id="rf-depth" type="number" min="1" max="50" value="5" />
+      </div>
+      <div>
+        <label>RF estimators</label>
+        <input id="rf-n-estimators" type="number" min="1" max="300" value="10" />
+      </div>
+      <div>
+        <label>MLP alpha</label>
+        <input id="mlp-alpha" type="number" step="0.1" min="0" value="1" />
+      </div>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label>Add point class</label>
+    <label><input type="radio" name="add-class" value="0" checked /> Class 0</label>
+    <label><input type="radio" name="add-class" value="1" /> Class 1</label>
+  </div>
+
+  <div class="control-group">
+    <button id="run-btn" disabled>Run</button>
+  </div>
+
+</div>
+
+<p id="status">Loading Python & scikit‑learn…</p>
+
+<div id="plot-container">
+  <img id="plot" />
+  <canvas id="overlay"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
