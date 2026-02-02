@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Field & Potential of a Charged Wire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Render all elements with class "katex"
+            const katexElements = document.querySelectorAll('.katex');
+            katexElements.forEach(function(element) {
+                // Get the text content
+                let content = element.textContent.trim();
+
+                // Determine if it's a display equation (div) or inline (span)
+                const isDisplay = element.tagName.toLowerCase() === 'div';
+
+                try {
+                    // Render the KaTeX
+                    katex.render(content, element, {
+                        throwOnError: false,
+                        displayMode: isDisplay
+                    });
+                } catch(e) {
+                    console.warn('KaTeX rendering failed for element:', element, 'with content:', content, 'error:', e);
+                }
+            });
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(120deg, #1e5799 0%, #207cca 51%, #2989d8 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 45px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        h2 {
+            font-size: 2.1rem;
+            color: #1a3a6c;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #eaeff5;
+            display: inline-block;
+        }
+        
+        h3 {
+            font-size: 1.6rem;
+            color: #2c5282;
+            margin: 25px 0 15px;
+        }
+        
+        p {
+            margin-bottom: 18px;
+            font-size: 1.05rem;
+            max-width: 850px;
+        }
+        
+        .formula-container {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .formula-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1e40af;
+            display: block;
+        }
+        
+        .katex {
+            font-size: 1.3rem !important;
+        }
+        
+        .visualization-container {
+            background: #f9fbfd;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin: 30px 0;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 25px 0;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 12px;
+            justify-content: center;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+            align-items: center;
+        }
+        
+        .control-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05rem;
+        }
+        
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 25px;
+            -webkit-appearance: none;
+            background: #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .value-display {
+            font-weight: bold;
+            margin-top: 5px;
+            color: #1a365d;
+            font-size: 1.2rem;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+        
+        .notes {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+        
+        .notes ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+        
+        .notes li {
+            margin-bottom: 5px;
+        }
+        
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        
+        canvas {
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .vector-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .vector-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #0c4a6e;
+            margin: 5px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #4a5568;
+            font-size: 0.95rem;
+            background: #f8fafc;
+            border-top: 1px solid #edf2f7;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2.3rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .control-group {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Electric Field & Electrostatic Potential</h1>
+            <div class="subtitle">Analysis of a uniformly charged wire with linear charge density λ and length 2a</div>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2>Problem Statement</h2>
+                <p>Consider a straight wire of length <span class="katex">2a</span> with uniform charge density <span class="katex">\lambda</span> (charge per unit length). The wire has negligible cross-section and lies along the x-axis from <span class="katex">x = -a</span> to <span class="katex">x = a</span>. We aim to study:</p>
+                <ol>
+                    <li>The electric field vector <span class="katex">\vec{E}(x,y)</span> at any point in space</li>
+                    <li>The electrostatic potential <span class="katex">V(x,y)</span> at any point in space</li>
+                </ol>
+                <p>This configuration is fundamental in electrostatics and demonstrates how continuous charge distributions generate electric fields and potentials.</p>
+            </div>
+            
+            <div class="section">
+                <h2>Theoretical Solution</h2>
+                
+                <h3>Electric Field Calculation</h3>
+                <p>The electric field at point <span class="katex">(x, y)</span> is obtained by integrating contributions from infinitesimal wire segments. For a segment <span class="katex">dx'</span> at position <span class="katex">x'</span>, the contribution is:</p>
+                <div class="formula-container">
+                    <span class="formula-title">Electric field contribution from a segment:</span>
+                    <div class="katex">\vec{dE} = \frac{1}{4\pi\epsilon_0} \frac{\lambda \, dx'}{r^2} \hat{r}</div>
+                </div>
+                <p>Breaking into components and integrating along the wire:</p>
+                <div class="formula-container">
+                    <span class="formula-title">Electric field components:</span>
+                    <div class="katex">E_x = \frac{\lambda}{4\pi\epsilon_0} \int_{-a}^{a} \frac{x - x'}{[(x-x')^2 + y^2]^{3/2}} \, dx'</div>
+                    <div class="katex">E_y = \frac{\lambda}{4\pi\epsilon_0} \int_{-a}^{a} \frac{y}{[(x-x')^2 + y^2]^{3/2}} \, dx'</div>
+                </div>
+                <p>These integrals can be solved analytically. The solutions are:</p>
+                <div class="formula-container">
+                    <span class="formula-title">Analytical solution for electric field:</span>
+                    <div class="katex">E_x = \frac{\lambda}{4\pi\epsilon_0} \left( \frac{1}{\sqrt{(x-a)^2 + y^2}} - \frac{1}{\sqrt{(x+a)^2 + y^2}} \right)</div>
+                    <div class="katex">E_y = \frac{\lambda}{4\pi\epsilon_0} \frac{y}{|y|} \left( \frac{x+a}{\sqrt{(x+a)^2 + y^2}} - \frac{x-a}{\sqrt{(x-a)^2 + y^2}} \right) \quad (y \neq 0)</div>
+                </div>
+                
+                <h3>Electrostatic Potential Calculation</h3>
+                <p>The electrostatic potential is a scalar quantity obtained by integrating contributions from all segments:</p>
+                <div class="formula-container">
+                    <span class="formula-title">Potential contribution from a segment:</span>
+                    <div class="katex">dV = \frac{1}{4\pi\epsilon_0} \frac{\lambda \, dx'}{r}</div>
+                </div>
+                <p>Integrating along the wire gives:</p>
+                <div class="formula-container">
+                    <span class="formula-title">Electrostatic potential:</span>
+                    <div class="katex">V = \frac{\lambda}{4\pi\epsilon_0} \int_{-a}^{a} \frac{dx'}{\sqrt{(x-x')^2 + y^2}} = \frac{\lambda}{4\pi\epsilon_0} \ln \left( \frac{\sqrt{(x+a)^2 + y^2} + (x+a)}{\sqrt{(x-a)^2 + y^2} + (x-a)} \right)</div>
+                </div>
+                <p>The potential diverges logarithmically near the wire ends, which is characteristic of line charges.</p>
+            </div>
+            
+            <div class="section">
+                <h2>Interactive Visualization</h2>
+                <p>Below is an interactive simulation of the electric field and electrostatic potential. The red line represents the charged wire with uniform density <span class="katex">\lambda</span>. Drag the blue test point to explore how the electric field vector and potential change at different positions.</p>
+                
+                <div class="visualization-container">
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="aSlider">Half-length (a)</label>
+                            <div class="slider-container">
+                                <input type="range" id="aSlider" min="0.5" max="5" step="0.1" value="2">
+                                <div class="value-display"><span id="aValue">2.0</span> units</div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="lambdaSlider">Charge density (λ)</label>
+                            <div class="slider-container">
+                                <input type="range" id="lambdaSlider" min="-5" max="5" step="0.1" value="1">
+                                <div class="value-display"><span id="lambdaValue">1.0</span> units</div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="gridDensitySlider">Field line density</label>
+                            <div class="slider-container">
+                                <input type="range" id="gridDensitySlider" min="5" max="25" step="1" value="12">
+                                <div class="value-display"><span id="gridDensityValue">12</span> lines</div>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showFieldLines" checked>
+                                <label for="showFieldLines">Show electric field lines</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="showPotential" checked>
+                                <label for="showPotential">Show equipotential lines</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-container">
+                        <div id="sketch-holder"></div>
+                    </div>
+                    
+                    <div class="notes">
+                        <p><strong>Notes:</strong></p>
+                        <ul>
+                            <li>Drag the blue test point to see electric field vector and potential values at different positions</li>
+                            <li>Red line: Charged wire with uniform density λ</li>
+                            <li>Green arrow: Electric field vector at test point (length proportional to field strength)</li>
+                            <li>Blue curves: Electric field lines (show direction of force on positive test charge)</li>
+                            <li>Orange curves: Equipotential lines (perpendicular to field lines)</li>
+                            <li>For simplicity, we set <span class="katex">\frac{1}{4\pi\epsilon_0} = 1</span> in our calculations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="vector-info">
+                        <div>Electric field magnitude at test point:</div>
+                        <div class="vector-value" id="eMagnitude">0.00</div>
+                        <div>Electrostatic potential at test point:</div>
+                        <div class="vector-value" id="vValue">0.00</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Key Physical Insights</h2>
+                <h3>Symmetry Considerations</h3>
+                <p>The system has symmetry about the x-axis. For points on the perpendicular bisector (x=0), the x-component of the electric field vanishes due to symmetry, leaving only the y-component. For points on the x-axis beyond the wire ends, the field resembles that of a point charge.</p>
+                
+                <h3>Behavior Near the Wire</h3>
+                <p>Close to the wire (but not at the ends), the electric field approximates that of an infinite wire: <span class="katex">|\vec{E}| \approx \frac{\lambda}{2\pi\epsilon_0 r}</span>, where <span class="katex">r</span> is the perpendicular distance to the wire. The field is radial and perpendicular to the wire.</p>
+                
+                <h3>Behavior at Large Distances</h3>
+                <p>Far from the wire (<span class="katex">r \gg a</span>), the system resembles a point charge <span class="katex">Q = 2a\lambda</span>, with field magnitude <span class="katex">|\vec{E}| \approx \frac{1}{4\pi\epsilon_0} \frac{2a\lambda}{r^2}</span> and potential <span class="katex">V \approx \frac{1}{4\pi\epsilon_0} \frac{2a\lambda}{r}</span>.</p>
+                
+                <h3>Field Lines and Equipotentials</h3>
+                <p>Electric field lines originate from positive charges and terminate at negative charges. For a positively charged wire, field lines radiate outward. Equipotential surfaces are always perpendicular to electric field lines. Near the wire ends, both field lines and equipotentials exhibit curvature that reflects the finite length of the wire.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Physics Simulation | Electric Field & Potential of a Uniformly Charged Wire | Created with p5.js and KaTeX</p>
+            <p>Note: All calculations use arbitrary units with <span class="katex">\frac{1}{4\pi\epsilon_0} = 1</span> for simplicity</p>
+        </footer>
+    </div>
+
+    <script>
+        // Global variables for the sketch
+        let a = 2.0; // Half-length of wire
+        let lambda = 1.0; // Charge density
+        let k = 1.0; // Constant (1/(4*pi*epsilon0)) set to 1 for simplicity
+        let testPoint = {x: 1.5, y: 1.5}; // Test point position
+        let isDragging = false;
+        let showFieldLines = true;
+        let showPotential = true;
+        let gridDensity = 12;
+        let fieldLines = [];
+        let equipotentials = [];
+        let scale = 45; // Scale factor: pixels per unit
+        let origin = {x: 0, y: 0}; // Will be set to canvas center
+        
+        // Precompute field lines and equipotentials
+        function precomputeFieldLines() {
+            fieldLines = [];
+            const numLines = gridDensity;
+            const lineDensity = numLines * 0.5;
+            
+            // Create starting points around the wire
+            for (let i = 0; i < numLines; i++) {
+                // Start points above and below the wire
+                const angle = (i / numLines) * Math.PI;
+                const radius = 0.3; // Distance from wire to start field lines
+                
+                // For positive lambda, field lines radiate outward
+                // Start points above the wire
+                let startX = -a + (2*a)*(i/(numLines-1));
+                let startY = radius;
+                
+                if (lambda < 0) {
+                    // For negative charge, reverse direction
+                    startY = -radius;
+                }
+                
+                // Trace the field line
+                let line = traceFieldLine(startX, startY, 200, 0.05);
+                if (line.length > 1) fieldLines.push(line);
+                
+                // Also trace below the wire (if not on axis)
+                if (Math.abs(startY) > 0.01) {
+                    let line2 = traceFieldLine(startX, -startY, 200, 0.05);
+                    if (line2.length > 1) fieldLines.push(line2);
+                }
+            }
+        }
+        
+        function precomputeEquipotentials() {
+            equipotentials = [];
+            const numLines = Math.floor(gridDensity * 0.7);
+            const basePotential = lambda > 0 ? 0.5 : -0.5;
+            const step = lambda > 0 ? 0.7 : -0.7;
+            
+            // Create equipotential lines at different potential values
+            for (let i = 0; i < numLines; i++) {
+                const Vtarget = basePotential + i * step;
+                let contour = computeEquipotential(Vtarget, 30);
+                if (contour.length > 5) equipotentials.push(contour);
+            }
+        }
+        
+        // Trace a field line starting from (x0, y0)
+        function traceFieldLine(x0, y0, maxSteps, stepSize) {
+            let line = [];
+            let x = x0;
+            let y = y0;
+            const minDistance = 0.2; // Minimum distance from wire ends
+            
+            for (let i = 0; i < maxSteps; i++) {
+                // Stop if too far from origin
+                if (Math.abs(x) > 6 || Math.abs(y) > 4) break;
+                
+                // Stop if too close to wire ends
+                if (Math.abs(y) < 0.05 && Math.abs(Math.abs(x) - a) < minDistance) break;
+                
+                line.push({x: x, y: y});
+                
+                // Calculate electric field at current position
+                const E = computeE(x, y);
+                const magnitude = Math.sqrt(E.ex*E.ex + E.ey*E.ey);
+                
+                // Stop if field is too weak
+                if (magnitude < 0.01) break;
+                
+                // Normalize and move along field direction
+                const ex_norm = E.ex / magnitude;
+                const ey_norm = E.ey / magnitude;
+                
+                // For negative charge, reverse direction
+                const direction = lambda > 0 ? 1 : -1;
+                
+                x += direction * stepSize * ex_norm;
+                y += direction * stepSize * ey_norm;
+            }
+            
+            return line;
+        }
+        
+        // Compute equipotential line for a given potential value
+        function computeEquipotential(Vtarget, numPoints) {
+            let contour = [];
+            const radiusStep = 0.3;
+            const maxRadius = 5;
+            
+            // Sample points at different angles and radii
+            for (let angle = 0; angle < 2*Math.PI; angle += 0.2) {
+                let r = 0.5;
+                let prevDiff = null;
+                
+                // Search for radius where potential matches Vtarget
+                while (r < maxRadius) {
+                    const x = r * Math.cos(angle);
+                    const y = r * Math.sin(angle);
+                    
+                    // Skip points too close to wire
+                    if (Math.abs(y) < 0.1 && Math.abs(x) <= a) {
+                        r += radiusStep;
+                        continue;
+                    }
+                    
+                    const V = computeV(x, y);
+                    const diff = V - Vtarget;
+                    
+                    // Check if we crossed the target potential
+                    if (prevDiff !== null && diff * prevDiff <= 0) {
+                        contour.push({x: x, y: y});
+                        break;
+                    }
+                    
+                    prevDiff = diff;
+                    r += radiusStep;
+                }
+            }
+            
+            return contour;
+        }
+        
+        // Compute electric field at (x, y)
+        function computeE(x, y) {
+            // Handle singularity on the wire
+            if (Math.abs(y) < 1e-5 && Math.abs(x) <= a) {
+                return {ex: 0, ey: (lambda > 0 ? 1 : -1) * 1000};
+            }
+            
+            // Analytical solution for electric field
+            const denom1 = Math.sqrt((x - a)*(x - a) + y*y);
+            const denom2 = Math.sqrt((x + a)*(x + a) + y*y);
+            
+            const Ex = k * lambda * (1/denom1 - 1/denom2);
+            
+            let Ey = 0;
+            if (Math.abs(y) > 1e-5) {
+                const term1 = (x + a) / Math.sqrt((x + a)*(x + a) + y*y);
+                const term2 = (x - a) / Math.sqrt((x - a)*(x - a) + y*y);
+                Ey = k * lambda * (y/Math.abs(y)) * (term1 - term2);
+            } else {
+                // On the x-axis but outside the wire
+                if (x > a) {
+                    Ey = 0;
+                } else if (x < -a) {
+                    Ey = 0;
+                } else {
+                    // On the wire segment - undefined, return large value
+                    Ey = (lambda > 0 ? 1 : -1) * 1000;
+                }
+            }
+            
+            return {ex: Ex, ey: Ey};
+        }
+        
+        // Compute potential at (x, y)
+        function computeV(x, y) {
+            // Handle singularity on the wire
+            if (Math.abs(y) < 1e-5 && Math.abs(x) <= a) {
+                return (lambda > 0 ? 1 : -1) * 1000;
+            }
+            
+            // Analytical solution for potential
+            const term1 = Math.sqrt((x + a)*(x + a) + y*y) + (x + a);
+            const term2 = Math.sqrt((x - a)*(x - a) + y*y) + (x - a);
+            
+            // Avoid division by zero or log of negative number
+            if (term2 <= 0 || term1 <= 0) return 0;
+            
+            return k * lambda * Math.log(term1 / term2);
+        }
+        
+        // p5.js sketch
+        let sketch = function(p) {
+            p.setup = function() {
+                const canvas = p.createCanvas(700, 450);
+                canvas.parent('sketch-holder');
+                origin.x = p.width / 2;
+                origin.y = p.height / 2;
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(14);
+                p.textFont('Segoe UI, Arial, sans-serif');
+                
+                // Initial computation
+                precomputeFieldLines();
+                precomputeEquipotentials();
+            };
+            
+            p.draw = function() {
+                p.background(250, 252, 255);
+                
+                // Draw axes
+                p.push();
+                p.translate(origin.x, origin.y);
+                
+                // Draw grid
+                p.stroke(220, 225, 235);
+                p.strokeWeight(1);
+                for (let x = -6; x <= 6; x++) {
+                    p.line(x*scale, -4.5*scale, x*scale, 4.5*scale);
+                }
+                for (let y = -4.5; y <= 4.5; y++) {
+                    p.line(-6.5*scale, y*scale, 6.5*scale, y*scale);
+                }
+                
+                // Draw axes
+                p.stroke(100, 116, 139);
+                p.strokeWeight(1.5);
+                p.line(-6.5*scale, 0, 6.5*scale, 0); // x-axis
+                p.line(0, -4.5*scale, 0, 4.5*scale); // y-axis
+                
+                // Draw wire
+                p.stroke(220, 38, 38);
+                p.strokeWeight(4);
+                p.line(-a*scale, 0, a*scale, 0);
+                
+                // Draw wire endpoints
+                p.fill(220, 38, 38);
+                p.noStroke();
+                p.ellipse(-a*scale, 0, 8, 8);
+                p.ellipse(a*scale, 0, 8, 8);
+                
+                // Draw field lines
+                if (showFieldLines) {
+                    p.stroke(59, 130, 246);
+                    p.strokeWeight(1.5);
+                    p.noFill();
+                    
+                    for (let line of fieldLines) {
+                        if (line.length > 1) {
+                            p.beginShape();
+                            for (let pt of line) {
+                                p.vertex(pt.x*scale, -pt.y*scale); // Flip y for screen coordinates
+                            }
+                            p.endShape();
+                        }
+                    }
+                }
+                
+                // Draw equipotential lines
+                if (showPotential) {
+                    p.stroke(234, 88, 12);
+                    p.strokeWeight(1.2);
+                    p.noFill();
+                    
+                    for (let contour of equipotentials) {
+                        if (contour.length > 2) {
+                            p.beginShape();
+                            for (let pt of contour) {
+                                p.vertex(pt.x*scale, -pt.y*scale); // Flip y for screen coordinates
+                            }
+                            p.endShape(p.CLOSE);
+                        }
+                    }
+                }
+                
+                // Draw test point
+                p.fill(59, 130, 246);
+                p.noStroke();
+                p.ellipse(testPoint.x*scale, -testPoint.y*scale, 14, 14);
+                
+                // Compute E and V at test point
+                const E = computeE(testPoint.x, testPoint.y);
+                const V = computeV(testPoint.x, testPoint.y);
+                const Emag = Math.sqrt(E.ex*E.ex + E.ey*E.ey);
+                
+                // Update display values
+                document.getElementById('eMagnitude').textContent = Emag.toFixed(2);
+                document.getElementById('vValue').textContent = V.toFixed(2);
+                
+                // Draw electric field vector at test point
+                if (Emag > 0.01) {
+                    p.stroke(16, 185, 129);
+                    p.strokeWeight(3);
+                    
+                    // Normalize and scale the vector for display
+                    const maxDisplayLength = 80;
+                    const scaleVector = Math.min(maxDisplayLength / Emag, maxDisplayLength);
+                    const ex_display = E.ex * scaleVector;
+                    const ey_display = -E.ey * scaleVector; // Flip y for screen coordinates
+                    
+                    // Draw arrow
+                    const arrowX = testPoint.x*scale;
+                    const arrowY = -testPoint.y*scale;
+                    p.line(arrowX, arrowY, arrowX + ex_display, arrowY + ey_display);
+                    
+                    // Draw arrowhead
+                    const arrowSize = 8;
+                    const angle = Math.atan2(ey_display, ex_display);
+                    p.push();
+                    p.translate(arrowX + ex_display, arrowY + ey_display);
+                    p.rotate(angle);
+                    p.line(0, 0, -arrowSize, -arrowSize/2);
+                    p.line(0, 0, -arrowSize, arrowSize/2);
+                    p.pop();
+                }
+                
+                // Draw coordinate labels
+                p.fill(50, 65, 100);
+                p.noStroke();
+                p.textSize(12);
+                p.text("x", 6.3*scale, -15);
+                p.text("y", 15, -4.3*scale);
+                p.text("(0,0)", -15, 15);
+                
+                p.pop();
+            };
+            
+            p.mousePressed = function() {
+                p.push();
+                p.translate(origin.x, origin.y);
+                
+                // Convert mouse position to physical coordinates
+                const mx = (p.mouseX - origin.x) / scale;
+                const my = -(p.mouseY - origin.y) / scale; // Flip y
+                
+                // Check if mouse is near test point
+                const dx = mx - testPoint.x;
+                const dy = my - testPoint.y;
+                if (dx*dx + dy*dy < 0.25) { // Within 0.5 units radius
+                    isDragging = true;
+                }
+                
+                p.pop();
+            };
+            
+            p.mouseReleased = function() {
+                isDragging = false;
+            };
+            
+            p.mouseDragged = function() {
+                if (isDragging) {
+                    p.push();
+                    p.translate(origin.x, origin.y);
+                    
+                    // Convert mouse position to physical coordinates
+                    const mx = (p.mouseX - origin.x) / scale;
+                    const my = -(p.mouseY - origin.y) / scale; // Flip y
+                    
+                    // Update test point position (constrain to visible area)
+                    testPoint.x = p.constrain(mx, -6, 6);
+                    testPoint.y = p.constrain(my, -4, 4);
+                    
+                    p.pop();
+                }
+            };
+        };
+        
+        // Initialize p5 sketch
+        new p5(sketch);
+        
+        // Setup event listeners
+        document.getElementById('aSlider').addEventListener('input', function() {
+            a = parseFloat(this.value);
+            document.getElementById('aValue').textContent = a.toFixed(1);
+            precomputeFieldLines();
+            precomputeEquipotentials();
+        });
+        
+        document.getElementById('lambdaSlider').addEventListener('input', function() {
+            lambda = parseFloat(this.value);
+            document.getElementById('lambdaValue').textContent = lambda.toFixed(1);
+            precomputeFieldLines();
+            precomputeEquipotentials();
+        });
+        
+        document.getElementById('gridDensitySlider').addEventListener('input', function() {
+            gridDensity = parseInt(this.value);
+            document.getElementById('gridDensityValue').textContent = gridDensity;
+            precomputeFieldLines();
+            precomputeEquipotentials();
+        });
+        
+        document.getElementById('showFieldLines').addEventListener('change', function() {
+            showFieldLines = this.checked;
+        });
+        
+        document.getElementById('showPotential').addEventListener('change', function() {
+            showPotential = this.checked;
+        });
+    </script>
+</body>
+</html>
+
