@@ -1,0 +1,1346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Brachistochrone (Cycloid) — Interactive, Serverless</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121a33;
+      --panel2:#0f1730;
+      --text:#e8ecff;
+      --muted:#aab3dd;
+      --grid:rgba(255,255,255,.08);
+      --accent:#7aa2ff;
+      --accent2:#56f2c0;
+      --warn:#ffcc66;
+      --bad:#ff5f87;
+      --good:#6ee7a8;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --radius:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color-scheme: dark;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 900px at 20% 0%, #16204a 0%, var(--bg) 55%, #070a14 100%);
+      color:var(--text);
+      overflow:hidden;
+    }
+    .app{
+      height:100%;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+      padding:14px;
+      box-sizing:border-box;
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      min-width:0;
+    }
+    .controls{
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    .header{
+      padding:14px 14px 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .header h1{
+      font-size:16px;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    .header .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.25;
+    }
+
+    .content{
+      padding:12px 14px 14px;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .group{
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:10px;
+      margin:10px 0;
+    }
+    .group-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .group-title b{
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+      margin:8px 0;
+    }
+    label{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.2;
+    }
+    input[type="number"], input[type="text"]{
+      width:120px;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
+      font-size:12.5px;
+    }
+    input[type="number"]:focus, input[type="text"]:focus{
+      border-color: rgba(122,162,255,.55);
+      box-shadow: 0 0 0 3px rgba(122,162,255,.15);
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: var(--accent);
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 120px;
+      gap:10px;
+      align-items:center;
+      margin:8px 0;
+    }
+    .btns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    button{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      padding:9px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:12.5px;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    button:hover{ background: rgba(255,255,255,.07); }
+    button:active{ transform: translateY(1px); }
+    button.primary{
+      background: linear-gradient(180deg, rgba(122,162,255,.35), rgba(122,162,255,.18));
+      border-color: rgba(122,162,255,.45);
+    }
+    button.good{
+      background: linear-gradient(180deg, rgba(86,242,192,.28), rgba(86,242,192,.14));
+      border-color: rgba(86,242,192,.40);
+    }
+    button.bad{
+      background: linear-gradient(180deg, rgba(255,95,135,.28), rgba(255,95,135,.12));
+      border-color: rgba(255,95,135,.42);
+    }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      font-family:var(--mono);
+      font-size:12px;
+      padding:7px 8px;
+      border-radius:10px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      margin:6px 0;
+    }
+    .kv .k{color:rgba(232,236,255,.72)}
+    .kv .v{color:var(--text)}
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+      margin-top:8px;
+    }
+
+    .canvasWrap{
+      position:relative;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+    }
+    .stageHeader{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .stageHeader .left{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .stageHeader .title{
+      font-size:13px;
+      font-weight:650;
+    }
+    .stageHeader .meta{
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .stageHeader .right{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      font-family:var(--mono);
+      font-size:11.5px;
+      color:rgba(232,236,255,.85);
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:100%;
+      touch-action:none; /* we handle pan/drag ourselves */
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(122,162,255,.16), rgba(0,0,0,0) 55%),
+        radial-gradient(700px 500px at 85% 30%, rgba(86,242,192,.10), rgba(0,0,0,0) 55%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,0));
+    }
+    .stage{
+      position:relative;
+      flex:1;
+      min-height:0;
+    }
+
+    .legend{
+      position:absolute;
+      left:12px;
+      bottom:12px;
+      background: rgba(0,0,0,.26);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      padding:10px 10px;
+      font-size:12px;
+      color:rgba(232,236,255,.88);
+      max-width: min(340px, calc(100% - 24px));
+      backdrop-filter: blur(6px);
+    }
+    .legend .line{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:4px 0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .swatch{
+      width:18px;height:3px;border-radius:3px; flex:0 0 auto;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.12);
+    }
+    .swatch.g{ background: var(--accent2); }
+    .swatch.w{ background: var(--warn); }
+    .swatch.b{ background: rgba(232,236,255,.75); }
+
+    /* Mobile layout */
+    @media (max-width: 980px){
+      body{overflow:auto}
+      .app{
+        grid-template-columns: 1fr;
+        grid-template-rows: auto min(64vh, 540px);
+        overflow:auto;
+      }
+      .controls{ order: 1; }
+      .canvasWrap{ order: 2; min-height: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="panel controls" aria-label="Controls">
+      <div class="header">
+        <h1>Brachistochrone (Cycloid) — interactive</h1>
+        <div class="sub">
+          Drag the <span style="color:var(--text)">start</span> and <span style="color:var(--text)">end</span> points.
+          The brachistochrone is the fastest descent under uniform gravity (no friction) and is a cycloid segment.
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="group">
+          <div class="group-title">
+            <b>Units / world scale</b>
+          </div>
+
+          <div class="row2">
+            <div>
+              <label for="metersPerGrid">Meters per major grid cell</label>
+              <input id="metersPerGrid" type="range" min="0.5" max="20" step="0.5" value="5" />
+            </div>
+            <input id="metersPerGridNum" type="number" min="0.5" max="20" step="0.5" value="5" />
+          </div>
+
+          <div class="row2">
+            <div>
+              <label for="pxPerGrid">Pixels per major grid cell</label>
+              <input id="pxPerGrid" type="range" min="40" max="140" step="1" value="80" />
+            </div>
+            <input id="pxPerGridNum" type="number" min="40" max="140" step="1" value="80" />
+          </div>
+
+          <div class="row">
+            <label for="gInput">Gravity g (m/s²)</label>
+            <input id="gInput" type="number" min="0.1" max="50" step="0.1" value="9.81" />
+          </div>
+
+          <div class="hint">
+            Tip: choose meters/grid and px/grid to match a physical scale you want.
+            Travel times scale with √(length / g).
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-title">
+            <b>Visibility</b>
+          </div>
+          <div class="row">
+            <label>Show</label>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <label style="display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted);">
+                <input id="showLine" type="checkbox" checked />
+                Straight line
+              </label>
+              <label style="display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted);">
+                <input id="showArc" type="checkbox" checked />
+                Circular arc (approx)
+              </label>
+            </div>
+          </div>
+          <div class="row">
+            <label for="samples">Curve samples</label>
+            <input id="samples" type="number" min="80" max="2000" step="10" value="700" />
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-title">
+            <b>Simulation</b>
+          </div>
+
+          <div class="row2">
+            <div>
+              <label for="playSpeed">Playback speed</label>
+              <input id="playSpeed" type="range" min="0.1" max="3" step="0.1" value="1" />
+            </div>
+            <input id="playSpeedNum" type="number" min="0.1" max="3" step="0.1" value="1" />
+          </div>
+
+          <div class="btns">
+            <button id="btnPlay" class="good">Play</button>
+            <button id="btnPause">Pause</button>
+            <button id="btnReset" class="bad">Reset</button>
+            <button id="btnCenter">Center view</button>
+          </div>
+
+          <div class="hint">
+            The bead starts from rest at the start point and slides without friction. Speed is from energy:
+            v = √(2 g Δy).
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-title">
+            <b>Computed results</b>
+          </div>
+
+          <div class="kv"><div class="k">Start (m)</div><div class="v" id="readStart">—</div></div>
+          <div class="kv"><div class="k">End (m)</div><div class="v" id="readEnd">—</div></div>
+          <div class="kv"><div class="k">Δx, Δy (m)</div><div class="v" id="readDelta">—</div></div>
+
+          <div class="kv"><div class="k">Brachistochrone time (s)</div><div class="v" id="readTB">—</div></div>
+          <div class="kv"><div class="k">Straight line time (s)</div><div class="v" id="readTL">—</div></div>
+          <div class="kv"><div class="k">Circular arc time (s)</div><div class="v" id="readTA">—</div></div>
+
+          <div class="kv"><div class="k">Cycloid params</div><div class="v" id="readParams">—</div></div>
+
+          <div class="hint">
+            Valid when the end is <span style="color:var(--text)">to the right</span> and <span style="color:var(--text)">below</span> the start (Δx &gt; 0, Δy &gt; 0).
+            If not, the classical brachistochrone doesn’t apply (no purely downhill path).
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-title">
+            <b>Gestures</b>
+          </div>
+          <div class="hint">
+            Drag points to move them. Drag empty space to pan. Pinch / Ctrl+wheel to zoom.
+            Double-click / double-tap to reset view.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel canvasWrap" aria-label="Canvas">
+      <div class="stageHeader">
+        <div class="left">
+          <div class="title">World view</div>
+          <div class="meta" id="metaLine">—</div>
+        </div>
+        <div class="right">
+          <span class="pill" id="pillZoom">zoom: —</span>
+          <span class="pill" id="pillPan">pan: —</span>
+        </div>
+      </div>
+
+      <div class="stage">
+        <canvas id="c"></canvas>
+        <div class="legend">
+          <div class="line"><span class="swatch"></span> Brachistochrone (cycloid)</div>
+          <div class="line"><span class="swatch b"></span> Cycloid bead (animated)</div>
+          <div class="line"><span class="swatch w"></span> Straight line bead (animated)</div>
+          <div class="line"><span class="swatch g"></span> Circular arc bead (animated)</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ---------- Utilities ----------
+  const clamp = (x,a,b)=>Math.min(b,Math.max(a,x));
+  const hypot = Math.hypot;
+  const fmt = (x, d=3) => {
+    if (!isFinite(x)) return "—";
+    const ax = Math.abs(x);
+    if (ax !== 0 && (ax < 1e-3 || ax >= 1e6)) return x.toExponential(3);
+    return x.toFixed(d);
+  };
+
+  // Numerical integration: adaptive Simpson (robust enough for smooth integrands)
+  function simpson(f, a, b){
+    const c = (a+b)/2;
+    return (b-a)/6 * (f(a) + 4*f(c) + f(b));
+  }
+  function adaptiveSimpson(f, a, b, eps=1e-8, maxDepth=18){
+    const S = simpson(f,a,b);
+    function rec(a,b,S,depth){
+      const c=(a+b)/2;
+      const S1=simpson(f,a,c);
+      const S2=simpson(f,c,b);
+      const err = S1+S2 - S;
+      if (depth<=0 || Math.abs(err) < 15*eps) return S1+S2 + err/15;
+      return rec(a,c,S1,depth-1) + rec(c,b,S2,depth-1);
+    }
+    return rec(a,b,S,maxDepth);
+  }
+
+  // Solve for cycloid parameter theta1 given dx, dy:
+  // dx = r (theta - sin theta), dy = r (1 - cos theta)
+  // => dx/dy = (theta - sin theta) / (1 - cos theta)
+  function solveThetaFromRatio(ratio){
+    // ratio > 0 (dx/dy)
+    // As theta->0, ratio ~ theta/3 -> 0; as theta->2π, denominator -> 0, ratio -> +∞.
+    // So unique theta in (0, 2π) for any ratio>0.
+    const TWO_PI = Math.PI*2;
+
+    // Use Taylor expansion for small theta: (theta - sin theta)/(1 - cos theta) ≈ theta/3
+    // This avoids 0/0 numerical issues
+    const f = (th) => {
+      if (th < 1e-4) return th/3 - ratio;  // Taylor approx near 0
+      return (th - Math.sin(th)) / (1 - Math.cos(th)) - ratio;
+    };
+
+    let lo = 1e-6;  // small but not too small
+    let hi = TWO_PI - 1e-6;  // slightly farther from 2π to avoid numerical issues
+
+    // Bisection (monotonic for (0,2π) in ratio>0 region)
+    let flo = f(lo);
+    let fhi = f(hi);
+    
+    if (!isFinite(flo)) return NaN;
+    // fhi can be very large positive (that's ok)
+    if (fhi < 0) {
+      // ratio is too large, theta is very close to 2π
+      return TWO_PI - 1e-6;
+    }
+
+    // Ensure bracket; numerically, at hi ratio huge => fhi positive for finite ratio.
+    // At lo ratio ~0 => flo ~ -ratio negative.
+    if (!(flo <= 0 && fhi >= 0)){
+      // Fallback: scan for bracket
+      let prevT=lo, prevF=flo;
+      for (let i=1;i<=200;i++){
+        const t = lo + (hi-lo)*i/200;
+        const ft = f(t);
+        if (prevF<=0 && ft>=0){ lo=prevT; hi=t; flo=prevF; fhi=ft; break; }
+        prevT=t; prevF=ft;
+      }
+      if (!(flo <= 0 && fhi >= 0)) {
+        return NaN;
+      }
+    }
+
+    for (let it=0; it<80; it++){
+      const mid = 0.5*(lo+hi);
+      const fm = f(mid);
+      if (!isFinite(fm)) { hi = mid; continue; }
+      if (fm > 0) hi = mid;
+      else lo = mid;
+    }
+    return 0.5*(lo+hi);
+  }
+
+  // Build brachistochrone polyline in world coords (meters), along with time mapping
+  function buildCycloidPath(A, B, g, samples){
+    const dx = B.x - A.x;
+    const dy = B.y - A.y; // positive means B below A in our world coords (y down)
+    if (!(dx > 0 && dy > 0) || !(g > 0)) return { ok:false, reason:"Need Δx>0 and Δy>0." };
+
+    const ratio = dx / dy;
+    const theta1 = solveThetaFromRatio(ratio);
+    if (!isFinite(theta1) || theta1 <= 0 || theta1 >= 2*Math.PI) return { ok:false, reason:"Failed to solve θ." };
+
+    const r = dy / (1 - Math.cos(theta1));
+    if (!(r > 0 && isFinite(r))) return { ok:false, reason:"Bad r." };
+
+    // Parametric cycloid from theta=0 at A:
+    // x = A.x + r (theta - sin theta)
+    // y = A.y + r (1 - cos theta)
+    const pts = [];
+    const thetas = [];
+    const N = clamp(Math.floor(samples), 80, 4000);
+
+    for (let i=0;i<=N;i++){
+      const t = theta1 * (i/N);
+      const x = A.x + r*(t - Math.sin(t));
+      const y = A.y + r*(1 - Math.cos(t));
+      pts.push({x,y});
+      thetas.push(t);
+    }
+
+    // Time along cycloid has closed form:
+    // For cycloid, dt = sqrt(r/g) dθ, so T = sqrt(r/g) θ1
+    const T = Math.sqrt(r/g)*theta1;
+
+    // Precompute cumulative arclength and time fraction mapping for animation
+    // Time fraction along θ is linear in θ (because dt proportional to dθ).
+    const sCum = new Float64Array(pts.length);
+    sCum[0]=0;
+    for (let i=1;i<pts.length;i++){
+      const dxp = pts[i].x-pts[i-1].x;
+      const dyp = pts[i].y-pts[i-1].y;
+      sCum[i]=sCum[i-1]+hypot(dxp,dyp);
+    }
+
+    return { ok:true, A, B, dx, dy, theta1, r, pts, thetas, T, sCum, N };
+  }
+
+  function timeAlongPolyline(pts, g, A){
+    // Bead sliding along a fixed track y(s) (downwards is positive y)
+    // Using energy v = sqrt(2 g (y - yA)), dt = ds / v
+    // Guard v near 0 at start by small epsilon.
+    const y0 = A.y;
+    const EPSH = 1e-9;
+    let T = 0;
+    for (let i=1;i<pts.length;i++){
+      const p0=pts[i-1], p1=pts[i];
+      const segLen = hypot(p1.x-p0.x, p1.y-p0.y);
+      if (segLen === 0) continue;
+
+      // Integrate along segment with linear y(s). Parameter u in [0,1].
+      const y_u = (u)=> (p0.y + (p1.y-p0.y)*u);
+      const integrand = (u)=>{
+        const h = Math.max(EPSH, y_u(u)-y0);
+        const v = Math.sqrt(2*g*h);
+        return (segLen)/v;
+      };
+      T += adaptiveSimpson(integrand, 0, 1, 1e-7, 16);
+    }
+    return T;
+  }
+
+  // Precompute cumulative time along a polyline for animation lookup
+  function buildTimeMapping(pts, g, A){
+    const y0 = A.y;
+    const EPSH = 1e-9;
+    const tCum = new Float64Array(pts.length);
+    tCum[0] = 0;
+    let T = 0;
+    for (let i=1;i<pts.length;i++){
+      const p0=pts[i-1], p1=pts[i];
+      const segLen = hypot(p1.x-p0.x, p1.y-p0.y);
+      if (segLen === 0) { tCum[i]=T; continue; }
+
+      // Integrate along segment
+      const y_u = (u)=> (p0.y + (p1.y-p0.y)*u);
+      const integrand = (u)=>{
+        const h = Math.max(EPSH, y_u(u)-y0);
+        const v = Math.sqrt(2*g*h);
+        return (segLen)/v;
+      };
+      const dt = adaptiveSimpson(integrand, 0, 1, 1e-7, 16);
+      T += dt;
+      tCum[i] = T;
+    }
+    return { tCum, T };
+  }
+
+  // Find position along polyline at given time t (using binary search on cumulative time)
+  function positionOnPolyline(pts, tCum, t, T){
+    if (!pts || pts.length < 2 || T <= 0) return null;
+    const tFrac = clamp(t / T, 0, 1);
+    const targetT = tFrac * T;
+    
+    // Binary search for segment
+    let lo = 0, hi = pts.length - 1;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (tCum[mid] < targetT) lo = mid;
+      else hi = mid;
+    }
+    
+    // Interpolate within segment
+    const i = lo;
+    const t0 = tCum[i], t1 = tCum[i+1];
+    const segT = (t1 - t0) > 1e-12 ? (targetT - t0) / (t1 - t0) : 0;
+    
+    const p0 = pts[i], p1 = pts[i+1];
+    return {
+      x: p0.x + (p1.x - p0.x) * segT,
+      y: p0.y + (p1.y - p0.y) * segT,
+      segIdx: i,
+      segT: segT
+    };
+  }
+
+  function buildStraightPath(A,B,samples){
+    const N = clamp(Math.floor(samples), 30, 2000);
+    const pts=[];
+    for (let i=0;i<=N;i++){
+      const t=i/N;
+      pts.push({x:A.x + (B.x-A.x)*t, y:A.y + (B.y-A.y)*t});
+    }
+    return pts;
+  }
+
+  function buildCircularArcPath(A,B,bulge=0.22,samples=500){
+    // Construct a circle through A and B with center on perpendicular bisector
+    // Pick radius by setting sagitta = bulge * chordLength (clamped).
+    const dx=B.x-A.x, dy=B.y-A.y;
+    const L = hypot(dx,dy);
+    if (L<=1e-9) return {ok:false};
+
+    // Midpoint
+    const mx=(A.x+B.x)/2, my=(A.y+B.y)/2;
+
+    // Perp unit vector (choose direction that makes arc initially go down from A)
+    let px = -dy/L, py = dx/L;
+
+    // sagitta s
+    const s = clamp(bulge*L, 0.001*L, 0.45*L);
+    // radius from chord length and sagitta: R = (L^2)/(8s) + s/2
+    const R = (L*L)/(8*s) + s/2;
+
+    // distance from midpoint to center along perpendicular: h = sqrt(R^2 - (L/2)^2)
+    const h2 = Math.max(0, R*R - (L*0.5)*(L*0.5));
+    const h = Math.sqrt(h2);
+
+    // Two possible centers:
+    const c1 = {x: mx + px*h, y: my + py*h};
+    const c2 = {x: mx - px*h, y: my - py*h};
+
+    // Choose center that yields a downward initial tangent-ish direction:
+    // We'll sample a tiny step from A along each candidate arc direction and see which gives larger y.
+    function arcPoints(center){
+      const ax=A.x-center.x, ay=A.y-center.y;
+      const bx=B.x-center.x, by=B.y-center.y;
+      const angA=Math.atan2(ay,ax);
+      const angB=Math.atan2(by,bx);
+
+      // Choose shortest angular direction
+      let d = angB-angA;
+      while (d> Math.PI) d-=2*Math.PI;
+      while (d<-Math.PI) d+=2*Math.PI;
+
+      const N = clamp(Math.floor(samples), 60, 4000);
+      const pts=[];
+      for (let i=0;i<=N;i++){
+        const t=i/N;
+        const ang=angA + d*t;
+        pts.push({x:center.x + R*Math.cos(ang), y:center.y + R*Math.sin(ang)});
+      }
+      return {pts, d, R};
+    }
+
+    const a1 = arcPoints(c1);
+    const a2 = arcPoints(c2);
+
+    function initialDropScore(pts){
+      // compare y at small t to y at start
+      const i = Math.min(3, pts.length-1);
+      return pts[i].y - pts[0].y;
+    }
+    const s1 = initialDropScore(a1.pts);
+    const s2 = initialDropScore(a2.pts);
+    const chosen = (s1 >= s2) ? {center:c1, ...a1} : {center:c2, ...a2};
+
+    return {ok:true, ...chosen};
+  }
+
+  // ---------- View / coordinate transforms ----------
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d", { alpha:true, desynchronized:true });
+
+  const state = {
+    // World coordinates in meters (x right, y down)
+    A: {x: 0, y: 0},
+    B: {x: 12, y: 7},
+
+    // Scale: meters per major grid + pixels per major grid => px per meter
+    metersPerGrid: 5,
+    pxPerGrid: 80,
+
+    // Pan in screen pixels
+    panX: 0,
+    panY: 0,
+
+    // Additional zoom multiplier (pinch/ctrl+wheel)
+    zoom: 1,
+
+    g: 9.81,
+    samples: 700,
+
+    showLine: true,
+    showArc: true,
+
+    playing: false,
+    playSpeed: 1,
+    tSim: 0, // seconds along brachistochrone
+    lastTS: performance.now(),
+
+    dragging: null, // 'A' | 'B' | 'pan'
+    pointerId: null,
+    pinch: null, // {id2, startDist, startZoom, midX, midY, startPanX, startPanY}
+
+    // caches
+    cycloid: null,
+    linePts: null,
+    arcPts: null,
+    times: {TB:NaN, TL:NaN, TA:NaN},
+  };
+
+  function effectiveEndpoints(A, B){
+    // Want a "start" that is higher (smaller y) and "end" lower (bigger y).
+    // If equal y, want "start" left and "end" right.
+    const AisStart =
+      (A.y < B.y) || (A.y === B.y && A.x <= B.x);
+
+    const S = AisStart ? A : B;
+    const E = AisStart ? B : A;
+
+    return { S, E, swapped: !AisStart };
+  }
+
+  function pxPerMeter(){
+    return (state.pxPerGrid / state.metersPerGrid) * state.zoom;
+  }
+
+  function worldToScreen(p){
+    const ppm = pxPerMeter();
+    const cx = canvas.width/2 + state.panX;
+    const cy = canvas.height/2 + state.panY;
+    return { x: cx + p.x*ppm, y: cy + p.y*ppm };
+  }
+
+  function screenToWorld(p){
+    const ppm = pxPerMeter();
+    const cx = canvas.width/2 + state.panX;
+    const cy = canvas.height/2 + state.panY;
+    return { x: (p.x - cx)/ppm, y: (p.y - cy)/ppm };
+  }
+
+  function resize(){
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(2, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(2, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0); // draw in CSS pixels
+  }
+
+  // ---------- Model recomputation ----------
+  function recompute(){
+    const {S, E, swapped} = effectiveEndpoints(state.A, state.B);
+
+    // Cycloid, line, arc all computed from effective Start(S) -> End(E)
+    state.cycloid = buildCycloidPath(S, E, state.g, state.samples);
+    state.linePts = buildStraightPath(S, E, Math.max(120, Math.floor(state.samples/3)));
+    state.arcPts  = buildCircularArcPath(S, E, 0.22, Math.max(200, Math.floor(state.samples/2)));
+
+    state._effective = {S, E, swapped};
+
+    // Times
+    state.times.TB = (state.cycloid.ok) ? state.cycloid.T : NaN;
+    state.times.TL = (state.g>0) ? timeAlongPolyline(state.linePts, state.g, S) : NaN;
+    state.times.TA = (state.arcPts.ok && state.g>0) ? timeAlongPolyline(state.arcPts.pts, state.g, S) : NaN;
+
+    // Build time mappings for animation lookup
+    if (state.linePts && state.g > 0) {
+      const lineTime = buildTimeMapping(state.linePts, state.g, S);
+      state.lineT = lineTime;
+    } else {
+      state.lineT = null;
+    }
+    if (state.arcPts && state.arcPts.ok && state.g > 0) {
+      const arcTime = buildTimeMapping(state.arcPts.pts, state.g, S);
+      state.arcT = arcTime;
+    } else {
+      state.arcT = null;
+    }
+
+    // Clamp sim time
+    if (state.cycloid.ok){
+      state.tSim = clamp(state.tSim, 0, state.cycloid.T);
+    } else {
+      state.tSim = 0;
+    }
+
+    updateReadouts();
+  }
+  // ---------- Drawing ----------
+  function drawGrid(){
+    const w = canvas.getBoundingClientRect().width;
+    const h = canvas.getBoundingClientRect().height;
+    const ppm = pxPerMeter();
+    const major = state.pxPerGrid * state.zoom; // px per major cell
+
+    // Determine world bounds visible
+    const tl = screenToWorld({x:0,y:0});
+    const br = screenToWorld({x:w,y:h});
+
+    // Major grid lines at multiples of metersPerGrid
+    const stepM = state.metersPerGrid;
+    const x0 = Math.floor(tl.x/stepM)*stepM;
+    const y0 = Math.floor(tl.y/stepM)*stepM;
+
+    ctx.save();
+    ctx.lineWidth = 1;
+
+    // minor grid at 1/5 major
+    const minorStepM = stepM/5;
+    const minorAlpha = 0.05;
+    ctx.strokeStyle = `rgba(255,255,255,${minorAlpha})`;
+
+    for (let x = Math.floor(tl.x/minorStepM)*minorStepM; x<=br.x; x+=minorStepM){
+      const sx = worldToScreen({x, y:0}).x;
+      ctx.beginPath();
+      ctx.moveTo(sx, 0);
+      ctx.lineTo(sx, h);
+      ctx.stroke();
+    }
+    for (let y = Math.floor(tl.y/minorStepM)*minorStepM; y<=br.y; y+=minorStepM){
+      const sy = worldToScreen({x:0, y}).y;
+      ctx.beginPath();
+      ctx.moveTo(0, sy);
+      ctx.lineTo(w, sy);
+      ctx.stroke();
+    }
+
+    // major grid
+    ctx.strokeStyle = "rgba(255,255,255,.09)";
+    for (let x = x0; x<=br.x; x+=stepM){
+      const sx = worldToScreen({x, y:0}).x;
+      ctx.beginPath();
+      ctx.moveTo(sx, 0);
+      ctx.lineTo(sx, h);
+      ctx.stroke();
+    }
+    for (let y = y0; y<=br.y; y+=stepM){
+      const sy = worldToScreen({x:0, y}).y;
+      ctx.beginPath();
+      ctx.moveTo(0, sy);
+      ctx.lineTo(w, sy);
+      ctx.stroke();
+    }
+
+    // axes at x=0, y=0
+    ctx.strokeStyle = "rgba(255,255,255,.18)";
+    const sY0 = worldToScreen({x:0,y:0}).y;
+    const sX0 = worldToScreen({x:0,y:0}).x;
+    ctx.beginPath(); ctx.moveTo(0, sY0); ctx.lineTo(w, sY0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sX0, 0); ctx.lineTo(sX0, h); ctx.stroke();
+
+    // labels
+    ctx.fillStyle = "rgba(232,236,255,.7)";
+    ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--mono");
+    ctx.fillText("y (down, m)", 10, 18);
+    ctx.fillText("x (m)", w-60, sY0-8);
+
+    ctx.restore();
+  }
+
+  function drawPolyline(pts, strokeStyle, lineWidth=2.25, dash=null){
+    if (!pts || pts.length<2) return;
+    const wpts = pts;
+    ctx.save();
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = lineWidth;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    const p0 = worldToScreen(wpts[0]);
+    ctx.moveTo(p0.x, p0.y);
+    for (let i=1;i<wpts.length;i++){
+      const p = worldToScreen(wpts[i]);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawPoint(p, color, label){
+    const sp = worldToScreen(p);
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.strokeStyle = "rgba(0,0,0,.55)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sp.x, sp.y, 8, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(232,236,255,.92)";
+    ctx.font = "12px var(--sans)";
+    ctx.fillText(label, sp.x + 12, sp.y - 10);
+    ctx.restore();
+  }
+
+  function beadPositionOnCycloid(){
+    if (!state.cycloid || !state.cycloid.ok) return null;
+    const {A, r} = state.cycloid;
+    const th = clamp(state.tSim / state.cycloid.T, 0, 1) * state.cycloid.theta1;
+    const x = A.x + r*(th - Math.sin(th));
+    const y = A.y + r*(1 - Math.cos(th));
+    return {x,y,theta:th};
+  }
+
+  function drawBead(p, color, glowColor, label){
+    if (!p) return;
+    const sp = worldToScreen(p);
+    ctx.save();
+    // glow
+    ctx.fillStyle = glowColor;
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, 16, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = color;
+    ctx.strokeStyle = "rgba(0,0,0,.55)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, 6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+    if (label) {
+      ctx.fillStyle = "rgba(232,236,255,.90)";
+      ctx.font = "11px var(--mono)";
+      ctx.fillText(label, sp.x + 10, sp.y - 8);
+    }
+    ctx.restore();
+  }
+
+  function drawAllBeads(){
+    if (!state.cycloid || !state.cycloid.ok) return;
+    const y0 = state.cycloid.A.y;
+
+    // Cycloid bead (white/blue)
+    const bpCycloid = beadPositionOnCycloid();
+    drawBead(bpCycloid, "rgba(232,236,255,.85)", "rgba(122,162,255,.25)", null);
+
+    // Straight line bead (yellow/orange)
+    if (state.lineT && state.lineT.T > 0) {
+      const bpLine = positionOnPolyline(state.linePts, state.lineT.tCum, state.tSim, state.lineT.T);
+      drawBead(bpLine, "rgba(255,204,102,.9)", "rgba(255,204,102,.2)", null);
+    }
+
+    // Circular arc bead (green/cyan)
+    if (state.arcT && state.arcT.T > 0) {
+      const bpArc = positionOnPolyline(state.arcPts.pts, state.arcT.tCum, state.tSim, state.arcT.T);
+      drawBead(bpArc, "rgba(86,242,192,.9)", "rgba(86,242,192,.2)", null);
+    }
+
+    // Speed readout for cycloid bead (leader)
+    if (bpCycloid) {
+      const h = Math.max(0, bpCycloid.y - y0);
+      const v = Math.sqrt(Math.max(0, 2*state.g*h));
+      ctx.fillStyle = "rgba(232,236,255,.95)";
+      ctx.font = "12px var(--mono)";
+      ctx.fillText(`t=${fmt(state.tSim,3)} s  v=${fmt(v,3)} m/s`, worldToScreen(bpCycloid).x + 12, worldToScreen(bpCycloid).y + 4);
+    }
+  }
+
+  function render(){
+    const w = canvas.getBoundingClientRect().width;
+    const h = canvas.getBoundingClientRect().height;
+    ctx.clearRect(0,0,w,h);
+
+    drawGrid();
+
+    // Paths
+    if (state.showLine){
+      drawPolyline(state.linePts, "rgba(255,204,102,.80)", 2.0, [8,7]);
+    }
+    if (state.showArc && state.arcPts && state.arcPts.ok){
+      drawPolyline(state.arcPts.pts, "rgba(86,242,192,.78)", 2.0, [10,7]);
+    }
+    if (state.cycloid && state.cycloid.ok){
+      drawPolyline(state.cycloid.pts, "rgba(122,162,255,.95)", 3.0, null);
+    } else {
+      // Show error message near top
+      ctx.save();
+      ctx.fillStyle = "rgba(255,95,135,.92)";
+      ctx.font = "13px var(--sans)";
+      ctx.fillText("Brachistochrone needs a downhill end point. Try placing one point above the other.", 12, 34);
+      ctx.restore();
+    }
+
+    // Points and beads
+    drawPoint(state.A, "rgba(255,255,255,.92)", "Start");
+    drawPoint(state.B, "rgba(255,255,255,.92)", "End");
+    drawAllBeads();
+
+    // overlay pills
+    document.getElementById("pillZoom").textContent = `zoom: ${fmt(state.zoom,2)}×`;
+    document.getElementById("pillPan").textContent = `pan: ${fmt(state.panX,0)}, ${fmt(state.panY,0)} px`;
+
+    requestAnimationFrame(render);
+  }
+
+  // ---------- Readouts ----------
+  function updateReadouts(){
+    const dx = state.B.x - state.A.x;
+    const dy = state.B.y - state.A.y;
+
+    document.getElementById("readStart").textContent = `(${fmt(state.A.x,3)}, ${fmt(state.A.y,3)})`;
+    document.getElementById("readEnd").textContent   = `(${fmt(state.B.x,3)}, ${fmt(state.B.y,3)})`;
+    document.getElementById("readDelta").textContent = `(${fmt(dx,3)}, ${fmt(dy,3)})`;
+
+    document.getElementById("readTB").textContent = fmt(state.times.TB, 6);
+    document.getElementById("readTL").textContent = fmt(state.times.TL, 6);
+    document.getElementById("readTA").textContent = fmt(state.times.TA, 6);
+
+    if (state.cycloid && state.cycloid.ok){
+      document.getElementById("readParams").textContent =
+        `r=${fmt(state.cycloid.r,5)} m, θ=${fmt(state.cycloid.theta1,6)} rad`;
+      document.getElementById("metaLine").textContent =
+        `Δx=${fmt(dx,3)} m, Δy=${fmt(dy,3)} m | TB=${fmt(state.times.TB,5)} s`;
+    } else {
+      document.getElementById("readParams").textContent = "—";
+      document.getElementById("metaLine").textContent =
+        `Δx=${fmt(dx,3)} m, Δy=${fmt(dy,3)} m`;
+    }
+  }
+
+  // ---------- Input bindings ----------
+  function bindRangeNumber(rangeEl, numEl, onChange){
+    const syncFromRange = () => { numEl.value = rangeEl.value; onChange(parseFloat(rangeEl.value)); };
+    const syncFromNum   = () => { rangeEl.value = numEl.value; onChange(parseFloat(numEl.value)); };
+    rangeEl.addEventListener("input", syncFromRange);
+    numEl.addEventListener("input", syncFromNum);
+  }
+
+  // metersPerGrid / pxPerGrid / g / samples / checkboxes / speed
+  const metersPerGrid = document.getElementById("metersPerGrid");
+  const metersPerGridNum = document.getElementById("metersPerGridNum");
+  bindRangeNumber(metersPerGrid, metersPerGridNum, (v)=>{ state.metersPerGrid=v; recompute(); });
+
+  const pxPerGrid = document.getElementById("pxPerGrid");
+  const pxPerGridNum = document.getElementById("pxPerGridNum");
+  bindRangeNumber(pxPerGrid, pxPerGridNum, (v)=>{ state.pxPerGrid=v; recompute(); });
+
+  const gInput = document.getElementById("gInput");
+  gInput.addEventListener("input", ()=>{ state.g=parseFloat(gInput.value)||9.81; recompute(); });
+
+  const samplesInput = document.getElementById("samples");
+  samplesInput.addEventListener("input", ()=>{ state.samples=parseInt(samplesInput.value,10)||700; recompute(); });
+
+  const showLine = document.getElementById("showLine");
+  showLine.addEventListener("change", ()=>{ state.showLine = showLine.checked; });
+
+  const showArc = document.getElementById("showArc");
+  showArc.addEventListener("change", ()=>{ state.showArc = showArc.checked; });
+
+  const playSpeed = document.getElementById("playSpeed");
+  const playSpeedNum = document.getElementById("playSpeedNum");
+  bindRangeNumber(playSpeed, playSpeedNum, (v)=>{ state.playSpeed=v; });
+
+  document.getElementById("btnPlay").addEventListener("click", ()=>{
+    if (state.cycloid && state.cycloid.ok){
+      if (state.tSim >= state.cycloid.T) state.tSim = 0;
+      state.playing = true;
+      state.lastTS = performance.now();
+    }
+  });
+  document.getElementById("btnPause").addEventListener("click", ()=>{ state.playing = false; });
+  document.getElementById("btnReset").addEventListener("click", ()=>{
+    state.playing=false;
+    state.tSim=0;
+  });
+  document.getElementById("btnCenter").addEventListener("click", ()=>centerView());
+  function centerView(){
+    // Center on midpoint between A and B
+    const mid = {x:(state.A.x+state.B.x)/2, y:(state.A.y+state.B.y)/2};
+    const sp = worldToScreen(mid);
+    const w = canvas.getBoundingClientRect().width;
+    const h = canvas.getBoundingClientRect().height;
+    // Adjust pan so mid goes to center
+    state.panX += (w/2 - sp.x);
+    state.panY += (h/2 - sp.y);
+  }
+
+  // ---------- Pointer interactions (drag points / pan / pinch zoom) ----------
+  function hitTestPoint(screenPt, worldPt){
+    const sp = worldToScreen(worldPt);
+    const dx = sp.x - screenPt.x;
+    const dy = sp.y - screenPt.y;
+    return (dx*dx + dy*dy) <= (14*14);
+  }
+
+  function getEventPos(e){
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  canvas.addEventListener("pointerdown", (e)=>{
+    canvas.setPointerCapture(e.pointerId);
+    const p = getEventPos(e);
+
+    // If already in pinch mode, ignore
+    if (state.pinch) return;
+
+    const overA = hitTestPoint(p, state.A);
+    const overB = hitTestPoint(p, state.B);
+
+    if (overA) state.dragging = "A";
+    else if (overB) state.dragging = "B";
+    else state.dragging = "pan";
+
+    state.pointerId = e.pointerId;
+    state.dragStart = { p, panX: state.panX, panY: state.panY, A: {...state.A}, B: {...state.B} };
+  });
+
+  canvas.addEventListener("pointermove", (e)=>{
+    // Support 2-finger pinch: track second pointer
+    if (state.pinch){
+      if (e.pointerId === state.pointerId || e.pointerId === state.pinch.id2){
+        const rect = canvas.getBoundingClientRect();
+        const p1 = state.pinch.p1;
+        const p2 = state.pinch.p2;
+        const cur = {x: e.clientX-rect.left, y: e.clientY-rect.top};
+        if (e.pointerId === state.pointerId) state.pinch.p1 = cur;
+        else state.pinch.p2 = cur;
+
+        const dx = state.pinch.p2.x - state.pinch.p1.x;
+        const dy = state.pinch.p2.y - state.pinch.p1.y;
+        const dist = Math.max(10, Math.hypot(dx,dy));
+        const z = clamp(state.pinch.startZoom * (dist/state.pinch.startDist), 0.15, 12);
+        // Zoom around midpoint: adjust pan so midpoint stays fixed
+        const mid = {x:(state.pinch.p1.x+state.pinch.p2.x)/2, y:(state.pinch.p1.y+state.pinch.p2.y)/2};
+        const beforeWorld = screenToWorld(mid);
+        state.zoom = z;
+        const afterScreen = worldToScreen(beforeWorld);
+        state.panX += (mid.x - afterScreen.x);
+        state.panY += (mid.y - afterScreen.y);
+
+        return;
+      }
+    }
+
+    if (e.pointerId !== state.pointerId || !state.dragging) return;
+    const p = getEventPos(e);
+    const ds = state.dragStart;
+
+    if (state.dragging === "pan"){
+      state.panX = ds.panX + (p.x - ds.p.x);
+      state.panY = ds.panY + (p.y - ds.p.y);
+      return;
+    }
+
+    // dragging a point: move in world coords
+    const worldP = screenToWorld(p);
+    if (state.dragging === "A"){
+      state.A.x = worldP.x; state.A.y = worldP.y;
+    } else {
+      state.B.x = worldP.x; state.B.y = worldP.y;
+    }
+    recompute();
+  });
+
+  canvas.addEventListener("pointerup", (e)=>{
+    if (state.pinch){
+      // if one pointer lifted, end pinch
+      if (e.pointerId === state.pointerId || e.pointerId === state.pinch.id2){
+        state.pinch = null;
+        state.dragging = null;
+        state.pointerId = null;
+      }
+      return;
+    }
+    if (e.pointerId === state.pointerId){
+      state.dragging = null;
+      state.pointerId = null;
+    }
+  });
+
+  canvas.addEventListener("pointercancel", ()=>{
+    state.dragging=null; state.pointerId=null; state.pinch=null;
+  });
+
+  // Track second pointer for pinch on touch devices
+  canvas.addEventListener("pointerdown", (e)=>{
+    // If one pointer already active and second touches, begin pinch
+    if (state.pointerId !== null && e.pointerId !== state.pointerId && !state.pinch){
+      const rect = canvas.getBoundingClientRect();
+      const p1 = state.dragStart?.p || getEventPos({clientX:0,clientY:0}); // fallback
+      // Recompute p1 precisely from last known pointer? We'll store from event:
+      // Use pointer positions from client:
+      const p1c = { x: state._lastP1?.x ?? p1.x, y: state._lastP1?.y ?? p1.y };
+      const p2c = { x: e.clientX-rect.left, y: e.clientY-rect.top };
+
+      const dx = p2c.x - p1c.x, dy = p2c.y - p1c.y;
+      const dist = Math.max(10, Math.hypot(dx,dy));
+
+      state.pinch = {
+        id2: e.pointerId,
+        p1: p1c,
+        p2: p2c,
+        startDist: dist,
+        startZoom: state.zoom,
+      };
+      // Stop any drag mode when pinch starts
+      state.dragging = null;
+    }
+  }, {passive:true});
+
+  canvas.addEventListener("pointermove", (e)=>{
+    // remember last p1 for pinch
+    if (e.pointerId === state.pointerId){
+      const rect = canvas.getBoundingClientRect();
+      state._lastP1 = {x: e.clientX-rect.left, y: e.clientY-rect.top};
+    }
+  }, {passive:true});
+
+  // Wheel zoom (desktop). Ctrl+wheel or trackpad pinch triggers wheel with ctrlKey often.
+  canvas.addEventListener("wheel", (e)=>{
+    // zoom with ctrlKey OR trackpad wheel
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const p = {x: e.clientX-rect.left, y: e.clientY-rect.top};
+
+    const delta = -e.deltaY;
+    const factor = Math.exp(delta * 0.0015);
+    const newZoom = clamp(state.zoom * factor, 0.15, 12);
+
+    const beforeWorld = screenToWorld(p);
+    state.zoom = newZoom;
+    const afterScreen = worldToScreen(beforeWorld);
+    state.panX += (p.x - afterScreen.x);
+    state.panY += (p.y - afterScreen.y);
+  }, {passive:false});
+
+  // Double click/tap to reset view
+  let lastTap = 0;
+  canvas.addEventListener("dblclick", ()=>{
+    state.zoom=1; state.panX=0; state.panY=0;
+  });
+  canvas.addEventListener("pointerup", (e)=>{
+    const now = performance.now();
+    if (e.pointerType !== "mouse"){
+      if (now - lastTap < 300){
+        state.zoom=1; state.panX=0; state.panY=0;
+      }
+      lastTap = now;
+    }
+  }, {passive:true});
+
+  // ---------- Animation loop for physics time ----------
+  function step(){
+    const now = performance.now();
+    const dt = (now - state.lastTS)/1000;
+    state.lastTS = now;
+
+    if (state.playing && state.cycloid && state.cycloid.ok){
+      const T = state.cycloid.T;
+      state.tSim += dt * state.playSpeed;
+      if (state.tSim >= T){
+        state.tSim = T;
+        state.playing = false;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ---------- Init ----------
+  function initDefaultView(){
+    // Start with A near top-left of view and B lower-right
+    // We'll put origin centered, then center on mid.
+    state.panX = 0;
+    state.panY = 0;
+    state.zoom = 1;
+    centerView();
+  }
+
+  window.addEventListener("resize", ()=>{
+    resize();
+    recompute();
+  });
+
+  resize();
+  initDefaultView();
+  recompute();
+  state.lastTS = performance.now();
+  requestAnimationFrame(render);
+  requestAnimationFrame(step);
+
+})();
+</script>
+</body>
+</html>
