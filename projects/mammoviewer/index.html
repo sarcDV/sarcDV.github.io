@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  #toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #eee;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    z-index: 10;
+  }
+
+  #viewer {
+    margin-top: 120px; /* spazio per la barra */
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <h2>RAW Viewer</h2>
+
+  <input type="file" id="file">
+  <input type="number" id="width" placeholder="width">
+  <input type="number" id="height" placeholder="height">
+  <input type="number" id="numImages" placeholder="num images">
+  <input type="number" id="index" placeholder="index">
+  
+
+  <select id="pixelType">
+    <option value="u16">u16</option>
+    <option value="u32">u32</option>
+    <option value="f32">f32</option>
+  </select>
+
+  <button id="loadBtn">Load</button>
+  
+  <button id="resetBtn">Reset</button>
+
+  <br><br>
+  <label>Select slice</label><br>
+  <input type="range" id="sliceSlider" min="0" max="0" value="0" style="width:300px;">
+  <span id="sliceLabel">Slice: 0</span>
+
+
+<table>
+  <tr><td><label for="brightnessSlider">Brightness</label></td><td><input type="range" id="brightnessSlider" min="0.1" max="3" step="0.01" value="1"></td></tr>
+  <tr><td><label for="contrastSlider">Contrast</label></td><td><input type="range" id="contrastSlider" min="0.1" max="3" step="0.01" value="1"></td></tr>
+  <tr><td><label for="gammaSlider">Gamma</label></td><td><input type="range" id="gammaSlider" min="0.1" max="3" step="0.01" value="1"></td></tr>
+</table>
+<br><br>
+  <label>Lookup Table</label><br>
+  <select id="lutSelect">
+    <option value="gray">Grayscale</option>
+    <option value="hot">Hot</option>
+    <option value="bone">Bone</option>
+    <option value="iron">Iron</option>
+    <option value="rainbow">Rainbow</option>
+    <option value="invert">Inverted</option>
+  </select>
+
+  <!-- <label>Brightness</label><br>
+  <input type="range" id="brightnessSlider" min="0.1" max="3" step="0.01" value="1">
+  <br><br>
+  <label>Contrast</label><br>
+  <input type="range" id="contrastSlider" min="0.1" max="3" step="0.01" value="1">
+  <br><br>
+  <label>Gamma</label><br>
+  <input type="range" id="gammaSlider" min="0.1" max="3" step="0.01" value="1">
+   -->
+
+
+</div>
+
+<div id="viewer">
+  <!-- Canvas interno (non visibile) -->
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <!-- Canvas visibile (autoscalato + zoom) -->
+  <canvas id="displayCanvas"></canvas>
+</div>
+
+<script type="module">
+  import init, { load_raw, PixelType } from "./pkg/raw_viewer.js";
+
+  await init();
+
+  let scale = 1.0;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  let brightness = 1.0;
+  let contrast = 1.0;
+  let gamma = 1.0;
+
+
+  let lutType = "gray";
+
+  const fileInput = document.getElementById("file");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const displayCanvas = document.getElementById("displayCanvas");
+  const displayCtx = displayCanvas.getContext("2d");
+
+  const sliceSlider = document.getElementById("sliceSlider");
+  const sliceLabel = document.getElementById("sliceLabel");
+
+  const lutSelect = document.getElementById("lutSelect");
+
+  lutSelect.addEventListener("change", () => {
+    lutType = lutSelect.value;
+    loadSlice(+sliceSlider.value);
+  });
+
+  let rawData = null;
+  let width = 0;
+  let height = 0;
+  let numImages = 1;
+  let pixelType = PixelType.U16;
+  let isGz = false;
+
+  function applyBCG(rgba) {
+    const out = new Uint8ClampedArray(rgba.length);
+
+    for (let i = 0; i < rgba.length; i += 4) {
+      let r = rgba[i] / 255;
+      let g = rgba[i + 1] / 255;
+      let b = rgba[i + 2] / 255;
+
+      // Brightness
+      r *= brightness;
+      g *= brightness;
+      b *= brightness;
+
+      // Contrast
+      r = ((r - 0.5) * contrast + 0.5);
+      g = ((g - 0.5) * contrast + 0.5);
+      b = ((b - 0.5) * contrast + 0.5);
+
+      // Gamma
+      r = Math.pow(r, gamma);
+      g = Math.pow(g, gamma);
+      b = Math.pow(b, gamma);
+
+      out[i]     = Math.min(255, Math.max(0, r * 255));
+      out[i + 1] = Math.min(255, Math.max(0, g * 255));
+      out[i + 2] = Math.min(255, Math.max(0, b * 255));
+      out[i + 3] = 255;
+    }
+
+    return out;
+  }
+
+  // -------------------------------
+  // LUT
+  // -------------------------------
+  function applyLUT(v) {
+    switch (lutType) {
+      case "gray":
+        return [v, v, v];
+
+      case "invert":
+        return [1 - v, 1 - v, 1 - v];
+
+      case "hot":
+        return [
+          Math.min(1, v * 3),
+          Math.min(1, Math.max(0, (v - 0.33) * 3)),
+          Math.min(1, Math.max(0, (v - 0.66) * 3))
+        ];
+
+      case "bone":
+        return [
+          v * 0.8 + 0.2,
+          v * 0.9 + 0.1,
+          v
+        ];
+
+      case "iron":
+        return [
+          v,
+          v * 0.5,
+          v * 0.2
+        ];
+
+      case "rainbow":
+        return [
+          Math.sin(v * Math.PI),
+          Math.sin(v * Math.PI * 2),
+          Math.sin(v * Math.PI * 4)
+        ];
+
+      default:
+        return [v, v, v];
+    }
+  }
+
+  function applyLUTtoRGBA(rgba) {
+    const out = new Uint8ClampedArray(rgba.length);
+
+    for (let i = 0; i < rgba.length; i += 4) {
+      // media dei tre canali → LUT stabile
+      const v = (rgba[i] + rgba[i+1] + rgba[i+2]) / (3 * 255);
+
+      const [r, g, b] = applyLUT(v);
+
+      out[i]     = r * 255;
+      out[i + 1] = g * 255;
+      out[i + 2] = b * 255;
+      out[i + 3] = 255;
+    }
+
+    return out;
+  }
+
+  // -------------------------------
+  // Rendering
+  // -------------------------------
+  function render() {
+    displayCtx.resetTransform();
+    displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+
+    displayCtx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+    displayCtx.drawImage(canvas, 0, 0);
+  }
+
+  // -------------------------------
+  // Caricamento slice
+  // -------------------------------
+  function loadSlice(index) {
+    const rgba = load_raw(
+      rawData,
+      width,
+      height,
+      numImages,
+      index,
+      pixelType,
+      isGz
+    );
+
+    const lutRGBA = applyLUTtoRGBA(rgba);
+    const bcgRGBA = applyBCG(lutRGBA);
+    const imgData = new ImageData(bcgRGBA, width, height);
+
+    canvas.width = width;
+    canvas.height = height;
+    ctx.putImageData(imgData, 0, 0);
+
+    render();
+  }
+
+  // -------------------------------
+  // Caricamento file
+  // -------------------------------
+  document.getElementById("loadBtn").onclick = async () => {
+    const file = fileInput.files[0];
+    const buf = await file.arrayBuffer();
+    rawData = new Uint8Array(buf);
+
+    width = +document.getElementById("width").value;
+    height = +document.getElementById("height").value;
+    numImages = +document.getElementById("numImages").value;
+
+    pixelType =
+      document.getElementById("pixelType").value === "u16" ? PixelType.U16 :
+      document.getElementById("pixelType").value === "u32" ? PixelType.U32 :
+      PixelType.F32;
+
+    isGz = file.name.endsWith(".gz");
+
+    sliceSlider.max = numImages - 1;
+    sliceSlider.value = 0;
+    sliceLabel.textContent = "Slice: 0";
+
+    const maxW = window.innerWidth * 0.95;
+    const maxH = window.innerHeight * 0.95;
+
+    scale = Math.min(maxW / width, maxH / height);
+    offsetX = 0;
+    offsetY = 0;
+
+    displayCanvas.width = maxW;
+    displayCanvas.height = maxH;
+
+    // LUT deve essere applicata anche al primo caricamento
+    loadSlice(0);
+  };
+
+  sliceSlider.addEventListener("input", () => {
+    const index = +sliceSlider.value;
+    sliceLabel.textContent = "Slice: " + index;
+    loadSlice(index);
+  });
+
+  // -------------------------------
+  // Zoom con rotellina
+  // -------------------------------
+  displayCanvas.addEventListener("wheel", (event) => {
+    event.preventDefault();
+
+    const mouseX = event.offsetX;
+    const mouseY = event.offsetY;
+
+    const zoomFactor = 1.1;
+    const prevScale = scale;
+
+    if (event.deltaY < 0) scale *= zoomFactor;
+    else scale /= zoomFactor;
+
+    offsetX = mouseX - (mouseX - offsetX) * (scale / prevScale);
+    offsetY = mouseY - (mouseY - offsetY) * (scale / prevScale);
+
+    render();
+  });
+
+  // -------------------------------
+  // Pan con click sinistro (drag)
+  // -------------------------------
+  let isDragging = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  displayCanvas.addEventListener("mousedown", (event) => {
+    if (event.button === 0) {
+      isDragging = true;
+      lastX = event.clientX;
+      lastY = event.clientY;
+    }
+  });
+
+  displayCanvas.addEventListener("mousemove", (event) => {
+    if (!isDragging) return;
+
+    const dx = event.clientX - lastX;
+    const dy = event.clientY - lastY;
+
+    offsetX += dx;
+    offsetY += dy;
+
+    lastX = event.clientX;
+    lastY = event.clientY;
+
+    render();
+  });
+
+  displayCanvas.addEventListener("mouseup", () => isDragging = false);
+  displayCanvas.addEventListener("mouseleave", () => isDragging = false);
+
+  document.getElementById("brightnessSlider").addEventListener("input", (e) => {
+    brightness = parseFloat(e.target.value);
+    loadSlice(+sliceSlider.value);
+  });
+
+  document.getElementById("contrastSlider").addEventListener("input", (e) => {
+    contrast = parseFloat(e.target.value);
+    loadSlice(+sliceSlider.value);
+  });
+
+  document.getElementById("gammaSlider").addEventListener("input", (e) => {
+    gamma = parseFloat(e.target.value);
+    loadSlice(+sliceSlider.value);
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    brightness = 1.0;
+    contrast = 1.0;
+    gamma = 1.0;
+
+    document.getElementById("brightnessSlider").value = 1;
+    document.getElementById("contrastSlider").value = 1;
+    document.getElementById("gammaSlider").value = 1;
+
+    scale = Math.min(displayCanvas.width / width, displayCanvas.height / height);
+    offsetX = 0;
+    offsetY = 0;
+
+    loadSlice(+sliceSlider.value);
+  });
+
+
+</script>
+
+</body>
+</html>
