@@ -1,0 +1,5 @@
+/pkg/raw_viewer_bg.wasm
+  Content-Type: application/wasm
+
+/pkg/*
+  Access-Control-Allow-Origin: *
