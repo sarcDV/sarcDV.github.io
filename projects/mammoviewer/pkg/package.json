@@ -1,0 +1,15 @@
+{
+  "name": "raw_viewer",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "raw_viewer_bg.wasm",
+    "raw_viewer.js",
+    "raw_viewer.d.ts"
+  ],
+  "main": "raw_viewer.js",
+  "types": "raw_viewer.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
