@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wolfram Tixy Replication</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  canvas {
+    background: #000;
+    border-radius: 8px;
+    /* Scale up for visibility */
+    width: 600px;
+    height: 600px;
+    image-rendering: auto;
+  }
+</style>
+</head>
+<body>
+<canvas id="c" width="400" height="400"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = 400, H = 400;
+
+// Helper functions matching Wolfram/Tixy semantics
+const mag  = (a, b) => Math.sqrt(a * a + b * b);
+const atan2 = (y, x) => Math.atan2(y, x);
+
+let startTime = performance.now();
+
+function draw() {
+  const t = (performance.now() - startTime) / 1000; // time in seconds
+
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; // trail effect
+  ctx.fillRect(0, 0, W, H);
+
+  // 16x16 grid (Tixy convention: x ∈ [0,15], y ∈ [0,15])
+  for (let x = 0; x < 16; x++) {
+    for (let y = 0; y < 16; y++) {
+
+      // --- Replicating the Wolfram expression exactly ---
+      const k = 9 * Math.cos(x / 8);
+      const e = y / 8 - 12.5;
+      const d = (mag(k, e) ** 2) / 99 + Math.sin(t) / 6 + 0.5;
+
+      const c = d / 2 + e / 69 - t / 16;
+      const q = 99 - e * Math.sin(atan2(k, e) * 7) / d
+                   + k * (3 + Math.cos(d * d - t) * 2);
+
+      const px = q * Math.sin(c) + 200;
+      const py = (q + 19 * d) * Math.cos(c) + 200;
+
+      // --- Draw the point ---
+      // Color based on d for visual richness (not in original, but adds flair)
+      const hue = (d * 60 + t * 30) % 360;
+      ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.beginPath();
+      ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
