@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Animated Julia Fractal</title>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+  canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+  .info {
+    position: fixed; top: 12px; left: 12px;
+    color: #fff; font: 13px/1.4 system-ui, sans-serif;
+    background: rgba(0,0,0,0.4); padding: 8px 12px;
+    border-radius: 6px; backdrop-filter: blur(6px);
+    pointer-events: none;
+  }
+  .info b { color: #7cf; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="info">
+  <b>Julia Set</b> · z → z² + c<br>
+  c orbits a circle in the complex plane.<br>
+  Drag to pan · Scroll to zoom · <b>R</b> to reset
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl', { antialias: false });
+
+// ---------- Shaders ----------
+const vsSrc = `
+attribute vec2 p;
+void main() { gl_Position = vec4(p, 0.0, 1.0); }
+`;
+
+const fsSrc = `
+precision highp float;
+uniform vec2  u_res;
+uniform vec2  u_center;
+uniform float u_zoom;
+uniform vec2  u_c;
+uniform float u_time;
+
+// IQ-style cosine palette
+vec3 palette(float t) {
+    vec3 a = vec3(0.5, 0.5, 0.5);
+    vec3 b = vec3(0.5, 0.5, 0.5);
+    vec3 c = vec3(1.0, 1.0, 1.0);
+    vec3 d = vec3(0.00, 0.33, 0.67);
+    return a + b * cos(6.28318 * (c * t + d));
+}
+
+void main() {
+    // Map pixel -> complex plane
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
+    vec2 z = uv * u_zoom + u_center;
+    vec2 c = u_c;
+
+    // Iterate z = z^2 + c
+    float iter = 0.0;
+    const float MAX = 180.0;
+    float escape = 0.0;
+    for (float i = 0.0; i < 180.0; i++) {
+        z = vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + c;
+        if (dot(z, z) > 256.0) { escape = dot(z, z); break; }
+        iter = i + 1.0;
+    }
+
+    vec3 col;
+    if (iter >= MAX - 0.5) {
+        col = vec3(0.0); // inside the set
+    } else {
+        // Smooth (continuous) iteration count
+        float log_zn = log(escape) / 2.0;
+        float nu = log(log_zn / log(2.0)) / log(2.0);
+        float smoothIter = iter + 1.0 - nu;
+        float t = smoothIter / 60.0 + u_time * 0.05;
+        col = palette(t);
+        // subtle vignette
+        float v = smoothstep(2.5, 0.3, length(uv));
+        col *= 0.6 + 0.6 * v;
+    }
+
+    gl_FragColor = vec4(col, 1.0);
+}
+`;
+
+// ---------- GL setup ----------
+function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+        console.error(gl.getShaderInfoLog(s));
+    return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSrc));
+gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fsSrc));
+gl.linkProgram(prog); gl.useProgram(prog);
+
+// Full-screen quad
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1,-1,  1,-1,  -1,1,   -1,1,  1,-1,  1,1
+]), gl.STATIC_DRAW);
+const pLoc = gl.getAttribLocation(prog, 'p');
+gl.enableVertexAttribArray(pLoc);
+gl.vertexAttribPointer(pLoc, 2, gl.FLOAT, false, 0, 0);
+
+const uRes    = gl.getUniformLocation(prog, 'u_res');
+const uCenter = gl.getUniformLocation(prog, 'u_center');
+const uZoom   = gl.getUniformLocation(prog, 'u_zoom');
+const uC      = gl.getUniformLocation(prog, 'u_c');
+const uTime   = gl.getUniformLocation(prog, 'u_time');
+
+// ---------- Interaction ----------
+let center = [0, 0];
+let zoom = 1.6;
+let dragging = false, lastX = 0, lastY = 0;
+
+function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = innerWidth  * dpr;
+    canvas.height = innerHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+}
+addEventListener('resize', resize); resize();
+
+canvas.addEventListener('mousedown', e => {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+});
+addEventListener('mouseup',   () => dragging = false);
+addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    const scale = zoom * 2 / Math.min(innerWidth, innerHeight);
+    center[0] -= dx * scale;
+    center[1] += dy * scale;
+    lastX = e.clientX; lastY = e.clientY;
+});
+canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const f = e.deltaY > 0 ? 1.15 : 1/1.15;
+    zoom *= f;
+}, { passive: false });
+addEventListener('keydown', e => {
+    if (e.key === 'r' || e.key === 'R') { center = [0,0]; zoom = 1.6; }
+});
+
+// ---------- Render loop ----------
+const t0 = performance.now();
+function frame() {
+    const t = (performance.now() - t0) / 1000;
+
+    // c orbits a circle of radius ~0.7885 — a famously beautiful path
+    const cx = 0.7885 * Math.cos(t * 0.25);
+    const cy = 0.7885 * Math.sin(t * 0.25);
+
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform2f(uCenter, center[0], center[1]);
+    gl.uniform1f(uZoom, zoom);
+    gl.uniform2f(uC, cx, cy);
+    gl.uniform1f(uTime, t);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>
