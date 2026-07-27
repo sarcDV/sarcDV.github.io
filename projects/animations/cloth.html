@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cloth Simulation</title>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Scene setup ----------
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x1a1a2e, 10, 50);
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 2, 8);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+// ---------- Lighting ----------
+const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+dirLight.position.set(5, 10, 5);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.set(2048, 2048);
+dirLight.shadow.camera.left = -10;
+dirLight.shadow.camera.right = 10;
+dirLight.shadow.camera.top = 10;
+dirLight.shadow.camera.bottom = -10;
+scene.add(dirLight);
+
+const pointLight = new THREE.PointLight(0xff6b9d, 1, 20);
+pointLight.position.set(-3, 3, 2);
+scene.add(pointLight);
+
+// ---------- Cloth Physics ----------
+const clothWidth = 4;
+const clothHeight = 3;
+const segmentsW = 30;
+const segmentsH = 20;
+const restLength = clothWidth / segmentsW;
+
+// Particles
+const particles = [];
+for (let j = 0; j <= segmentsH; j++) {
+  for (let i = 0; i <= segmentsW; i++) {
+    const x = (i / segmentsW - 0.5) * clothWidth;
+    const y = (1 - j / segmentsH) * clothHeight;
+    const z = 0;
+    
+    particles.push({
+      pos: new THREE.Vector3(x, y, z),
+      prev: new THREE.Vector3(x, y, z),
+      pinned: j === 0 && (i === 0 || i === segmentsW) // Pin top corners
+    });
+  }
+}
+
+// Constraints (springs)
+const constraints = [];
+function addConstraint(i1, i2) {
+  const p1 = particles[i1];
+  const p2 = particles[i2];
+  constraints.push({
+    p1, p2,
+    restLength: p1.pos.distanceTo(p2.pos)
+  });
+}
+
+for (let j = 0; j <= segmentsH; j++) {
+  for (let i = 0; i <= segmentsW; i++) {
+    const idx = j * (segmentsW + 1) + i;
+    
+    // Structural (horizontal)
+    if (i < segmentsW) addConstraint(idx, idx + 1);
+    
+    // Structural (vertical)
+    if (j < segmentsH) addConstraint(idx, idx + segmentsW + 1);
+    
+    // Shear (diagonal)
+    if (i < segmentsW && j < segmentsH) {
+      addConstraint(idx, idx + segmentsW + 2);
+      addConstraint(idx + 1, idx + segmentsW + 1);
+    }
+    
+    // Bend (skip one)
+    if (i < segmentsW - 1) addConstraint(idx, idx + 2);
+    if (j < segmentsH - 1) addConstraint(idx, idx + 2 * (segmentsW + 1));
+  }
+}
+
+// Physics parameters
+const gravity = new THREE.Vector3(0, -9.8, 0);
+const damping = 0.97;
+const dt = 0.016;
+
+// Wind (turbulent)
+function getWind(pos, time) {
+  const turb = Math.sin(time * 2 + pos.x * 3) * Math.cos(time * 1.5 + pos.y * 2);
+  return new THREE.Vector3(
+    2 + turb * 1.5,
+    turb * 0.5,
+    Math.sin(time + pos.y) * 0.8
+  );
+}
+
+function simulate(time) {
+  // Verlet integration
+  for (const p of particles) {
+    if (p.pinned) continue;
+    
+    const vel = new THREE.Vector3().subVectors(p.pos, p.prev);
+    vel.multiplyScalar(damping);
+    
+    const wind = getWind(p.pos, time);
+    const acc = gravity.clone().add(wind);
+    
+    p.prev.copy(p.pos);
+    p.pos.add(vel).addScaledVector(acc, dt * dt);
+  }
+  
+  // Constraint satisfaction (multiple iterations for stability)
+  for (let iter = 0; iter < 5; iter++) {
+    for (const c of constraints) {
+      const diff = new THREE.Vector3().subVectors(c.p2.pos, c.p1.pos);
+      const dist = diff.length();
+      if (dist === 0) continue;
+      
+      const error = (dist - c.restLength) / dist;
+      const correction = diff.multiplyScalar(0.5 * error);
+      
+      if (!c.p1.pinned) c.p1.pos.add(correction);
+      if (!c.p2.pinned) c.p2.pos.sub(correction);
+    }
+  }
+}
+
+// ---------- Visual: Cloth mesh ----------
+const clothGeo = new THREE.BufferGeometry();
+const indices = [];
+const uvs = [];
+
+for (let j = 0; j < segmentsH; j++) {
+  for (let i = 0; i < segmentsW; i++) {
+    const a = j * (segmentsW + 1) + i;
+    const b = a + 1;
+    const c = a + segmentsW + 1;
+    const d = c + 1;
+    
+    indices.push(a, b, c);
+    indices.push(b, d, c);
+    
+    uvs.push(i / segmentsW, 1 - j / segmentsH);
+    uvs.push((i + 1) / segmentsW, 1 - j / segmentsH);
+    uvs.push(i / segmentsW, 1 - (j + 1) / segmentsH);
+    uvs.push((i + 1) / segmentsW, 1 - (j + 1) / segmentsH);
+  }
+}
+
+clothGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(particles.length * 3), 3));
+clothGeo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
+clothGeo.setIndex(indices);
+
+// Create gradient texture
+const canvas = document.createElement('canvas');
+canvas.width = 256;
+canvas.height = 256;
+const ctx = canvas.getContext('2d');
+const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+gradient.addColorStop(0, '#ff6b9d');
+gradient.addColorStop(0.5, '#c06c84');
+gradient.addColorStop(1, '#355c7d');
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 256, 256);
+
+const texture = new THREE.CanvasTexture(canvas);
+const clothMat = new THREE.MeshPhongMaterial({
+  map: texture,
+  side: THREE.DoubleSide,
+  shininess: 30
+});
+
+const clothMesh = new THREE.Mesh(clothGeo, clothMat);
+clothMesh.castShadow = true;
+clothMesh.receiveShadow = true;
+scene.add(clothMesh);
+
+// ---------- Ground plane ----------
+const groundGeo = new THREE.PlaneGeometry(50, 50);
+const groundMat = new THREE.MeshPhongMaterial({ color: 0x1a1a2e });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// ---------- Animation loop ----------
+let time = 0;
+
+function updateClothGeometry() {
+  const positions = clothGeo.attributes.position.array;
+  for (let i = 0; i < particles.length; i++) {
+    positions[i * 3] = particles[i].pos.x;
+    positions[i * 3 + 1] = particles[i].pos.y;
+    positions[i * 3 + 2] = particles[i].pos.z;
+  }
+  clothGeo.attributes.position.needsUpdate = true;
+  clothGeo.computeVertexNormals();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  
+  time += dt;
+  
+  // Physics
+  simulate(time);
+  
+  // Update visuals
+  updateClothGeometry();
+  
+  // Camera orbit
+  const camDist = 8;
+  camera.position.x = Math.cos(time * 0.2) * camDist;
+  camera.position.z = Math.sin(time * 0.2) * camDist;
+  camera.position.y = 2 + Math.sin(time * 0.1) * 1;
+  camera.lookAt(0, 1, 0);
+  
+  // Animate point light
+  pointLight.position.x = Math.sin(time * 0.5) * 4;
+  pointLight.position.z = Math.cos(time * 0.5) * 4;
+  
+  renderer.render(scene, camera);
+}
+
+// ---------- Resize handler ----------
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
