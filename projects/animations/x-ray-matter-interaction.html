@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>X-ray Matter Interaction</title>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Scene setup ----------
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 2, 12);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+
+// ---------- Lighting ----------
+const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+dirLight.position.set(5, 10, 5);
+scene.add(dirLight);
+
+// ---------- Crystal Structure (FCC lattice) ----------
+const crystalGroup = new THREE.Group();
+const atomRadius = 0.15;
+const latticeConstant = 0.8;
+const crystalSize = 4; // extent in lattice units
+
+// FCC basis positions
+const fccBasis = [
+  [0, 0, 0],
+  [0.5, 0.5, 0],
+  [0.5, 0, 0.5],
+  [0, 0.5, 0.5]
+];
+
+const atomMaterial = new THREE.MeshPhongMaterial({
+  color: 0x4a90e2,
+  shininess: 80,
+  transparent: true,
+  opacity: 0.7
+});
+
+const atomGeo = new THREE.SphereGeometry(atomRadius, 16, 16);
+const atoms = [];
+
+for (let i = -crystalSize; i <= crystalSize; i++) {
+  for (let j = -crystalSize; j <= crystalSize; j++) {
+    for (let k = -crystalSize; k <= crystalSize; k++) {
+      for (const basis of fccBasis) {
+        const x = (i + basis[0]) * latticeConstant;
+        const y = (j + basis[1]) * latticeConstant;
+        const z = (k + basis[2]) * latticeConstant;
+        
+        const atom = new THREE.Mesh(atomGeo, atomMaterial);
+        atom.position.set(x, y, z);
+        crystalGroup.add(atom);
+        atoms.push({ pos: new THREE.Vector3(x, y, z) });
+      }
+    }
+  }
+}
+
+scene.add(crystalGroup);
+
+// ---------- Photon System ----------
+const photons = [];
+const maxPhotons = 200;
+
+// Photon types
+const PHOTON_TYPES = {
+  INCIDENT: 0,
+  TRANSMITTED: 1,
+  COMPTON: 2,
+  RAYLEIGH: 3,
+  ABSORBED: 4
+};
+
+const photonColors = {
+  [PHOTON_TYPES.INCIDENT]: 0x00ffff,    // Cyan
+  [PHOTON_TYPES.TRANSMITTED]: 0x00ff00, // Green
+  [PHOTON_TYPES.COMPTON]: 0xffff00,     // Yellow
+  [PHOTON_TYPES.RAYLEIGH]: 0xff00ff,    // Magenta
+  [PHOTON_TYPES.ABSORBED]: 0xff0000     // Red
+};
+
+const photonGeo = new THREE.SphereGeometry(0.08, 8, 8);
+
+function createPhoton() {
+  const material = new THREE.MeshBasicMaterial({
+    color: photonColors[PHOTON_TYPES.INCIDENT]
+  });
+  
+  const photon = {
+    mesh: new THREE.Mesh(photonGeo, material),
+    velocity: new THREE.Vector3(),
+    type: PHOTON_TYPES.INCIDENT,
+    energy: 30 + Math.random() * 20, // keV (30-50 keV range)
+    hasInteracted: false,
+    lifetime: 0
+  };
+  
+  // Start from left side, collimated beam
+  const y = (Math.random() - 0.5) * 2;
+  const z = (Math.random() - 0.5) * 2;
+  photon.mesh.position.set(-8, y, z);
+  photon.velocity.set(0.15, 0, 0); // Moving right
+  
+  scene.add(photon.mesh);
+  return photon;
+}
+
+// ---------- Physics: Interaction Probabilities ----------
+// Simplified cross-sections (qualitative, not exact)
+function getInteractionProbability(energy, atomicNumber = 29) { // Copper-like
+  // Photoelectric: dominant at low E, high Z
+  const photoelectric = 1000 * Math.pow(atomicNumber, 4) / Math.pow(energy, 3);
+  
+  // Compton: dominant at medium E
+  const compton = 10 * atomicNumber / energy;
+  
+  // Rayleigh: coherent scattering, lower probability
+  const rayleigh = 2 * Math.pow(atomicNumber, 2) / Math.pow(energy, 2);
+  
+  const total = photoelectric + compton + rayleigh;
+  
+  return {
+    photoelectric: photoelectric / total,
+    compton: compton / total,
+    rayleigh: rayleigh / total,
+    total: total * 0.001 // Scale factor for interaction probability per atom
+  };
+}
+
+function interactPhoton(photon) {
+  if (photon.hasInteracted) return;
+  
+  const probs = getInteractionProbability(photon.energy);
+  const rand = Math.random();
+  
+  // Check if interaction occurs (based on distance to nearest atom)
+  let minDist = Infinity;
+  for (const atom of atoms) {
+    const dist = photon.mesh.position.distanceTo(atom.pos);
+    if (dist < minDist) minDist = dist;
+  }
+  
+  const interactionProb = Math.exp(-minDist * probs.total);
+  if (Math.random() > interactionProb) return; // No interaction
+  
+  photon.hasInteracted = true;
+  
+  if (rand < probs.photoelectric) {
+    // Photoelectric absorption
+    photon.type = PHOTON_TYPES.ABSORBED;
+    photon.mesh.material.color.setHex(photonColors[PHOTON_TYPES.ABSORBED]);
+    photon.velocity.set(0, 0, 0);
+    
+    // Eject electron (secondary particle)
+    createElectron(photon.mesh.position.clone());
+    
+  } else if (rand < probs.photoelectric + probs.compton) {
+    // Compton scattering (inelastic)
+    photon.type = PHOTON_TYPES.COMPTON;
+    photon.mesh.material.color.setHex(photonColors[PHOTON_TYPES.COMPTON]);
+    
+    // Random scattering angle
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const speed = 0.12 * (photon.energy / 50); // Energy loss
+    
+    photon.velocity.set(
+      speed * Math.sin(phi) * Math.cos(theta),
+      speed * Math.sin(phi) * Math.sin(theta),
+      speed * Math.cos(phi)
+    );
+    
+    photon.energy *= 0.7; // Lose 30% energy
+    
+  } else {
+    // Rayleigh scattering (elastic, coherent)
+    photon.type = PHOTON_TYPES.RAYLEIGH;
+    photon.mesh.material.color.setHex(photonColors[PHOTON_TYPES.RAYLEIGH]);
+    
+    // Small angle scattering
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const speed = 0.15; // Same speed (elastic)
+    
+    photon.velocity.set(
+      speed * Math.sin(phi) * Math.cos(theta),
+      speed * Math.sin(phi) * Math.sin(theta),
+      speed * Math.cos(phi)
+    );
+  }
+}
+
+// ---------- Secondary Electrons ----------
+const electrons = [];
+
+function createElectron(position) {
+  const material = new THREE.MeshBasicMaterial({ color: 0xff6600 });
+  const electron = {
+    mesh: new THREE.Mesh(photonGeo, material),
+    velocity: new THREE.Vector3(
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.1
+    ),
+    lifetime: 0
+  };
+  
+  electron.mesh.position.copy(position);
+  scene.add(electron.mesh);
+  electrons.push(electron);
+}
+
+// ---------- Animation Loop ----------
+let time = 0;
+let spawnTimer = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  
+  time += 0.016;
+  spawnTimer += 0.016;
+  
+  // Spawn new photons
+  if (spawnTimer > 0.05 && photons.length < maxPhotons) {
+    photons.push(createPhoton());
+    spawnTimer = 0;
+  }
+  
+  // Update photons
+  for (let i = photons.length - 1; i >= 0; i--) {
+    const photon = photons[i];
+    photon.lifetime += 0.016;
+    
+    // Move photon
+    photon.mesh.position.add(photon.velocity);
+    
+    // Check for interaction (only if hasn't interacted yet)
+    if (!photon.hasInteracted && photon.type === PHOTON_TYPES.INCIDENT) {
+      interactPhoton(photon);
+    }
+    
+    // Check if photon exited crystal region
+    const pos = photon.mesh.position;
+    const inCrystal = Math.abs(pos.x) < crystalSize * latticeConstant &&
+                      Math.abs(pos.y) < crystalSize * latticeConstant &&
+                      Math.abs(pos.z) < crystalSize * latticeConstant;
+    
+    // Mark transmitted photons
+    if (photon.type === PHOTON_TYPES.INCIDENT && pos.x > crystalSize * latticeConstant) {
+      photon.type = PHOTON_TYPES.TRANSMITTED;
+      photon.mesh.material.color.setHex(photonColors[PHOTON_TYPES.TRANSMITTED]);
+    }
+    
+    // Remove photons that are too far or absorbed
+    const dist = pos.length();
+    if (dist > 20 || (photon.type === PHOTON_TYPES.ABSORBED && photon.lifetime > 0.5)) {
+      scene.remove(photon.mesh);
+      photons.splice(i, 1);
+    }
+  }
+  
+  // Update electrons
+  for (let i = electrons.length - 1; i >= 0; i--) {
+    const electron = electrons[i];
+    electron.lifetime += 0.016;
+    electron.mesh.position.add(electron.velocity);
+    
+    if (electron.lifetime > 1.0) {
+      scene.remove(electron.mesh);
+      electrons.splice(i, 1);
+    }
+  }
+  
+  // Camera orbit
+  const camDist = 12;
+  camera.position.x = Math.cos(time * 0.15) * camDist;
+  camera.position.z = Math.sin(time * 0.15) * camDist;
+  camera.position.y = 2 + Math.sin(time * 0.1) * 1;
+  camera.lookAt(0, 0, 0);
+  
+  renderer.render(scene, camera);
+}
+
+// ---------- Resize handler ----------
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
