@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cell Division - Mitosis</title>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0a1a; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Scene setup ----------
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0, 25);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+
+// ---------- Lighting ----------
+scene.add(new THREE.AmbientLight(0x606080, 0.8));
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+dirLight.position.set(5, 10, 7);
+scene.add(dirLight);
+
+const pLight1 = new THREE.PointLight(0xff6b9d, 1.2, 40);
+pLight1.position.set(-8, 5, 5);
+scene.add(pLight1);
+
+const pLight2 = new THREE.PointLight(0x6b9dff, 1.2, 40);
+pLight2.position.set(8, -5, 5);
+scene.add(pLight2);
+
+// ---------- Cell Class ----------
+class Cell {
+  constructor(position, initialPhase) {
+    this.position = position.clone();
+    this.phase = initialPhase !== undefined ? initialPhase : Math.random();
+    this.phaseSpeed = 0.00015 + Math.random() * 0.00008;
+    this.alive = true;
+    this.group = new THREE.Group();
+    this.group.position.copy(position);
+    scene.add(this.group);
+
+    // Membrane
+    const membraneMat = new THREE.MeshPhongMaterial({
+      color: 0xff9eb5, transparent: true, opacity: 0.35,
+      shininess: 100, side: THREE.DoubleSide
+    });
+    this.membrane = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), membraneMat);
+    this.group.add(this.membrane);
+
+    // Cytoplasm
+    const cytoMat = new THREE.MeshPhongMaterial({
+      color: 0xffb5c5, transparent: true, opacity: 0.25,
+      emissive: 0xff3366, emissiveIntensity: 0.15
+    });
+    this.cytoplasm = new THREE.Mesh(new THREE.SphereGeometry(1.1, 32, 32), cytoMat);
+    this.group.add(this.cytoplasm);
+
+    // Nucleus
+    const nucleusMat = new THREE.MeshPhongMaterial({
+      color: 0x9b6bff, transparent: true, opacity: 0.7, shininess: 80,
+      emissive: 0x6633ff, emissiveIntensity: 0.3
+    });
+    this.nucleus = new THREE.Mesh(new THREE.SphereGeometry(0.45, 32, 32), nucleusMat);
+    this.group.add(this.nucleus);
+
+    // Chromosomes (using small spheres instead of CapsuleGeometry)
+    this.chromosomes = [];
+    const chromoCount = 6;
+    for (let i = 0; i < chromoCount; i++) {
+      const color = i < 3 ? 0xff6b9d : 0x6b9dff;
+      const mat = new THREE.MeshPhongMaterial({
+        color: color, emissive: color, emissiveIntensity: 0.5
+      });
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), mat);
+      mesh.scale.set(1, 2.5, 1);
+      mesh.visible = false;
+      this.group.add(mesh);
+      this.chromosomes.push({
+        mesh: mesh,
+        pairIndex: i % 3,
+        copy: i >= 3 ? 1 : 0
+      });
+    }
+
+    // Spindle fibers
+    this.spindleGroup = new THREE.Group();
+    this.spindleGroup.visible = false;
+    this.group.add(this.spindleGroup);
+    this.createSpindleFibers();
+  }
+
+  createSpindleFibers() {
+    const mat = new THREE.LineBasicMaterial({
+      color: 0x9dffb5, transparent: true, opacity: 0.4
+    });
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const r = 0.15;
+      const points = [
+        new THREE.Vector3(-0.8, 0, 0),
+        new THREE.Vector3(Math.cos(angle) * r, Math.sin(angle) * r, 0),
+        new THREE.Vector3(0.8, 0, 0)
+      ];
+      const geo = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geo, mat);
+      this.spindleGroup.add(line);
+    }
+  }
+
+  update(deltaTime) {
+    if (!this.alive) return;
+
+    this.phase += this.phaseSpeed * deltaTime;
+    if (this.phase >= 1.0) {
+      this.phase = 0;
+    }
+
+    const p = this.phase;
+
+    // Interphase (0-0.3): Cell grows gently
+    if (p < 0.3) {
+      const t = p / 0.3;
+      const scale = 1.0 + t * 0.15;
+      this.group.scale.setScalar(scale);
+      this.nucleus.visible = true;
+      this.chromosomes.forEach(c => c.mesh.visible = false);
+      this.spindleGroup.visible = false;
+      this.membrane.scale.set(1, 1, 1);
+    }
+    // Prophase (0.3-0.45): Chromosomes condense
+    else if (p < 0.45) {
+      const t = (p - 0.3) / 0.15;
+      this.nucleus.visible = t < 0.5;
+      this.chromosomes.forEach(c => {
+        c.mesh.visible = true;
+        const angle = (c.pairIndex / 3) * Math.PI * 2;
+        const r = 0.2 * (1 - t * 0.5);
+        c.mesh.position.set(
+          Math.cos(angle) * r,
+          Math.sin(angle) * r,
+          (Math.random() - 0.5) * 0.05
+        );
+        c.mesh.rotation.set(Math.random(), Math.random(), Math.random());
+      });
+    }
+    // Metaphase (0.45-0.55): Chromosomes align at equator
+    else if (p < 0.55) {
+      const t = (p - 0.45) / 0.1;
+      this.nucleus.visible = false;
+      this.spindleGroup.visible = true;
+      this.chromosomes.forEach(c => {
+        const angle = (c.pairIndex / 3) * Math.PI * 2;
+        const r = 0.15 * (1 - t);
+        c.mesh.position.set(
+          Math.cos(angle) * r,
+          Math.sin(angle) * r,
+          0
+        );
+      });
+    }
+    // Anaphase (0.55-0.7): Chromosomes separate
+    else if (p < 0.7) {
+      const t = (p - 0.55) / 0.15;
+      this.chromosomes.forEach(c => {
+        const angle = (c.pairIndex / 3) * Math.PI * 2;
+        const dir = c.copy === 0 ? -1 : 1;
+        c.mesh.position.set(
+          Math.cos(angle) * 0.1 + dir * t * 0.5,
+          Math.sin(angle) * 0.1,
+          0
+        );
+      });
+    }
+    // Telophase (0.7-0.85): Cell elongates, nuclei reform
+    else if (p < 0.85) {
+      const t = (p - 0.7) / 0.15;
+      this.group.scale.set(1.15 + t * 0.4, 1.0, 1.0);
+      this.chromosomes.forEach(c => {
+        const dir = c.copy === 0 ? -1 : 1;
+        c.mesh.position.set(dir * 0.6, 0, 0);
+        c.mesh.scale.setScalar(1 - t * 0.3);
+      });
+      this.nucleus.visible = t > 0.5;
+    }
+    // Cytokinesis (0.85-1.0): Pinch and divide
+    else {
+      const t = (p - 0.85) / 0.15;
+      const pinch = Math.max(0.15, 1.0 - t);
+      this.group.scale.set(1.55, pinch, pinch);
+      this.chromosomes.forEach(c => c.mesh.visible = t < 0.7);
+      this.nucleus.visible = false;
+
+      if (t > 0.95 && this.alive) {
+        this.divide();
+      }
+    }
+
+    // Gentle rotation
+    this.group.rotation.y += deltaTime * 0.0003;
+    this.group.rotation.x += deltaTime * 0.0002;
+  }
+
+  divide() {
+    this.alive = false;
+    const offset = 2.0;
+    const pos1 = this.position.clone().add(new THREE.Vector3(-offset, 0, 0));
+    const pos2 = this.position.clone().add(new THREE.Vector3(offset, 0, 0));
+    cells.push(new Cell(pos1, 0));
+    cells.push(new Cell(pos2, 0));
+    scene.remove(this.group);
+  }
+
+  dispose() {
+    scene.remove(this.group);
+  }
+}
+
+// ---------- Create initial cells ----------
+const cells = [];
+const initialCount = 4;
+for (let i = 0; i < initialCount; i++) {
+  const angle = (i / initialCount) * Math.PI * 2;
+  const r = 6;
+  const pos = new THREE.Vector3(
+    Math.cos(angle) * r,
+    Math.sin(angle) * r,
+    (Math.random() - 0.5) * 3
+  );
+  cells.push(new Cell(pos, Math.random()));
+}
+
+// ---------- Background particles ----------
+const particleCount = 400;
+const pGeo = new THREE.BufferGeometry();
+const pPos = new Float32Array(particleCount * 3);
+const pCol = new Float32Array(particleCount * 3);
+for (let i = 0; i < particleCount; i++) {
+  pPos[i*3]   = (Math.random() - 0.5) * 50;
+  pPos[i*3+1] = (Math.random() - 0.5) * 50;
+  pPos[i*3+2] = (Math.random() - 0.5) * 50;
+  const c = new THREE.Color().setHSL(0.75 + Math.random() * 0.2, 0.6, 0.6);
+  pCol[i*3] = c.r; pCol[i*3+1] = c.g; pCol[i*3+2] = c.b;
+}
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+const pMat = new THREE.PointsMaterial({
+  size: 0.15, vertexColors: true, transparent: true, opacity: 0.5,
+  blending: THREE.AdditiveBlending
+});
+scene.add(new THREE.Points(pGeo, pMat));
+
+// ---------- Animation loop ----------
+let lastTime = performance.now();
+let time = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const now = performance.now();
+  const dt = Math.min(now - lastTime, 50);
+  lastTime = now;
+  time += dt * 0.001;
+
+  // Update cells
+  for (let i = cells.length - 1; i >= 0; i--) {
+    cells[i].update(dt);
+    if (!cells[i].alive) {
+      cells.splice(i, 1);
+    }
+  }
+
+  // Limit population
+  while (cells.length > 16) {
+    const oldest = cells.shift();
+    oldest.dispose();
+  }
+
+  // Animate background particles
+  const pos = pGeo.attributes.position.array;
+  for (let i = 0; i < particleCount; i++) {
+    pos[i*3+1] += Math.sin(time + i) * 0.003;
+    pos[i*3]   += Math.cos(time * 0.7 + i) * 0.002;
+  }
+  pGeo.attributes.position.needsUpdate = true;
+
+  // Camera orbit
+  const camDist = 25;
+  camera.position.x = Math.cos(time * 0.08) * camDist;
+  camera.position.z = Math.sin(time * 0.08) * camDist;
+  camera.position.y = Math.sin(time * 0.04) * 6;
+  camera.lookAt(0, 0, 0);
+
+  // Animate lights
+  pLight1.position.x = Math.sin(time * 0.3) * 10;
+  pLight1.position.z = Math.cos(time * 0.3) * 10;
+  pLight2.position.x = Math.cos(time * 0.2) * 10;
+  pLight2.position.z = Math.sin(time * 0.2) * 10;
+
+  renderer.render(scene, camera);
+}
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
