@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Monte Carlo — Estimating π</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #05060f;
+    font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+    color: #e8e8ff;
+  }
+  canvas { display: block; }
+
+  .panel {
+    position: fixed;
+    background: rgba(10, 12, 28, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(120, 160, 255, 0.15);
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Title + formula */
+  .title-panel {
+    top: 24px; left: 24px;
+    max-width: 380px;
+  }
+  .title-panel h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .title-panel .sub {
+    font-size: 12px;
+    color: #8a94c4;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .formula {
+    font-size: 15px;
+    padding: 10px 14px;
+    background: rgba(120, 160, 255, 0.06);
+    border-left: 2px solid #6b9dff;
+    border-radius: 4px;
+    color: #c8d4ff;
+    line-height: 1.7;
+  }
+  .formula .sym { color: #ff6b9d; font-weight: 600; }
+  .formula .num { color: #6bffb5; }
+
+  /* Live stats */
+  .stats-panel {
+    top: 24px; right: 24px;
+    min-width: 260px;
+    text-align: right;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #6b7aa8;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 32px;
+    font-weight: 300;
+    color: #fff;
+    letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-value .unit {
+    font-size: 14px;
+    color: #6b7aa8;
+    margin-left: 4px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(120, 160, 255, 0.1);
+  }
+  .stat-row > div { text-align: left; }
+  .stat-row .stat-value { font-size: 18px; }
+
+  .inside { color: #6bffb5; }
+  .outside { color: #ff6b9d; }
+  .error { color: #ffb86b; }
+
+  /* Convergence plot */
+  .plot-panel {
+    bottom: 24px; left: 24px; right: 24px;
+    height: 160px;
+    padding: 14px 20px;
+  }
+  .plot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .plot-title {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: #8a94c4;
+    text-transform: uppercase;
+  }
+  .plot-legend {
+    font-size: 11px;
+    color: #6b7aa8;
+  }
+  .plot-legend .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  #plotCanvas {
+    width: 100%;
+    height: 100px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="main"></canvas>
+
+<div class="panel title-panel">
+  <h1>Monte Carlo Estimation of π</h1>
+  <div class="sub">
+    Random points are sampled uniformly inside a unit square.<br>
+    The ratio of points landing inside the inscribed circle<br>
+    converges to π/4 as the sample size grows.
+  </div>
+  <div class="formula">
+    <span class="sym">π</span> ≈ <span class="num">4</span> ×
+    <span style="color:#6bffb5">●</span> inside /
+    (<span style="color:#6bffb5">●</span> + <span style="color:#ff6b9d">●</span>) total
+  </div>
+</div>
+
+<div class="panel stats-panel">
+  <div class="stat-label">Current Estimate</div>
+  <div class="stat-value" id="piValue">—<span class="unit"></span></div>
+  <div class="stat-row">
+    <div>
+      <div class="stat-label">Error</div>
+      <div class="stat-value error" id="errorValue">—</div>
+    </div>
+    <div>
+      <div class="stat-label">Samples</div>
+      <div class="stat-value" id="countValue" style="color:#c8d4ff">0</div>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div>
+      <div class="stat-label">Inside</div>
+      <div class="stat-value inside" id="insideValue">0</div>
+    </div>
+    <div>
+      <div class="stat-label">Outside</div>
+      <div class="stat-value outside" id="outsideValue">0</div>
+    </div>
+  </div>
+</div>
+
+<div class="panel plot-panel">
+  <div class="plot-header">
+    <div class="plot-title">Convergence to π</div>
+    <div class="plot-legend">
+      <span class="dot" style="background:#6bffb5"></span>estimate
+      <span style="margin-left:12px"></span>
+      <span class="dot" style="background:#ffb86b"></span>true π
+      <span style="margin-left:12px"></span>
+      <span class="dot" style="background:rgba(255,107,157,0.3)"></span>error band
+    </div>
+  </div>
+  <canvas id="plotCanvas"></canvas>
+</div>
+
+<script>
+// ---------- Main canvas ----------
+const main = document.getElementById('main');
+const ctx = main.getContext('2d');
+
+// Offscreen buffer for accumulated points (so we don't redraw millions)
+const buffer = document.createElement('canvas');
+const bctx = buffer.getContext('2d');
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  main.width = innerWidth * dpr;
+  main.height = innerHeight * dpr;
+  main.style.width = innerWidth + 'px';
+  main.style.height = innerHeight + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // Buffer matches main
+  buffer.width = main.width;
+  buffer.height = main.height;
+  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+addEventListener('resize', resize);
+resize();
+
+// ---------- Monte Carlo state ----------
+let insideCount = 0;
+let totalCount = 0;
+let currentPi = 0;
+const history = []; // {n, pi}
+const MAX_HISTORY = 800;
+
+// ---------- Plot canvas ----------
+const plotCanvas = document.getElementById('plotCanvas');
+const pctx = plotCanvas.getContext('2d');
+
+function resizePlot() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = plotCanvas.getBoundingClientRect();
+  plotCanvas.width = rect.width * dpr;
+  plotCanvas.height = rect.height * dpr;
+  pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+addEventListener('resize', resizePlot);
+setTimeout(resizePlot, 0);
+
+// ---------- Simulation ----------
+function samplePoints(n) {
+  for (let i = 0; i < n; i++) {
+    // Uniform in [-1, 1] × [-1, 1]
+    const x = Math.random() * 2 - 1;
+    const y = Math.random() * 2 - 1;
+    const r2 = x * x + y * y;
+    const inside = r2 <= 1;
+
+    if (inside) insideCount++;
+    totalCount++;
+
+    // Draw on buffer
+    drawPoint(x, y, inside);
+  }
+  currentPi = 4 * insideCount / totalCount;
+
+  // Record history (log-spaced for nice convergence curve)
+  if (history.length === 0 ||
+      totalCount - history[history.length - 1].n > Math.max(50, totalCount * 0.005)) {
+    history.push({ n: totalCount, pi: currentPi });
+    if (history.length > MAX_HISTORY) history.shift();
+  }
+}
+
+function drawPoint(x, y, inside) {
+  // Map math coords to screen
+  const size = Math.min(innerWidth, innerHeight) * 0.62;
+  const cx = innerWidth / 2;
+  const cy = innerHeight / 2;
+  const px = cx + x * size / 2;
+  const py = cy - y * size / 2;
+
+  bctx.globalCompositeOperation = 'lighter';
+  bctx.fillStyle = inside ? 'rgba(107, 255, 181, 0.55)' : 'rgba(255, 107, 157, 0.45)';
+  bctx.beginPath();
+  bctx.arc(px, py, 1.2, 0, Math.PI * 2);
+  bctx.fill();
+}
+
+// ---------- Rendering ----------
+function drawFrame() {
+  const W = innerWidth, H = innerHeight;
+  const size = Math.min(W, H) * 0.62;
+  const cx = W / 2, cy = H / 2;
+  const half = size / 2;
+
+  // Background
+  ctx.fillStyle = '#05060f';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle radial glow behind the square
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 0.8);
+  grad.addColorStop(0, 'rgba(60, 80, 180, 0.15)');
+  grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Accumulated points (from buffer)
+  ctx.drawImage(buffer, 0, 0, W, H);
+
+  // Square outline
+  ctx.strokeStyle = 'rgba(200, 212, 255, 0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(cx - half, cy - half, size, size);
+
+  // Circle outline
+  ctx.strokeStyle = 'rgba(255, 184, 107, 0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, half, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Axes (subtle)
+  ctx.strokeStyle = 'rgba(200, 212, 255, 0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - half, cy); ctx.lineTo(cx + half, cy);
+  ctx.moveTo(cx, cy - half); ctx.lineTo(cx, cy + half);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(200, 212, 255, 0.4)';
+  ctx.font = '11px SF Mono, Consolas, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('-1', cx - half, cy + 16);
+  ctx.fillText('+1', cx + half, cy + 16);
+  ctx.fillText('+1', cx + 12, cy - half + 4);
+  ctx.fillText('-1', cx + 12, cy + half + 4);
+
+  // Latest falling point highlight (pulsing ring)
+  if (totalCount > 0) {
+    const last = history[history.length - 1];
+    // Not tracking last point position; skip highlight for perf
+  }
+}
+
+// ---------- Convergence plot ----------
+function drawPlot() {
+  const rect = plotCanvas.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
+  pctx.clearRect(0, 0, W, H);
+
+  if (history.length < 2) return;
+
+  const padL = 10, padR = 10, padT = 8, padB = 18;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  // y-range: symmetric around π, but adaptive
+  const truePi = Math.PI;
+  let maxErr = 0.5;
+  for (const h of history) {
+    const e = Math.abs(h.pi - truePi);
+    if (e > maxErr) maxErr = e;
+  }
+  maxErr = Math.max(maxErr * 1.2, 0.05);
+  const yMin = truePi - maxErr;
+  const yMax = truePi + maxErr;
+
+  // x-range: log scale of sample count
+  const nMin = history[0].n;
+  const nMax = history[history.length - 1].n;
+  const logMin = Math.log10(Math.max(nMin, 1));
+  const logMax = Math.log10(Math.max(nMax, 2));
+
+  function toX(n) {
+    const l = Math.log10(Math.max(n, 1));
+    return padL + ((l - logMin) / (logMax - logMin || 1)) * plotW;
+  }
+  function toY(v) {
+    return padT + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+  }
+
+  // Error band (1σ ≈ 1/√n scaled)
+  pctx.fillStyle = 'rgba(255, 107, 157, 0.08)';
+  pctx.beginPath();
+  for (let i = 0; i < history.length; i++) {
+    const h = history[i];
+    const sigma = 2 / Math.sqrt(h.n); // rough 1σ band
+    const x = toX(h.n);
+    const y = toY(truePi + sigma);
+    if (i === 0) pctx.moveTo(x, y); else pctx.lineTo(x, y);
+  }
+  for (let i = history.length - 1; i >= 0; i--) {
+    const h = history[i];
+    const sigma = 2 / Math.sqrt(h.n);
+    const x = toX(h.n);
+    const y = toY(truePi - sigma);
+    pctx.lineTo(x, y);
+  }
+  pctx.closePath();
+  pctx.fill();
+
+  // True π line
+  pctx.strokeStyle = 'rgba(255, 184, 107, 0.7)';
+  pctx.lineWidth = 1;
+  pctx.setLineDash([4, 4]);
+  pctx.beginPath();
+  pctx.moveTo(padL, toY(truePi));
+  pctx.lineTo(padL + plotW, toY(truePi));
+  pctx.stroke();
+  pctx.setLineDash([]);
+
+  // Estimate curve
+  pctx.strokeStyle = '#6bffb5';
+  pctx.lineWidth = 1.5;
+  pctx.shadowColor = '#6bffb5';
+  pctx.shadowBlur = 6;
+  pctx.beginPath();
+  for (let i = 0; i < history.length; i++) {
+    const x = toX(history[i].n);
+    const y = toY(history[i].pi);
+    if (i === 0) pctx.moveTo(x, y); else pctx.lineTo(x, y);
+  }
+  pctx.stroke();
+  pctx.shadowBlur = 0;
+
+  // Current point
+  if (history.length > 0) {
+    const last = history[history.length - 1];
+    const x = toX(last.n);
+    const y = toY(last.pi);
+    pctx.fillStyle = '#6bffb5';
+    pctx.beginPath();
+    pctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    pctx.fill();
+  }
+
+  // Y-axis labels
+  pctx.fillStyle = 'rgba(200, 212, 255, 0.5)';
+  pctx.font = '10px SF Mono, Consolas, monospace';
+  pctx.textAlign = 'left';
+  pctx.fillText(truePi.toFixed(3), padL + 4, toY(truePi) - 4);
+  pctx.fillText((truePi + maxErr).toFixed(2), padL + 4, padT + 10);
+  pctx.fillText((truePi - maxErr).toFixed(2), padL + 4, padT + plotH - 2);
+
+  // X-axis labels (log scale)
+  pctx.textAlign = 'center';
+  const ticks = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000];
+  for (const t of ticks) {
+    if (t < nMin * 0.9 || t > nMax * 1.1) continue;
+    const x = toX(t);
+    pctx.fillStyle = 'rgba(200, 212, 255, 0.3)';
+    pctx.fillText(formatN(t), x, padT + plotH + 12);
+  }
+}
+
+function formatN(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(0) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
+  return n.toString();
+}
+
+// ---------- UI updates ----------
+const piEl = document.getElementById('piValue');
+const errEl = document.getElementById('errorValue');
+const countEl = document.getElementById('countValue');
+const insideEl = document.getElementById('insideValue');
+const outsideEl = document.getElementById('outsideValue');
+
+function updateUI() {
+  if (totalCount === 0) return;
+  piEl.innerHTML = currentPi.toFixed(7);
+  const err = Math.abs(currentPi - Math.PI);
+  errEl.textContent = err < 0.0001 ? err.toExponential(2) : err.toFixed(5);
+  countEl.textContent = totalCount.toLocaleString();
+  insideEl.textContent = insideCount.toLocaleString();
+  outsideEl.textContent = (totalCount - insideCount).toLocaleString();
+}
+
+// ---------- Main loop ----------
+let lastTime = performance.now();
+let plotUpdateTimer = 0;
+
+function loop() {
+  requestAnimationFrame(loop);
+
+  const now = performance.now();
+  const dt = now - lastTime;
+  lastTime = now;
+
+  // Sample more points as totalCount grows (keep it visually interesting)
+  // Start slow, accelerate
+  let rate;
+  if (totalCount < 500) rate = 8;
+  else if (totalCount < 5000) rate = 40;
+  else if (totalCount < 50000) rate = 200;
+  else if (totalCount < 500000) rate = 1500;
+  else rate = 5000;
+
+  samplePoints(rate);
+
+  drawFrame();
+
+  plotUpdateTimer += dt;
+  if (plotUpdateTimer > 100) {
+    drawPlot();
+    updateUI();
+    plotUpdateTimer = 0;
+  }
+}
+
+loop();
+</script>
+</body>
+</html>
