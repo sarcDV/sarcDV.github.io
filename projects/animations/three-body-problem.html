@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Three-Body Problem</title>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Scene setup ----------
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+camera.position.set(0, 3, 8);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+
+// ---------- Starfield background ----------
+const starGeo = new THREE.BufferGeometry();
+const starCount = 2000;
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount; i++) {
+  const r = 100 + Math.random() * 200;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  starPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  starPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+  starPos[i*3+2] = r * Math.cos(phi);
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, sizeAttenuation: true });
+scene.add(new THREE.Points(starGeo, starMat));
+
+// ---------- Physics: Three-Body Problem ----------
+const G = 1.0;
+const softening = 0.08;
+const dt = 0.004;
+const substeps = 8;
+
+// State: positions and velocities
+let bodies = [
+  { pos: new THREE.Vector3(-1.0, 0.0, 0.0), vel: new THREE.Vector3(0.0, 0.35, 0.15), mass: 1.0 },
+  { pos: new THREE.Vector3( 1.0, 0.0, 0.0), vel: new THREE.Vector3(0.0,-0.35,-0.15), mass: 1.0 },
+  { pos: new THREE.Vector3( 0.0, 0.6, 0.6), vel: new THREE.Vector3(0.25, 0.0,-0.25), mass: 1.0 }
+];
+
+// Center of mass correction (keep system bounded)
+function centerOfMass() {
+  const com = new THREE.Vector3();
+  let totalMass = 0;
+  for (const b of bodies) {
+    com.addScaledVector(b.pos, b.mass);
+    totalMass += b.mass;
+  }
+  com.divideScalar(totalMass);
+  return com;
+}
+
+function centerMomentum() {
+  const mom = new THREE.Vector3();
+  let totalMass = 0;
+  for (const b of bodies) {
+    mom.addScaledVector(b.vel, b.mass);
+    totalMass += b.mass;
+  }
+  mom.divideScalar(totalMass);
+  return mom;
+}
+
+// Zero out COM drift
+const com0 = centerOfMass();
+const mom0 = centerMomentum();
+for (const b of bodies) {
+  b.pos.sub(com0);
+  b.vel.sub(mom0);
+}
+
+function computeAccelerations(positions) {
+  const acc = positions.map(() => new THREE.Vector3());
+  for (let i = 0; i < positions.length; i++) {
+    for (let j = i + 1; j < positions.length; j++) {
+      const diff = new THREE.Vector3().subVectors(positions[j], positions[i]);
+      const distSq = diff.lengthSq() + softening * softening;
+      const dist = Math.sqrt(distSq);
+      const forceMag = G / (distSq * dist);
+      acc[i].addScaledVector(diff, forceMag * bodies[j].mass);
+      acc[j].addScaledVector(diff, -forceMag * bodies[i].mass);
+    }
+  }
+  return acc;
+}
+
+function physicsStep() {
+  // Velocity Verlet integration (symplectic, energy-conserving)
+  const acc = computeAccelerations(bodies.map(b => b.pos));
+  
+  // Half-step velocity + full-step position
+  for (let i = 0; i < bodies.length; i++) {
+    bodies[i].vel.addScaledVector(acc[i], dt * 0.5);
+    bodies[i].pos.addScaledVector(bodies[i].vel, dt);
+  }
+  
+  // Recompute accelerations at new positions
+  const accNew = computeAccelerations(bodies.map(b => b.pos));
+  
+  // Complete velocity step
+  for (let i = 0; i < bodies.length; i++) {
+    bodies[i].vel.addScaledVector(accNew[i], dt * 0.5);
+  }
+}
+
+// ---------- Visual: Bodies ----------
+const bodyColors = [0xff3366, 0x33ff99, 0x3399ff];
+const bodyMeshes = bodies.map((b, i) => {
+  const geo = new THREE.SphereGeometry(0.15, 32, 32);
+  const mat = new THREE.MeshBasicMaterial({ color: bodyColors[i] });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  
+  // Glow
+  const glowGeo = new THREE.SphereGeometry(0.25, 32, 32);
+  const glowMat = new THREE.MeshBasicMaterial({ 
+    color: bodyColors[i], 
+    transparent: true, 
+    opacity: 0.3 
+  });
+  const glow = new THREE.Mesh(glowGeo, glowMat);
+  mesh.add(glow);
+  
+  return mesh;
+});
+
+// ---------- Visual: Trails ----------
+const trailLength = 600;
+const trails = bodies.map((b, i) => {
+  const positions = new Float32Array(trailLength * 3);
+  const colors = new Float32Array(trailLength * 3);
+  
+  const color = new THREE.Color(bodyColors[i]);
+  for (let j = 0; j < trailLength; j++) {
+    const alpha = 1.0 - j / trailLength;
+    colors[j*3]   = color.r * alpha;
+    colors[j*3+1] = color.g * alpha;
+    colors[j*3+2] = color.b * alpha;
+  }
+  
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  
+  const mat = new THREE.LineBasicMaterial({ 
+    vertexColors: true, 
+    transparent: true, 
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending
+  });
+  
+  const line = new THREE.Line(geo, mat);
+  scene.add(line);
+  
+  return { geo, positions, line };
+});
+
+let trailIndex = 0;
+
+function updateTrails() {
+  for (let i = 0; i < bodies.length; i++) {
+    const trail = trails[i];
+    
+    // Shift positions back
+    for (let j = trailLength - 1; j > 0; j--) {
+      trail.positions[j*3]   = trail.positions[(j-1)*3];
+      trail.positions[j*3+1] = trail.positions[(j-1)*3+1];
+      trail.positions[j*3+2] = trail.positions[(j-1)*3+2];
+    }
+    
+    // Add current position at front
+    trail.positions[0] = bodies[i].pos.x;
+    trail.positions[1] = bodies[i].pos.y;
+    trail.positions[2] = bodies[i].pos.z;
+    
+    trail.geo.attributes.position.needsUpdate = true;
+  }
+}
+
+// ---------- Animation loop ----------
+let time = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  
+  // Physics
+  for (let s = 0; s < substeps; s++) {
+    physicsStep();
+  }
+  
+  // Update visuals
+  for (let i = 0; i < bodies.length; i++) {
+    bodyMeshes[i].position.copy(bodies[i].pos);
+  }
+  
+  trailIndex++;
+  if (trailIndex % 2 === 0) { // Update trails every other frame
+    updateTrails();
+  }
+  
+  // Camera orbit
+  time += 0.003;
+  const camDist = 10;
+  camera.position.x = Math.cos(time) * camDist;
+  camera.position.z = Math.sin(time) * camDist;
+  camera.position.y = Math.sin(time * 0.5) * 3;
+  camera.lookAt(0, 0, 0);
+  
+  renderer.render(scene, camera);
+}
+
+// ---------- Resize handler ----------
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
