@@ -93,3 +93,32 @@ body {
 @keyframes drift { from { transform: scale(1.05) translateY(20px); opacity: 0; } to { transform: scale(1.2) translateY(0); opacity: 1; } }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+
+    .hero {
+        height: 18vh;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .slideshow {
+        height: 100vh;
+    }
+
+    .slideshow img {
+        object-fit: cover;
+    }
+
+    .video-section video {
+        width: 95%;
+    }
+}
+
+html, body {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+}
